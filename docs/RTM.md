@@ -15,6 +15,8 @@ Fuente de verdad: `docs/Sistema_Gestion_Creditos_Base.md`.
 | DEC-04 | Límite Atribución Jefe | Límite en Bs 70.000. Montos superiores se bloquean y derivan a nivel superior (Comité no modelado). | Sección 13.5 (Límites de atribución), CU07 y CA13. | APROBADO |
 | DEC-05 | Autenticación y Bloqueo | Bloqueo al 5.° intento fallido consecutivo; sesión expira a los 15 minutos (JWT). | Sección 16.2 y RNF01. | APROBADO |
 | DEC-06 | Rol Cliente | Cliente no inicia sesión en el sistema. | Apéndice B, B4. | APROBADO |
+| DEC-07 | Disponibilidad del Sistema | 99,0 % de disponibilidad. | RNF04. Anotado como pendiente de confirmación del grupo/docente frente a RNF06. | PENDIENTE |
+| DEC-08 | Cifrado en Tránsito | TLS 1.3 obligatorio. | RNF02 y Sección 16.2. Anotado como pendiente de confirmación frente a RNF07. | PENDIENTE |
 
 ---
 

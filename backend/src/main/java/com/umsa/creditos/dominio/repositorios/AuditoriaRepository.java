@@ -10,4 +10,6 @@ import java.util.List;
 public interface AuditoriaRepository extends JpaRepository<Auditoria, Long> {
     List<Auditoria> findTop50ByOrderByFechaHoraDesc();
     List<Auditoria> findByEntidadOrderByFechaHoraDesc(String entidad);
+    List<Auditoria> findByEntidadAndIdEntidadOrderByFechaHoraDesc(String entidad, String idEntidad);
+    List<Auditoria> findByOperacionOrderByFechaHoraDesc(String operacion);
 }
