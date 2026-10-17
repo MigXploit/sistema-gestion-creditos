@@ -1,0 +1,28 @@
+# ==============================================================================
+# PERFIL OPCIONAL H2 (Modo compatibilidad PostgreSQL)
+# DESVIACIÓN: Permitido exclusivamente para ejecución de pruebas y visualización
+# preliminar sin servicio PostgreSQL activo. No usar en producción.
+# ==============================================================================
+spring:
+  datasource:
+    url: jdbc:h2:mem:creditos_db;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1
+    username: creditos_user
+    password: creditos_pass
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
