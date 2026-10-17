@@ -1,23 +1,19 @@
 package com.umsa.creditos.dominio.entidades;
 
-import com.umsa.creditos.dominio.enums.Dictamen;
 import com.umsa.creditos.dominio.enums.NivelRiesgo;
+import com.umsa.creditos.dominio.enums.ResultadoEvaluacion;
 import jakarta.persistence.*;
-import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
  * Entidad EVALUACION_CREDITO. Fuente: sección 14.1 y D02.
  * RF04, RF05, RF06 – CU03, CU04, CU05.
- * Relación 1:1 con SolicitudCredito.
  */
 @Entity
 @Table(name = "evaluacion_credito", indexes = {
         @Index(name = "idx_evaluacion_solicitud", columnList = "id_solicitud", unique = true)
 })
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
-@Builder
 public class EvaluacionCredito {
 
     @Id
@@ -33,27 +29,21 @@ public class EvaluacionCredito {
     @Column(name = "fecha_evaluacion", nullable = false)
     private LocalDate fechaEvaluacion;
 
-    /** Ingresos verificados en la evaluación (pueden diferir de los declarados). */
     @Column(name = "ingresos", nullable = false, precision = 12, scale = 2)
     private BigDecimal ingresos;
 
-    /** Gastos fijos mensuales del cliente. */
     @Column(name = "gastos", nullable = false, precision = 12, scale = 2)
     private BigDecimal gastos;
 
-    /** Excedente neto = ingresos - gastos (sección 13.5). */
     @Column(name = "capacidad_pago", nullable = false, precision = 12, scale = 2)
     private BigDecimal capacidadPago;
 
-    /** DTI = (cuota + deudas) / ingresos × 100. Debe ser ≤ 40% (sección 13.5). */
     @Column(name = "ratio_dti", precision = 5, scale = 2)
     private BigDecimal ratioDti;
 
-    /** Score del buró de riesgo (CU03, RF04). */
     @Column(name = "score_buro")
     private Integer scoreBuro;
 
-    /** Referencia de la consulta al buró (P13). */
     @Column(name = "referencia_buro", length = 50)
     private String referenciaBuro;
 
@@ -61,12 +51,48 @@ public class EvaluacionCredito {
     @Column(name = "nivel_riesgo", length = 10)
     private NivelRiesgo nivelRiesgo;
 
-    /** Dictamen final de la evaluación (D7: enum FAVORABLE/DESFAVORABLE). */
     @Enumerated(EnumType.STRING)
-    @Column(name = "dictamen", length = 20)
-    private Dictamen dictamen;
+    @Column(name = "resultado", nullable = false, length = 20)
+    private ResultadoEvaluacion resultado;
 
-    /** Observaciones textuales adicionales del analista. */
-    @Column(name = "observaciones", length = 1000)
-    private String observaciones;
+    @Column(name = "dictamen", length = 1000)
+    private String dictamen;
+
+    public EvaluacionCredito() {}
+
+    public Long getIdEvaluacion() { return idEvaluacion; }
+    public void setIdEvaluacion(Long idEvaluacion) { this.idEvaluacion = idEvaluacion; }
+
+    public SolicitudCredito getSolicitud() { return solicitud; }
+    public void setSolicitud(SolicitudCredito solicitud) { this.solicitud = solicitud; }
+
+    public LocalDate getFechaEvaluacion() { return fechaEvaluacion; }
+    public void setFechaEvaluacion(LocalDate fechaEvaluacion) { this.fechaEvaluacion = fechaEvaluacion; }
+
+    public BigDecimal getIngresos() { return ingresos; }
+    public void setIngresos(BigDecimal ingresos) { this.ingresos = ingresos; }
+
+    public BigDecimal getGastos() { return gastos; }
+    public void setGastos(BigDecimal gastos) { this.gastos = gastos; }
+
+    public BigDecimal getCapacidadPago() { return capacidadPago; }
+    public void setCapacidadPago(BigDecimal capacidadPago) { this.capacidadPago = capacidadPago; }
+
+    public BigDecimal getRatioDti() { return ratioDti; }
+    public void setRatioDti(BigDecimal ratioDti) { this.ratioDti = ratioDti; }
+
+    public Integer getScoreBuro() { return scoreBuro; }
+    public void setScoreBuro(Integer scoreBuro) { this.scoreBuro = scoreBuro; }
+
+    public String getReferenciaBuro() { return referenciaBuro; }
+    public void setReferenciaBuro(String referenciaBuro) { this.referenciaBuro = referenciaBuro; }
+
+    public NivelRiesgo getNivelRiesgo() { return nivelRiesgo; }
+    public void setNivelRiesgo(NivelRiesgo nivelRiesgo) { this.nivelRiesgo = nivelRiesgo; }
+
+    public ResultadoEvaluacion getResultado() { return resultado; }
+    public void setResultado(ResultadoEvaluacion resultado) { this.resultado = resultado; }
+
+    public String getDictamen() { return dictamen; }
+    public void setDictamen(String dictamen) { this.dictamen = dictamen; }
 }

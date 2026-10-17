@@ -3,21 +3,19 @@ package com.umsa.creditos.dominio.entidades;
 import com.umsa.creditos.dominio.enums.EstadoSolicitud;
 import com.umsa.creditos.dominio.enums.TipoCredito;
 import jakarta.persistence.*;
-import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entidad SOLICITUD_CREDITO. Fuente: sección 14.1 y D02.
- * RF03 – CU02. Estado inicial REGISTRADA.
- * Campo motivo_rechazo agregado por decisión D6 (requerido por P06 y CU08).
+ * RF03 – CU02.
  */
 @Entity
 @Table(name = "solicitud_credito", indexes = {
         @Index(name = "idx_solicitud_numero", columnList = "numero_solicitud", unique = true)
 })
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
-@Builder
 public class SolicitudCredito {
 
     @Id
@@ -30,7 +28,6 @@ public class SolicitudCredito {
     @JoinColumn(name = "id_cliente", nullable = false)
     private Cliente cliente;
 
-    /** Número de solicitud único. Formato: SOL-YYYY-NNNN */
     @Column(name = "numero_solicitud", nullable = false, unique = true, length = 30)
     private String numeroSolicitud;
 
@@ -52,20 +49,64 @@ public class SolicitudCredito {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 20)
-    @Builder.Default
     private EstadoSolicitud estado = EstadoSolicitud.REGISTRADA;
 
-    /** Motivo de rechazo obligatorio al rechazar (CU08, CA14). Decisión D6. */
     @Column(name = "motivo_rechazo", length = 500)
     private String motivoRechazo;
 
-    /** Documentación presentada (checklist como texto JSON o CSV de claves). */
-    @Column(name = "documentacion", length = 500)
-    private String documentacion;
+    @Column(name = "documentacion_completa", nullable = false)
+    private Boolean documentacionCompleta = false;
 
     @OneToOne(mappedBy = "solicitud", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private EvaluacionCredito evaluacion;
 
     @OneToOne(mappedBy = "solicitud", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Credito credito;
+
+    @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Garantia> garantias = new ArrayList<>();
+
+    public SolicitudCredito() {}
+
+    public Long getIdSolicitud() { return idSolicitud; }
+    public void setIdSolicitud(Long idSolicitud) { this.idSolicitud = idSolicitud; }
+
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
+
+    public String getNumeroSolicitud() { return numeroSolicitud; }
+    public void setNumeroSolicitud(String numeroSolicitud) { this.numeroSolicitud = numeroSolicitud; }
+
+    public LocalDate getFechaSolicitud() { return fechaSolicitud; }
+    public void setFechaSolicitud(LocalDate fechaSolicitud) { this.fechaSolicitud = fechaSolicitud; }
+
+    public BigDecimal getMontoSolicitado() { return montoSolicitado; }
+    public void setMontoSolicitado(BigDecimal montoSolicitado) { this.montoSolicitado = montoSolicitado; }
+
+    public Integer getPlazoMeses() { return plazoMeses; }
+    public void setPlazoMeses(Integer plazoMeses) { this.plazoMeses = plazoMeses; }
+
+    public TipoCredito getTipoCredito() { return tipoCredito; }
+    public void setTipoCredito(TipoCredito tipoCredito) { this.tipoCredito = tipoCredito; }
+
+    public String getDestino() { return destino; }
+    public void setDestino(String destino) { this.destino = destino; }
+
+    public EstadoSolicitud getEstado() { return estado; }
+    public void setEstado(EstadoSolicitud estado) { this.estado = estado; }
+
+    public String getMotivoRechazo() { return motivoRechazo; }
+    public void setMotivoRechazo(String motivoRechazo) { this.motivoRechazo = motivoRechazo; }
+
+    public Boolean getDocumentacionCompleta() { return documentacionCompleta; }
+    public void setDocumentacionCompleta(Boolean documentacionCompleta) { this.documentacionCompleta = documentacionCompleta; }
+
+    public EvaluacionCredito getEvaluacion() { return evaluacion; }
+    public void setEvaluacion(EvaluacionCredito evaluacion) { this.evaluacion = evaluacion; }
+
+    public Credito getCredito() { return credito; }
+    public void setCredito(Credito credito) { this.credito = credito; }
+
+    public List<Garantia> getGarantias() { return garantias; }
+    public void setGarantias(List<Garantia> garantias) { this.garantias = garantias; }
 }

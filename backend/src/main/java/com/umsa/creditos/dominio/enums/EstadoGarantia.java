@@ -1,11 +1,15 @@
 package com.umsa.creditos.dominio.enums;
 
 /**
- * Estado de una garantía registrada.
- * Fuente: D02 (no enumera valores). Decisión D2: valores definidos por el grupo.
+ * Estados de la garantía conforme a las referencias del informe.
  */
 public enum EstadoGarantia {
-    VIGENTE,     // Garantía activa y en custodia
-    LIBERADA,    // Garantía liberada al cancelar el crédito
-    EJECUCION    // Garantía en proceso de ejecución judicial (> 90 días mora)
+    /** Estado en pantalla P12. DEL INFORME (P12). */
+    VIGENTE,
+
+    /** Estado en objeto gar1 de D13. DEL INFORME (D13). */
+    CUSTODIA,
+
+    /** Estado resultante de la operación liberar() en D02. DEL INFORME (D02). */
+    LIBERADA
 }

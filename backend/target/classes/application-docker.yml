@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/creditos_db
+    username: creditos_user
+    password: creditos_pass

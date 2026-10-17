@@ -1,11 +1,15 @@
 package com.umsa.creditos.dominio.enums;
 
 /**
- * Estado de un contrato crediticio.
- * Fuente: D02 (no enumera valores). Decisión D2: valores definidos por el grupo.
+ * Estados del contrato conforme a las referencias del informe.
  */
 public enum EstadoContrato {
-    PENDIENTE_FIRMA,  // Contrato generado, esperando firma notarial
-    FIRMADO,          // Contrato firmado; habilita el desembolso (RN10)
-    ANULADO           // Contrato anulado
+    /** Generado y esperando suscripción notarial. SUPUESTO (CU09: "listo para firma"). */
+    PENDIENTE_FIRMA,
+
+    /** Contrato legalmente firmado y suscrito. DEL INFORME (D13, ctr1). */
+    FIRMADO,
+
+    /** Contrato anulado tras no formalización o rescisión. DEL INFORME (D02: operación anular()). */
+    ANULADO
 }
