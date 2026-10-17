@@ -37,4 +37,17 @@ Fuente de verdad: `docs/Sistema_Gestion_Creditos_Base.md`.
 | **RF13** | CU12 (Registrar pago) | RN07, RN08, RN10 | `Pago`, `Cuota`, `Credito` | `POST /api/pagos` | Caja (Pendiente) | `PAGO`, `CUOTA`, `CREDITO` | CA19, CA20, CA21 | PENDIENTE |
 | **RF14** | CU13 (Controlar mora) | RN09, RN12 | `Cuota`, `Credito` | `POST /api/mora/ejecutar-control` | Automático / Job | `CUOTA`, `CREDITO`, `AUDITORIA` | CA22 | PENDIENTE |
 | **RF15** | CU14 (Generar reportes) | — | Reportes Service | `GET /api/reportes/*` | Reportes (Pendiente) | Lectura sobre todas | CA23 | PENDIENTE |
-| **RF16** | CU15 (Administrar usuarios) | RN12 | `Usuario` | `POST/GET/PUT /api/usuarios` | Usuarios (Pendiente) | `USUARIO`, `AUDITORIA` | CA24, CA25 | PENDIENTE |
+| **RF16** | CU15 (Administrar usuarios) | RN12 | `Usuario`, `UsuarioService` | `GET/POST /api/usuarios`, `PUT /api/usuarios/{id}/estado` | P14 (`UsuariosView`) | `USUARIO`, `AUDITORIA` | CA24, CA25 | COMPLETO (`AuthIntegrationTest`) |
+
+---
+
+## 3. Matriz de Requisitos No Funcionales y Seguridad (RNF / Fase 2)
+
+| Requisito / Tema | Especificación | Implementación | Pantalla | Pruebas | Estado |
+|---|---|---|---|---|---|
+| **RNF01 (Autenticación)** | Login con JWT, contraseñas encriptadas con BCrypt | `AuthService`, `JwtTokenProvider`, `SecurityConfig` | P01 (`LoginScreen`) | `AuthIntegrationTest.testLoginExitosoJefeCarlosMendoza`, `PasswordHashGeneratorTest` | COMPLETO |
+| **RNF01 (Control de Bloqueo)** | Bloqueo al 5.° intento fallido consecutivo durante 30 min | `AuthService.login` (conteo de `intentos_fallidos`) | P01 | `AuthIntegrationTest.testLoginCredencialesInvalidas` | COMPLETO |
+| **RNF01 / RNF06 (Sesión)** | Expiración de token a los 15 minutos de inactividad | `jwt.expiration-ms=900000` (15 min) en backend y timer en frontend | Frontend `Layout` | Configurado en `application.yml` | COMPLETO |
+| **RBAC (Matriz 16.2)** | Acceso a endpoints restringido por roles (`@PreAuthorize`) | Spring Security `hasAnyRole` / `hasRole` | Menú lateral dinámico | `AuthIntegrationTest.testControlAccesoRbacAdminVsOficial` (403 vs 200) | COMPLETO |
+| **RN12 (Auditoría Inmutable)** | Registro de eventos críticos en tabla `AUDITORIA` (solo INSERT) | `AuditoriaService.registrarEvento`, `AuditoriaController` | `AuditoriaView` | Verificado en tests de autenticación y creación de usuario | COMPLETO |
+
