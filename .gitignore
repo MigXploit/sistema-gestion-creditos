@@ -1,0 +1,15 @@
+# Build artifacts
+**/target/
+**/.mvn/wrapper/maven-wrapper.jar
+*.class
+
+# Node / Frontend
+**/node_modules/
+**/dist/
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+*.DS_Store
+Thumbs.db
