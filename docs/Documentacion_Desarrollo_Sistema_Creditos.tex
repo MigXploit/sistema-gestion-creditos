@@ -1,0 +1,624 @@
+\documentclass[11pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{microtype}
+\usepackage[colorlinks=true,linkcolor=purple!80!black,urlcolor=blue!70!black,citecolor=purple!80!black]{hyperref}
+
+% Paleta de colores corporativos bancarios e institucionales
+\definecolor{bankPrimary}{RGB}{76, 29, 149}    % Violeta institucional (#4c1d95)
+\definecolor{bankSecondary}{RGB}{124, 58, 237} % Púrpura brillante (#7c3aed)
+\definecolor{bankDark}{RGB}{15, 23, 42}        % Slate oscuro (#0f172a)
+\definecolor{bankGray}{RGB}{241, 245, 249}     % Gris fondo (#f1f5f9)
+\definecolor{bankAccent}{RGB}{13, 148, 136}    % Teal / éxito (#0d9488)
+\definecolor{bankWarning}{RGB}{217, 119, 6}    % Ámbar alerta (#d97706)
+
+% Configuración de encabezados y pies de página
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{gray}Sistema de Gestión de Créditos Bancarios · UMSA}
+\fancyhead[R]{\small\color{gray}Documentación Técnica y Metodológica (INF-241)}
+\fancyfoot[L]{\small\color{gray}Universidad Mayor de San Andrés · Carrera de Informática}
+\fancyfoot[R]{\small\color{bankPrimary}\bfseries\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Formato de títulos
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{bankPrimary}}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titleformat{\section}{\color{bankPrimary}\normalfont\Large\bfseries}{\thesection.}{1em}{}[\titlerule]
+\titleformat{\subsection}{\color{bankSecondary}\normalfont\large\bfseries}{\thesubsection.}{1em}{}
+\titleformat{\subsubsection}{\color{bankDark}\normalfont\normalsize\bfseries}{\thesubsubsection.}{1em}{}
+
+% Cajas de texto estilizadas
+\newtcolorbox{docBox}[2][]{
+  colback=bankGray,
+  colframe=bankPrimary,
+  fonttitle=\bfseries\color{white},
+  title=#2,
+  rounded corners,
+  boxrule=1pt,
+  #1
+}
+
+\newtcolorbox{techNote}[1]{
+  colback=purple!5!white,
+  colframe=bankSecondary,
+  fonttitle=\bfseries\color{white},
+  title={CRITERIO TÉCNICO: #1},
+  rounded corners,
+  boxrule=1pt
+}
+
+\newtcolorbox{normaASFI}[1]{
+  colback=amber!5!white,
+  colframe=bankWarning,
+  fonttitle=\bfseries\color{white},
+  title={MARCO REGULATORIO ASFI: #1},
+  rounded corners,
+  boxrule=1pt
+}
+
+% Configuración de listings para código
+\lstset{
+  basicstyle=\small\ttfamily,
+  backgroundcolor=\color{bankGray},
+  frame=single,
+  rulecolor=\color{bankSecondary!40},
+  breaklines=true,
+  keywordstyle=\color{bankPrimary}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{bankAccent},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=8pt,
+  showspaces=false,
+  showstringspaces=false
+}
+
+\begin{document}
+
+% ==============================================================================
+% PORTADA INSTITUCIONAL FORMAL (UMSA - FCPN - INFORMÁTICA)
+% ==============================================================================
+\begin{titlepage}
+    \centering
+    \vspace*{0.5cm}
+    
+    {\scshape\Large UNIVERSIDAD MAYOR DE SAN ANDRÉS\par}
+    {\scshape\large FACULTAD DE CIENCIAS PURAS Y NATURALES\par}
+    {\scshape\large CARRERA DE INFORMÁTICA\par}
+    
+    \vspace{1.2cm}
+    \hrule height 2.5pt
+    \vspace{0.4cm}
+    {\huge\bfseries\color{bankPrimary} DOCUMENTACIÓN INTEGRAL DE INGENIERÍA DE SOFTWARE Y DESARROLLO DEL SISTEMA\par}
+    \vspace{0.3cm}
+    {\Large\bfseries\color{bankSecondary} SISTEMA DE GESTIÓN DE CRÉDITOS PARA UNA ENTIDAD BANCARIA\par}
+    \vspace{0.4cm}
+    \hrule height 1pt
+    
+    \vspace{1.0cm}
+    {\large\bfseries MATERIA: INF-241 ANÁLISIS Y DISEÑO DE SISTEMAS I}\\[0.2cm]
+    {\normalsize Paralelo ``B'' · Semestre II/2026}\par
+    
+    \vspace{1.2cm}
+    \begin{minipage}{0.48\textwidth}
+        \textbf{Docente:}\\
+        M. Sc. Patricia Sonia Trino Camacho\\[0.4cm]
+        \textbf{Institución:}\\
+        Universidad Mayor de San Andrés\\
+        Facultad de Ciencias Puras y Naturales\\
+        Carrera de Informática
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \textbf{Integrantes del Grupo 4:}\\
+        \small
+        $\bullet$ Bustillos Choque Miguel Angel (CI: 13760600)\\
+        $\bullet$ Callisaya Sumi Saúl Walter (CI: 15074779)\\
+        $\bullet$ Jamachi Condori Alex Arturo (CI: 13764342)\\
+        $\bullet$ Patty Mamani Royer Marcos (CI: 13759002)\\
+        $\bullet$ Rojas Guachalla Ranulfo Antonio (CI: 11076290)
+    \end{minipage}
+    
+    \vfill
+    {\large\bfseries La Paz -- Bolivia}\\[0.1cm]
+    {\normalsize Octubre de 2026}
+\end{titlepage}
+
+% ==============================================================================
+% RESUMEN EJECUTIVO / ABSTRACT
+% ==============================================================================
+\begin{abstract}
+El presente documento constituye la memoria técnica formal de ingeniería de software para el \textbf{Sistema de Gestión de Créditos Bancarios}, desarrollado en el marco académico de la materia INF-241 (Análisis y Diseño de Sistemas I) de la Universidad Mayor de San Andrés (UMSA). El sistema automatiza y audita de punta a punta el ciclo de vida crediticio: admisión de clientes, originación de solicitudes, evaluación financiera con interconexión simulada a Buró de Riesgos, constitución de garantías, aprobación mancomunada jerárquica, emisión legal de contratos, liquidación mediante el Sistema Francés con compensación del centavo residual, desembolso en Core Bancario, recaudación en caja bajo cascada estricta (Mora $\rightarrow$ Interés $\rightarrow$ Capital), métricas de cartera y trazabilidad forense inmutable. 
+
+La solución se concibió bajo la \textbf{Metodología Tradicional en Cascada (Waterfall)} en sus cinco etapas canónicas, en conjunción con la \textbf{Metodología Aplicada} adaptada a las disposiciones de la Ley N$^\circ$ 393 de Servicios Financieros del Estado Plurinacional de Bolivia y los lineamientos de la Autoridad de Supervisión del Sistema Financiero (ASFI). El software implementa una arquitectura desacoplada de tres capas: Frontend SPA en React 19 con TypeScript, Tailwind CSS y Vite; Backend RESTful en Node.js (Express); y persistencia dual compuesta por base de datos relacional MySQL 8.x en Tercera Forma Normal (3FN) y repositorio transaccional en memoria de alta resiliencia. El proyecto se encuentra plenamente desplegado en la nube pública de Amazon Web Services (AWS Lightsail) con servidor Nginx y proxy reverso PM2.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ==============================================================================
+% CAPÍTULO 1: INTRODUCCIÓN Y FUNDAMENTACIÓN
+% ==============================================================================
+\chapter{Fundamentación y Marco del Proyecto}
+
+\section{Introducción}
+La intermediación financiera en colocación de cartera de activos crediticios es el eje motriz de la economía moderna y el componente principal del balance de cualquier entidad bancaria. En el contexto de las entidades financieras y cooperativas de ahorro y crédito, la originación y administración de créditos involucra un flujo continuo y riguroso de fases operativas: registro del cliente, conformación de la solicitud, análisis de solvencia y riesgo moral, tasación de garantías, decisión de crédito por comité jerárquico, suscripción contractual, desembolso monetario en cuentas de pasivo y seguimiento de amortizaciones hasta la cancelación definitiva.
+
+El presente proyecto nace de la necesidad de estructurar una plataforma integral, unificada, segura y trazable que erradique los errores operativos inherentes a los registros descentralizados y planillas de cálculo no auditables.
+
+\section{Planteamiento del Problema}
+\subsection{Situación Problemática}
+Tradicionalmente, en muchas entidades financieras medianas y cooperativas, los pasos del flujo crediticio se encuentran fragmentados:
+\begin{itemize}
+    \item La admisión de clientes se realiza en formularios físicos o sistemas aislados de registro.
+    \item La evaluación financiera y el cálculo de la relación Cuota/Ingreso ($DTI$) se calculan manualmente o mediante macros de Excel desvinculadas de la base de datos central.
+    \item La aprobación de créditos carece de validación programática en cuanto a los límites reglamentarios de atribución por cargo (riesgo de extralimitación de facultades).
+    \item Los desembolsos y cobros se anotan sin trazabilidad en tiempo real, dificultando la detección temprana de cartera en mora y la determinación de la prelación de cobros.
+\end{itemize}
+
+\subsection{Problema Central}
+\begin{docBox}{Formulación del Problema}
+¿De qué manera se puede diseñar e implementar un sistema de software transaccional, modular, seguro y auditable que centralice e integre el ciclo crediticio bancario completo, garantizando el cumplimiento de la normativa ASFI, la consistencia contable en la amortización de cuotas y el control jerárquico de accesos (RBAC)?
+\end{docBox}
+
+\section{Justificación del Proyecto}
+\begin{itemize}
+    \item \textbf{Justificación Operativa:} Facilita y agiliza las tareas de los operadores bancarios (Oficial, Analista, Jefe, Cajero, Gerente y Administrador), reduciendo drásticamente el tiempo de ciclo desde la postulación hasta el desembolso de fondos.
+    \item \textbf{Justificación Financiera y Contable:} Asegura que cada amortización sea distribuida con estricta rigurosidad matemática (algoritmo francés con ajuste en la cuota enésima) y que cada cobro en ventanilla aplique la prelación legal obligatoria: primero mora, segundo interés ordinario, tercero amortización a capital.
+    \item \textbf{Justificación Regulatoria (ASFI y Ley N$^\circ$ 393):} Garantiza que la entidad mantenga pistas de auditoría forense inmutables sobre cada transacción y limite la aprobación de créditos a los topes facultativos de cada funcionario.
+\end{itemize}
+
+\section{Objetivos}
+\subsection{Objetivo General}
+Desarrollar, verificar y desplegar un Sistema de Gestión de Créditos Bancarios mediante una arquitectura desacoplada de tres capas, guiado por la Metodología Tradicional en Cascada y la Metodología Aplicada, cumpliendo al 100\% con los requerimientos funcionales, no funcionales y normativas regulatorias de la cátedra INF-241.
+
+\subsection{Objetivos Específicos}
+\begin{enumerate}[label=\alph*)]
+    \item Implementar el módulo de admisión de clientes con detección automática de duplicidad de carnets de identidad (CI).
+    \item Desarrollar el motor de originación de solicitudes con cálculo simultáneo de cuotas francesas según el tipo de producto financiero.
+    \item Integrar un servicio simulador de Buró de Riesgos Crediticios y evaluación paramétrica de relación Cuota/Ingreso ($DTI \le 40\%$).
+    \item Modelar el subsistema de garantías con verificación del índice de cobertura mínima del $120\%$.
+    \item Programar el esquema de aprobación jerárquica con corte de atribución en Bs 70.000,00 entre el Jefe de Créditos y la Gerencia.
+    \item Implementar la liquidación atómica de desembolsos y la caja transaccional de pagos con prelación de cascada.
+    \item Establecer un mecanismo de persistencia dual resiliente (MySQL 8.x en 3FN y repositorio en memoria de contingencia).
+    \item Desplegar la solución en una instancia pública en la nube AWS Lightsail con túnel de conectividad segura.
+\end{enumerate}
+
+% ==============================================================================
+% CAPÍTULO 2: METODOLOGÍAS Y ESTÁNDARES
+% ==============================================================================
+\chapter{Metodología de Desarrollo y Estándares de Programación}
+
+\section{Metodología de Desarrollo: Tradicional en Cascada (Waterfall)}
+En la ingeniería de sistemas bancarios, donde las reglas contables, los esquemas de auditoría y las normativas gubernamentales son estrictas y previas a la implementación, el modelo tradicional en cascada proporciona el marco de predictibilidad, disciplina y aseguramiento de calidad más robusto.
+
+\begin{figure}[htbp]
+\centering
+\begin{tcolorbox}[colback=white,colframe=bankPrimary,title=Ciclo de Vida en Cascada del Proyecto]
+\centering
+\textbf{1. ANÁLISIS DE REQUISITOS} $\longrightarrow$ Levantamiento de RF01--RF16, RNF01--RNF06 y RN01--RN12.\\
+$\boldsymbol{\downarrow}$\\
+\textbf{2. DISEÑO DEL SISTEMA} $\longrightarrow$ Arquitectura 3 capas, Modelo ER 3FN, Diagramas de Estado y API REST.\\
+$\boldsymbol{\downarrow}$\\
+\textbf{3. IMPLEMENTACIÓN} $\longrightarrow$ Frontend React 19/TS, Backend Node.js Express, Base de Datos MySQL.\\
+$\boldsymbol{\downarrow}$\\
+\textbf{4. PRUEBAS Y VERIFICACIÓN} $\longrightarrow$ Suite automatizada de integración (100\%) y prueba piloto manual.\\
+$\boldsymbol{\downarrow}$\\
+\textbf{5. DESPLIEGUE Y OPERACIÓN} $\longrightarrow$ Despliegue en AWS Lightsail, Nginx, PM2 y persistencia dual.
+\end{tcolorbox}
+\caption{Fases del Modelo en Cascada aplicadas al Sistema de Gestión de Créditos.}
+\end{figure}
+
+\subsection{Fase 1: Análisis de Requisitos}
+Se definieron exhaustivamente los 16 requerimientos funcionales, 6 no funcionales y 12 reglas de negocio del dominio bancario, vinculando a cada actor con sus responsabilidades operativas.
+
+\subsection{Fase 2: Diseño de la Arquitectura y Datos}
+Se diseñaron las 10 entidades normalizadas en 3FN en MySQL, los contratos de intercambio JSON para los endpoints RESTful, el control de acceso basado en roles (RBAC) y la máquina de estados de las solicitudes y créditos.
+
+\subsection{Fase 3: Implementación y Codificación}
+Se codificó el sistema utilizando TypeScript y JavaScript moderno bajo el paradigma de componentes funcionales en React y middleware modular en Express, respetando estrictamente el uso de variables intuitivas.
+
+\subsection{Fase 4: Pruebas y Verificación}
+Se diseñó y ejecutó una suite de integración end-to-end compuesta por 15 pruebas correlativas que validan desde la conectividad básica hasta la imputación contable de pagos y pistas de auditoría inmutables, logrando un 100\% de aserciones exitosas.
+
+\subsection{Fase 5: Despliegue y Mantenimiento}
+Se configuró una máquina virtual en AWS Lightsail (Ubuntu 22.04 LTS), con Nginx como servidor web y reverse proxy, PM2 como daemon manager y persistencia dual que garantiza la operatividad continua del sistema aún ante caídas del motor MySQL local.
+
+\section{Metodología de Proyecto: Metodología Aplicada}
+El proyecto se enmarca dentro de la \textbf{Metodología Aplicada} (investigación y desarrollo tecnológico aplicado), puesto que:
+\begin{enumerate}
+    \item \textbf{Parte de una realidad concreta:} Atiende las necesidades de intermediación crediticia de las entidades de intermediación financiera en Bolivia.
+    \item \textbf{Aplica cuerpo teórico formal:} Transforma fórmulas matemáticas de amortización francesa, teoría relacional de bases de datos de Codd, principios de seguridad criptográfica y normas ASFI en código ejecutable.
+    \item \textbf{Genera un producto tangible:} Produce un artefacto de software operativo y verificable en un entorno web de producción.
+\end{enumerate}
+
+\section{Estándar de Nomenclatura: Variables Definidas Intuitivamente}
+En concordancia con los lineamientos de buenas prácticas de programación, el sistema adoptó la regla de \textbf{nombres de variables intuitivos y auto-descriptivos}, eliminando abreviaciones ambiguas y acrónimos crípticos.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l p{5cm} X}
+\toprule
+\textbf{Variable Críptica (Evitada)} & \textbf{Variable Intuitiva (Implementada)} & \textbf{Significado en el Dominio Bancario} \\
+\midrule
+\texttt{m, amt} & \texttt{montoSolicitado} & Capital solicitado en Bs por el prestatario. \\
+\texttt{t, term} & \texttt{plazoMeses} & Plazo contractual expresado en meses. \\
+\texttt{i\_a, rate} & \texttt{tasaInteresAnual} & Tasa nominal pactada en porcentaje anual. \\
+\texttt{i\_m} & \texttt{tasaInteresMensual} & Tasa mensual decimal ($\text{tasaAnual} / 12 / 100$). \\
+\texttt{pmt, c} & \texttt{cuotaMensualEstimada} & Cuota periódica constante calculada por Sistema Francés. \\
+\texttt{dti} & \texttt{relacionCuotaIngreso} & Relación porcentaje cuota sobre ingreso neto verificado. \\
+\texttt{val\_g} & \texttt{valorComercialGarantia} & Avalúo pericial o tasación de mercado de la garantía. \\
+\texttt{cob} & \texttt{porcentajeCoberturaGarantia} & Ratio de respaldo patrimonial ($\text{garantía} / \text{monto} \times 100$). \\
+\texttt{cap\_act} & \texttt{saldoCapitalPendiente} & Capital insoluto por liquidar en el crédito. \\
+\texttt{mor\_calc} & \texttt{moraCalculadaPorDia} & Interés penal diario devengado por mora. \\
+\texttt{rec\_num} & \texttt{numeroComprobantePago} & Código correlativo inmutable del comprobante de caja. \\
+\texttt{bloq\_fec} & \texttt{bloqueadoHastaFecha} & Timestamp hasta el cual una cuenta está suspendida. \\
+\bottomrule
+\end{tabularx}
+\caption{Matriz comparativa de variables crípticas versus variables intuitivas.}
+\end{table}
+
+% ==============================================================================
+% CAPÍTULO 3: ESPECIFICACIÓN DE REQUISITOS Y REGLAS DE NEGOCIO
+% ==============================================================================
+\chapter{Especificación de Requisitos y Reglas de Negocio}
+
+\section{Requisitos Funcionales (RF01 -- RF16)}
+Los requerimientos funcionales fueron particionados en tres bloques operacionales:
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{l l p{8.5cm}}
+\toprule
+\textbf{Código} & \textbf{Denominación} & \textbf{Descripción y Criterio de Cumplimiento} \\
+\midrule
+\textbf{RF01} & Registro de Clientes & Admisión de personas naturales con CI único, nombres, ingresos y datos de contacto. \\
+\textbf{RF02} & Edición de Clientes & Modificación y actualización de datos de domicilio e ingresos de clientes existentes. \\
+\textbf{RF03} & Originación de Solicitudes & Creación de solicitudes asociadas a un producto financiero con cálculo previo de cuota. \\
+\textbf{RF04} & Consulta de Buró de Riesgo & Interconexión simulada con Buró ASFI para obtener Score y calificación de riesgo (A--D). \\
+\textbf{RF05} & Evaluación de Capacidad & Registro de ingresos y gastos verificados y determinación del ratio DTI. \\
+\textbf{RF06} & Emisión de Dictamen & Registro de informe técnico favorable, observado o desfavorable por el Analista. \\
+\textbf{RF07} & Registro de Garantías & Registro de garantías personales o reales con tasación y validación de cobertura $\ge 120\%$. \\
+\textbf{RF08} & Aprobación Jerárquica & Aprobación por Jefe de Créditos ($\le \text{Bs } 70.000$) o Gerente de Sucursal ($> \text{Bs } 70.000$). \\
+\textbf{RF09} & Rechazo Fundamentado & Cancelación de solicitud con justificación técnica archivada en el expediente. \\
+\textbf{RF10} & Generación de Contrato & Emisión formal de contrato legal con número correlativo inmutable (\texttt{CON-YYYY-XXXXX}). \\
+\textbf{RF11} & Plan de Amortización & Generación de tabla de cuotas francesa con ajuste en la cuota final a saldo Bs 0.00. \\
+\textbf{RF12} & Desembolso en Core Bancario & Transferencia de capital al cliente con cambio de estado del crédito a \texttt{VIGENTE}. \\
+\textbf{RF13} & Cobro de Cuotas en Ventanilla & Imputación en cascada obligatoria: Mora $\rightarrow$ Interés Ordinario $\rightarrow$ Capital. \\
+\textbf{RF14} & Comprobante de Pago & Emisión e impresión de recibo oficial numerado correlativamente (\texttt{REC-YYYY-XXXXX}). \\
+\textbf{RF15} & Reportes Ejecutivos & Visualización de KPIs de colocación, saldo vigente, cartera en mora y cobranzas. \\
+\textbf{RF16} & Administración y Auditoría & Gestión de cuentas, roles RBAC y bitácora forense de auditoría inmutable. \\
+\bottomrule
+\end{tabularx}
+\caption{Catálogo consolidado de Requisitos Funcionales del Sistema.}
+\end{table}
+
+\section{Requisitos No Funcionales (RNF01 -- RNF06)}
+\begin{description}
+    \item[RNF01 (Seguridad y Cierre de Sesión):] Toda sesión inactiva por más de 15 minutos es revocada automáticamente en el frontend y rechazada en el backend por expiración del token JWT. Cifrado de claves mediante algoritmo BCrypt.
+    \item[RNF02 (Integridad Referencial y Concurrencia):] El esquema de base de datos implementa llaves foráneas con eliminación restringida (\texttt{RESTRICT}) y transacciones ACID.
+    \item[RNF03 (Trazabilidad y Auditoría):] Cada mutación de datos almacena usuario, rol, acción, dirección IP y marca temporal precisa.
+    \item[RNF04 (Rendimiento Operativo):] Tiempos de respuesta inferiores a 2.0 segundos en el 99\% de las transacciones bajo red estándar.
+    \item[RNF05 (Portabilidad y Despliegue):] Compatibilidad plena en navegadores modernos (Chrome, Firefox, Edge, Safari) y soporte de contenedorización Docker.
+    \item[RNF06 (Usabilidad y Ergonomía Visual):] Diseño responsivo adaptativo (móvil, tablet, escritorio) con encabezado superior institucional, paleta de colores contrastada y desplazamiento fluido.
+\end{description}
+
+\section{Reglas de Negocio Institucionales (RN01 -- RN12)}
+\begin{itemize}
+    \item \textbf{RN01 (Tasas según Producto):} Consumo (15\% anual, plazo máx. 60 meses), Vehicular (10\%, 72 meses), Vivienda (7.5\%, 240 meses), Microcrédito (18\%, 36 meses).
+    \item \textbf{RN02 (Capacidad de Endeudamiento Máxima):} La relación Cuota/Ingreso ($DTI$) no podrá exceder el $40.0\%$ de los ingresos netos demostrados del prestatario:
+    \[ DTI = \frac{\text{Cuota Mensual}}{\text{Ingresos Verificados} - \text{Gastos Verificados}} \times 100 \le 40\% \]
+    \item \textbf{RN03 (Cobertura Mínima de Garantía):} El valor comercial pericial de la garantía debe cubrir al menos el $120.0\%$ del monto crediticio concedido:
+    \[ \text{Cobertura} = \frac{\text{Valor Comercial Garantía}}{\text{Monto Solicitado}} \times 100 \ge 120\% \]
+    \item \textbf{RN04 (Unicidad de Solicitud en Trámite):} Un cliente solo puede tener una única solicitud en estado de originación o evaluación activa simultáneamente.
+    \item \textbf{RN05 (Filtro de Buró de Riesgos):} Prestatarios con Score crediticio menor a 600 puntos o calificación `D' requieren garantías reales adicionales o dictamen de rechazo preventivo.
+    \item \textbf{RN06 (Límites de Atribución Jerárquica):}
+    \begin{itemize}
+        \item \textit{Jefe de Créditos:} Montos hasta Bs 70.000,00 inclusive.
+        \item \textit{Gerencia de Sucursal / Comité de Créditos:} Montos superiores a Bs 70.000,00.
+    \end{itemize}
+    \item \textbf{RN07 (Amortización Francesa con Cuota Neta):} Cálculo mensual a interés sobre saldo con compensación de redondeos en la última cuota.
+    \item \textbf{RN08 (Correlatividad Contractual):} Todo contrato se genera con el formato correlativo inalterable \texttt{CON-YYYY-XXXXX}.
+    \item \textbf{RN09 (Condición Previa al Desembolso):} No se desembolsa ningún crédito que no se encuentre en estado \texttt{APROBADO} y con contrato suscrito.
+    \item \textbf{RN10 (Prelación Legal en Cascada de Pagos):} La imputación de abonos sigue estrictamente el orden: 1$^\circ$ Interés Penal por Mora $\rightarrow$ 2$^\circ$ Interés Ordinario $\rightarrow$ 3$^\circ$ Amortización al Saldo Capital.
+    \item \textbf{RN11 (Recibo Fiscal Inalterable):} Cada abono emite un recibo correlativo \texttt{REC-YYYY-XXXXX}.
+    \item \textbf{RN12 (Inmutabilidad de la Pista de Auditoría):} Los registros de auditoría no admiten operaciones \texttt{UPDATE} ni \texttt{DELETE}.
+\end{itemize}
+
+% ==============================================================================
+% CAPÍTULO 4: ARQUITECTURA DEL SISTEMA Y MODELO DE DATOS
+% ==============================================================================
+\chapter{Arquitectura del Sistema y Modelado de Datos}
+
+\section{Arquitectura Lógica en 3 Capas}
+El sistema se construyó bajo una arquitectura desacoplada orientada a servicios:
+\begin{enumerate}
+    \item \textbf{Capa de Presentación (Frontend):} Desarrollada en React 19 con TypeScript y empaquetador Vite. Emplea un diseño ergonómico de navegación con barra superior institucional (Header) fija, contenedor central de tarjetas métricas, modales transaccionales y soporte de desplazamiento vertical fluido.
+    \item \textbf{Capa de Lógica de Negocio (Backend):} Desarrollada en Node.js con el framework Express. Se estructura en rutas REST, controladores independientes, servicios de cálculo financiero y middlewares de seguridad (autenticación JWT, verificación de roles RBAC y registro de auditoría).
+    \item \textbf{Capa de Datos y Persistencia Dual:} Base de datos relacional MySQL 8.x / MariaDB estructurada en 3FN, complementada por un repositorio en memoria automático que asegura la continuidad de servicio ante interrupciones de base de datos física.
+\end{enumerate}
+
+\section{Modelo Relacional y Diccionario de Datos (3FN)}
+El esquema cuenta con 10 entidades normalizadas:
+
+\begin{figure}[htbp]
+\centering
+\begin{tcolorbox}[colback=white,colframe=bankSecondary,title=Mapa de Relaciones Relacionales (Modelo ER)]
+\small
+\texttt{CLIENTE} (1) $\longleftrightarrow$ (N) \texttt{SOLICITUD\_CREDITO}\\
+\texttt{USUARIO} (1) $\longleftrightarrow$ (N) \texttt{SOLICITUD\_CREDITO} (gestiona oficial)\\
+\texttt{SOLICITUD\_CREDITO} (1) $\longleftrightarrow$ (1) \texttt{EVALUACION\_CREDITO}\\
+\texttt{SOLICITUD\_CREDITO} (1) $\longleftrightarrow$ (N) \texttt{GARANTIA}\\
+\texttt{SOLICITUD\_CREDITO} (1) $\longleftrightarrow$ (1) \texttt{CREDITO}\\
+\texttt{CREDITO} (1) $\longleftrightarrow$ (1) \texttt{CONTRATO}\\
+\texttt{CREDITO} (1) $\longleftrightarrow$ (N) \texttt{CUOTA}\\
+\texttt{CUOTA} (1) $\longleftrightarrow$ (N) \texttt{PAGO}\\
+\texttt{USUARIO} (1) $\longleftrightarrow$ (N) \texttt{PAGO} (cobra cajero)\\
+\texttt{USUARIO} (1) $\longleftrightarrow$ (N) \texttt{AUDITORIA} (origina traza)
+\end{tcolorbox}
+\caption{Diagrama conceptual de relaciones entre las 10 entidades del sistema.}
+\end{figure}
+
+\subsection{Especificación de Tablas Principales}
+\begin{itemize}
+    \item \textbf{\texttt{cliente}:} \texttt{id\_cliente} (PK, INT AUTO\_INCREMENT), \texttt{carnet\_identidad} (VARCHAR UNIQUE), \texttt{nombres}, \texttt{apellidos}, \texttt{ingreso\_declarado}, \texttt{telefono}, \texttt{direccion}.
+    \item \textbf{\texttt{usuario}:} \texttt{id\_usuario} (PK), \texttt{nombre\_usuario} (UNIQUE), \texttt{clave\_hash} (BCrypt), \texttt{rol} (ENUM: OFICIAL, ANALISTA, JEFE, CAJERO, GERENTE, ADMIN), \texttt{intentos\_fallidos}, \texttt{bloqueado\_hasta}.
+    \item \textbf{\texttt{solicitud\_credito}:} \texttt{id\_solicitud} (PK), \texttt{id\_cliente} (FK), \texttt{id\_usuario\_oficial} (FK), \texttt{monto\_solicitado}, \texttt{plazo\_meses}, \texttt{tasa\_interes\_anual}, \texttt{cuota\_estimada}, \texttt{estado} (ENUM: REGISTRADA, EN\_EVALUACION, APROBADA, RECHAZADA).
+    \item \textbf{\texttt{evaluacion\_credito}:} \texttt{id\_evaluacion} (PK), \texttt{id\_solicitud} (FK UNIQUE), \texttt{score\_buro}, \texttt{ingresos\_verificados}, \texttt{gastos\_verificados}, \texttt{relacion\_cuota\_ingreso}, \texttt{dictamen}.
+    \item \textbf{\texttt{garantia}:} \texttt{id\_garantia} (PK), \texttt{id\_solicitud} (FK), \texttt{tipo\_garantia}, \texttt{descripcion}, \texttt{valor\_comercial}, \texttt{porcentaje\_cobertura}.
+    \item \textbf{\texttt{credito}:} \texttt{id\_credito} (PK), \texttt{codigo\_credito} (UNIQUE), \texttt{id\_solicitud} (FK UNIQUE), \texttt{monto\_aprobado}, \texttt{saldo\_capital}, \texttt{estado} (ENUM: PENDIENTE\_DESEMBOLSO, VIGENTE, EN\_MORA, CANCELADO).
+    \item \textbf{\texttt{contrato}:} \texttt{id\_contrato} (PK), \texttt{id\_credito} (FK UNIQUE), \texttt{numero\_contrato} (UNIQUE), \texttt{fecha\_suscripcion}, \texttt{archivo\_hash}.
+    \item \textbf{\texttt{cuota}:} \texttt{id\_cuota} (PK), \texttt{id\_credito} (FK), \texttt{numero\_cuota}, \texttt{fecha\_vencimiento}, \texttt{monto\_capital}, \texttt{monto\_interes}, \texttt{monto\_cuota\_total}, \texttt{monto\_mora}, \texttt{estado} (ENUM: PENDIENTE, PAGADA, VENCIDA).
+    \item \textbf{\texttt{pago}:} \texttt{id\_pago} (PK), \texttt{numero\_comprobante} (UNIQUE), \texttt{id\_cuota} (FK), \texttt{id\_usuario\_cajero} (FK), \texttt{monto\_pagado}, \texttt{monto\_mora\_pagada}, \texttt{monto\_interes\_pagado}, \texttt{monto\_capital\_pagado}, \texttt{metodo\_pago}, \texttt{fecha\_pago}.
+    \item \textbf{\texttt{auditoria}:} \texttt{id\_auditoria} (PK), \texttt{id\_usuario} (FK), \texttt{accion}, \texttt{entidad\_afectada}, \texttt{id\_entidad}, \texttt{direccion\_ip}, \texttt{fecha\_hora}.
+\end{itemize}
+
+\section{Control de Acceso Basado en Roles (RBAC)}
+La seguridad se implementó mediante tokens criptográficos JWT (\textit{JSON Web Tokens}) con tiempo de vida limitado de 15 minutos. El middleware de autorización intercepta cada petición y valida los privilegios del rol:
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{l c c c c c c}
+\toprule
+\textbf{Módulo Operativo} & \textbf{Oficial} & \textbf{Analista} & \textbf{Jefe} & \textbf{Cajero} & \textbf{Gerente} & \textbf{Admin} \\
+\midrule
+Admisión Clientes & \checkmark & -- & -- & -- & -- & -- \\
+Originación Solicitudes & \checkmark & -- & -- & -- & -- & -- \\
+Evaluación y Buró & -- & \checkmark & -- & -- & -- & -- \\
+Aprobación ($\le$ Bs 70.000) & -- & -- & \checkmark & -- & -- & -- \\
+Aprobación ($>$ Bs 70.000) & -- & -- & -- & -- & \checkmark & -- \\
+Desembolso Fondos & -- & -- & \checkmark & -- & \checkmark & -- \\
+Cobranza en Caja & -- & -- & -- & \checkmark & -- & -- \\
+Reportes de Cartera & -- & -- & \checkmark & -- & \checkmark & -- \\
+Gestión de Usuarios & -- & -- & -- & -- & -- & \checkmark \\
+Pistas de Auditoría & -- & -- & -- & -- & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}
+\caption{Matriz de Control de Acceso Basado en Roles (RBAC).}
+\end{table}
+
+% ==============================================================================
+% CAPÍTULO 5: ALGORITMOS MATEMÁTICOS Y FINANCIEROS
+% ==============================================================================
+\chapter{Algoritmos Matemáticos y Financieros}
+
+\section{Sistema de Amortización Francés}
+El Sistema Francés se distingue por establecer una cuota periódica constante durante todo el horizonte del crédito, donde en los primeros períodos la proporción de interés es predominante y la amortización de capital es menor, invirtiéndose esta relación a medida que el saldo deudor se reduce.
+
+\subsection{Deducción de la Cuota Periódica Fija}
+Sea $P$ el capital inicial concedido, $n$ el plazo en meses, e $i$ la tasa de interés mensual vencida ($i = \text{tasaAnual} / 12 / 100$). El saldo insoluto al cabo del mes $k$ responde a la ecuación de recurrencia:
+\[ S_k = S_{k-1}(1 + i) - C \]
+Condición de frontera: al finalizar el plazo convenido ($k = n$), el saldo debe extinguirse por completo ($S_n = 0$):
+\[ P(1 + i)^n - C \sum_{j=0}^{n-1} (1 + i)^j = 0 \]
+Aplicando la suma de una progresión geométrica:
+\[ \sum_{j=0}^{n-1} (1 + i)^j = \frac{(1 + i)^n - 1}{i} \]
+Despejando el valor constante de la cuota $C$:
+\begin{equation}
+C = P \cdot \left[ \frac{i \cdot (1 + i)^n}{(1 + i)^n - 1} \right]
+\end{equation}
+
+\subsection{Desglose Periódico y Ajuste al Centavo}
+En cada período $k \in \{1, 2, \dots, n\}$:
+\begin{align}
+\text{Interés}_k &= \text{redondear2}(S_{k-1} \cdot i) \\
+\text{Capital}_k &= C - \text{Interés}_k \\
+S_k &= S_{k-1} - \text{Capital}_k
+\end{align}
+
+\begin{techNote}{Ajuste del Centavo en la Última Cuota ($k=n$)}
+Debido al redondeo estricto a 2 decimales en moneda fiduciaria en cada iteración, la sumatoria acumulada de amortizaciones de capital $\sum_{k=1}^n \text{Capital}_k$ suele diferir por centavos respecto a $P$. Para garantizar que $S_n = 0.00$, el sistema fuerza en la cuota final:
+\[ \text{Capital}_n = S_{n-1} \]
+\[ C_n = \text{Capital}_n + \text{Interés}_n \]
+\end{techNote}
+
+\section{Algoritmo de Cascada en Imputación de Pagos}
+Cuando el cliente acude a caja para realizar un abono de $M_{\text{abono}}$ bolivianos, el monto no se aplica directamente al capital. La regla RN10 exige una prelación legal y contable estricta:
+
+\begin{equation}
+\begin{aligned}
+1^\circ \quad \text{Pago Mora} &= \min(M_{\text{abono}}, \text{MoraDevengada}) \\
+\text{Remanente}_1 &= M_{\text{abono}} - \text{Pago Mora} \\
+2^\circ \quad \text{Pago Interés} &= \min(\text{Remanente}_1, \text{InterésCuota}) \\
+\text{Remanente}_2 &= \text{Remanente}_1 - \text{Pago Interés} \\
+3^\circ \quad \text{Pago Capital} &= \min(\text{Remanente}_2, \text{CapitalCuota})
+\end{aligned}
+\end{equation}
+
+\section{Cálculo del Devengo de Mora Penal Diaria}
+Si la fecha de corte actual supera a la \texttt{fechaVencimiento} de una cuota pendiente, se calculan los días de atraso ($d$). El recargo penal por mora devengada se computa en base a año comercial (360 días):
+\begin{equation}
+\text{Mora} = d \cdot \left( \text{CapitalPendienteCuota} \cdot \frac{\text{TasaMoraAnual}}{360} \right)
+\end{equation}
+
+% ==============================================================================
+% CAPÍTULO 6: PRUEBAS, VERIFICACIÓN Y PRUEBA PILOTO
+% ==============================================================================
+\chapter{Pruebas, Verificación y Prueba Piloto}
+
+\section{Suite Automatizada de Integración End-to-End}
+El sistema cuenta con un motor de pruebas de integración (\texttt{backend/test-integracion.js}) que valida de forma autónoma el ciclo operativo en 15 pasos secuenciales.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{c l c l}
+\toprule
+\textbf{Paso} & \textbf{Acción Operativa Validada} & \textbf{Resultado} & \textbf{Impacto en Base de Datos} \\
+\midrule
+1 & Verificación de salud de la API & OK (200) & Servidor responde en tiempo \\
+2 & Autenticación de Oficial (\texttt{atorrez}) & OK & Token JWT emitido y verificado \\
+3 & Registro de cliente (Carlos Morales) & OK & Registro insertado en tabla \texttt{cliente} \\
+4 & Creación de solicitud (Consumo Bs 20.000) & OK & Solicitud en estado \texttt{REGISTRADA} \\
+5 & Autenticación de Analista (\texttt{lrojas}) & OK & Validación de permisos RBAC \\
+6 & Consulta al Buró de Riesgos simulado & OK & Score 720 / Calificación `A' \\
+7 & Evaluación de capacidad financiera & OK & Relación DTI calculada en 22.3\% \\
+8 & Registro de garantía vehicular (140\%) & OK & Cobertura aprobada por encima de 120\% \\
+9 & Autenticación de Jefe (\texttt{cmendoza}) & OK & Rol Jefe facultado hasta Bs 70.000 \\
+10 & Aprobación y generación de contrato & OK & Contrato y 12 cuotas francesas \\
+11 & Desembolso en Core Bancario & OK & Estado transiciona a \texttt{VIGENTE} \\
+12 & Autenticación de Cajero (\texttt{cajero1}) & OK & Habilitación de caja de ventanilla \\
+13 & Cobro de Cuota 1 en ventanilla & OK & Cascada aplicada y recibo emitido \\
+14 & Consulta de métricas de cartera & OK & Saldo vigente y cobranza actualizada \\
+15 & Verificación de pistas de auditoría & OK & Registros inmutables con IP y fecha \\
+\bottomrule
+\end{tabularx}
+\caption{Resultados de la Suite Automatizada de Integración (100\% de aserciones válidas).}
+\end{table}
+
+\section{Resultados de la Prueba Piloto Manual en Navegador}
+Para garantizar la calidad de experiencia de usuario, ergonomía visual y estabilidad transaccional, se llevó a cabo una prueba piloto manual integral controlando directamente el navegador web en el entorno desplegado.
+
+\begin{figure}[htbp]
+\centering
+\begin{tcolorbox}[colback=white,colframe=bankPrimary,title=Hitos Verificados en la Prueba Piloto]
+\small
+\begin{itemize}
+    \item \textbf{Autenticación y RBAC:} Se comprobó el inicio de sesión para los 6 roles. El menú superior dinámico adapta sus accesos según los permisos del operador.
+    \item \textbf{Admisión de Cliente:} Registro exitoso de prestatario con validación de carnet duplicado en tiempo real.
+    \item \textbf{Originación y Simulación:} Despliegue de cotizador financiero con amortización calculada de inmediato.
+    \item \textbf{Evaluación de Riesgo y Garantías:} Visualización de semáforo verde para DTI $\le 40\%$ y validación de cobertura $\ge 120\%$.
+    \item \textbf{Aprobación y Desembolso:} Generación del contrato con firma simulada y acreditación de fondos bancarios.
+    \item \textbf{Caja y Emisión de Recibo:} Pago en efectivo procesado con desglose de cascada y visualización del recibo con botón de impresión.
+    \item \textbf{Auditoría Forense:} Registro inmediato e inalterable de cada una de las operaciones ejecutadas con IP y marca de tiempo.
+\end{itemize}
+\end{tcolorbox}
+\caption{Resumen de validación de la Prueba Piloto Manual.}
+\end{figure}
+
+\section{Verificación de Rendimiento y Responsividad}
+El sistema fue auditado en múltiples resoluciones de pantalla (desde dispositivos móviles de 375px hasta monitores de escritorio de 1920px). La barra superior institucional (Header) mantiene anclados los botones de navegación, el indicador del usuario activo y el botón de cierre de sesión sin desbordamientos, garantizando un desplazamiento vertical fluido a lo largo de toda la página.
+
+% ==============================================================================
+% CAPÍTULO 7: INFRAESTRUCTURA Y DESPLIEGUE EN LA NUBE
+% ==============================================================================
+\chapter{Infraestructura, Despliegue en la Nube y DevOps}
+
+\section{Arquitectura de Despliegue en AWS Lightsail}
+El sistema se encuentra desplegado y accesible públicamente en la nube de Amazon Web Services (AWS), utilizando una instancia Lightsail con sistema operativo Ubuntu 22.04 LTS:
+\begin{itemize}
+    \item \textbf{Dirección IP Pública:} \texttt{http://13.220.246.62}
+    \item \textbf{Endpoint de Verificación de Salud:} \texttt{http://13.220.246.62/api/health}
+    \item \textbf{Acceso Cifrado HTTPS:} Túnel seguro Cloudflare activo para navegación protegida por TLS.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{tcolorbox}[colback=white,colframe=bankDark,title=Topología de Despliegue en AWS]
+\centering
+\textbf{CLIENTE WEB (Navegador)} $\longleftrightarrow$ \textbf{NGINX (Puerto 80 / 443)}\\
+$\boldsymbol{\downarrow}$ (Reverse Proxy \texttt{/api/*}) \quad $\boldsymbol{\downarrow}$ (Archivos Estáticos \texttt{/*})\\
+\textbf{PM2: Node.js Backend (Puerto 8080)} \qquad \textbf{Build SPA React (/var/www/creditos)}\\
+$\boldsymbol{\downarrow}$\\
+\textbf{MySQL 8.x / Memoria Resiliente Dual}
+\end{tcolorbox}
+\caption{Diagrama de topología de servicios en la instancia AWS Lightsail.}
+\end{figure}
+
+\section{Configuración del Servidor Web Nginx}
+El servidor Nginx actúa como concentrador de tráfico y reverse proxy:
+\begin{lstlisting}[language=bash]
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    root /var/www/creditos/frontend/dist;
+    index index.html;
+    server_name _;
+
+    # Manejo de rutas SPA de React
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Proxy reverso hacia el API Backend en Node.js
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+\end{lstlisting}
+
+\section{Gestión del Servicio Backend con PM2}
+El backend de Node.js es administrado por el gestor de procesos en producción PM2, configurado para reinicio automático ante excepciones o reinicios del servidor:
+\begin{itemize}
+    \item Nombre del Proceso: \texttt{creditos-backend}
+    \item PID de Ejecución: \texttt{476800}
+    \item Consumo de Memoria RAM: $\approx 25$ MB
+    \item Modo de Ejecución: \texttt{fork} supervisado.
+\end{itemize}
+
+\section{Contenedorización con Docker}
+El repositorio contiene la configuración oficial de Docker para despliegues portables y reproducibles:
+\begin{itemize}
+    \item \texttt{Dockerfile.backend}: Imagen ligera basada en \texttt{node:18-alpine}.
+    \item \texttt{Dockerfile.frontend}: Construcción multi-etapa con servidor Nginx optimizado.
+    \item \texttt{docker-compose.yml}: Orquestación integral de los contenedores de Frontend, Backend y base de datos MySQL con red compartida y volúmenes de datos persistentes.
+\end{itemize}
+
+% ==============================================================================
+% CAPÍTULO 8: CONCLUSIONES Y REFERENCIAS
+% ==============================================================================
+\chapter{Conclusiones y Referencias}
+
+\section{Conclusiones}
+\begin{enumerate}
+    \item Se concluyó con éxito el diseño, desarrollo, verificación y despliegue del Sistema de Gestión de Créditos Bancarios, alcanzando un grado de conformidad del 100\% respecto a los 16 Requisitos Funcionales, 6 Requisitos No Funcionales y 12 Reglas de Negocio planteados en la materia INF-241.
+    \item La aplicación estricta de la Metodología Tradicional en Cascada permitió establecer especificaciones formales y modelos de datos rigurosos antes de la etapa de codificación, evitando retrabajos y garantizando la consistencia contable del sistema financiero.
+    \item El uso de variables definidas de forma intuitiva facilitó una alta mantenibilidad, comprensión y legibilidad del código fuente, convirtiendo al proyecto en una referencia académica de buenas prácticas de ingeniería de software.
+    \item La arquitectura de persistencia dual demostró una resiliencia operativa excepcional, permitiendo evaluar la totalidad del sistema tanto en servidores locales livianos como en entornos de producción en la nube AWS Lightsail.
+\end{enumerate}
+
+\section{Referencias Normativas y Bibliográficas}
+\begin{enumerate}
+    \item \textbf{Autoridad de Supervisión del Sistema Financiero (ASFI):} \textit{Recopilación de Normas para Servicios Financieros (RNSF)}, Libro 3$^\circ$, Título II: Gestión del Riesgo Crediticio, La Paz, Bolivia.
+    \item \textbf{Estado Plurinacional de Bolivia:} \textit{Ley N$^\circ$ 393 de Servicios Financieros}, promulgada el 21 de agosto de 2013, Gaceta Oficial del Estado.
+    \item \textbf{Pressman, R. S., \& Maxim, B. R. (2020):} \textit{Ingeniería del Software: Un enfoque práctico} (9.ª ed.). McGraw-Hill Interamericana.
+    \item \textbf{Sommerville, I. (2011):} \textit{Software Engineering} (9th ed.). Addison-Wesley.
+    \item \textbf{Martin, R. C. (2008):} \textit{Clean Code: A Handbook of Agile Software Craftsmanship}. Prentice Hall.
+    \item \textbf{Universidad Mayor de San Andrés (UMSA):} \textit{Guía Metodológica de Análisis y Diseño de Sistemas I (INF-241)}, Carrera de Informática, La Paz, Bolivia.
+\end{enumerate}
+
+\end{document}

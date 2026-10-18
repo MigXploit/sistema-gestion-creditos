@@ -1,0 +1,374 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{microtype}
+\usepackage[colorlinks=true,linkcolor=purple!80!black,urlcolor=blue!70!black,citecolor=purple!80!black]{hyperref}
+
+% Paleta de colores corporativos bancarios
+\definecolor{bankPrimary}{RGB}{76, 29, 149}    % Violeta institucional
+\definecolor{bankSecondary}{RGB}{124, 58, 237} % Purpura brillante
+\definecolor{bankDark}{RGB}{15, 23, 42}        % Slate oscuro
+\definecolor{bankGray}{RGB}{241, 245, 249}     % Gris fondo
+\definecolor{bankAccent}{RGB}{13, 148, 136}    % Teal / exito
+
+% Encabezados y pies de pagina
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{gray}Sistema de Gestión de Créditos Bancarios · UMSA}
+\fancyhead[R]{\small\color{gray}Manual de Usuario (INF-241)}
+\fancyfoot[L]{\small\color{gray}Universidad Mayor de San Andrés · Carrera de Informática}
+\fancyfoot[R]{\small\color{bankPrimary}\bfseries\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Formato de titulos
+\titleformat{\section}{\color{bankPrimary}\normalfont\Large\bfseries}{\thesection.}{1em}{}[\titlerule]
+\titleformat{\subsection}{\color{bankSecondary}\normalfont\large\bfseries}{\thesubsection.}{1em}{}
+\titleformat{\subsubsection}{\color{bankDark}\normalfont\normalsize\bfseries}{\thesubsubsection.}{1em}{}
+
+% Cajas de alerta y notas
+\newtcolorbox{bankBox}[2][]{
+  colback=bankGray,
+  colframe=bankPrimary,
+  fonttitle=\bfseries\color{white},
+  title=#2,
+  rounded corners,
+  boxrule=1pt,
+  #1
+}
+
+\newtcolorbox{alertBox}[1]{
+  colback=red!5!white,
+  colframe=red!75!black,
+  fonttitle=\bfseries\color{white},
+  title={IMPORTANTE: #1},
+  rounded corners,
+  boxrule=1pt
+}
+
+\newtcolorbox{tipBox}[1]{
+  colback=teal!5!white,
+  colframe=bankAccent,
+  fonttitle=\bfseries\color{white},
+  title={RECOMENDACIÓN OPERATIVA: #1},
+  rounded corners,
+  boxrule=1pt
+}
+
+\begin{document}
+
+% ==============================================================================
+% PORTADA INSTITUCIONAL
+% ==============================================================================
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    
+    {\scshape\Large UNIVERSIDAD MAYOR DE SAN ANDRÉS\par}
+    {\scshape\large FACULTAD DE CIENCIAS PURAS Y NATURALES\par}
+    {\scshape\large CARRERA DE INFORMÁTICA\par}
+    
+    \vspace{1.5cm}
+    \hrule height 2pt
+    \vspace{0.4cm}
+    {\Huge\bfseries\color{bankPrimary} MANUAL DE USUARIO Y GUÍA DE OPERACIÓN TÉCNICA\par}
+    \vspace{0.4cm}
+    {\Large\bfseries\color{bankSecondary} SISTEMA INTEGRAL DE GESTIÓN CREDITICIA\par}
+    \vspace{0.4cm}
+    \hrule height 1pt
+    
+    \vspace{1.5cm}
+    {\large\bfseries MATERIA: INF-241 ANÁLISIS Y DISEÑO DE SISTEMAS I}\\[0.2cm]
+    {\normalsize Paralelo ``B'' · Semestre II/2026}\par
+    
+    \vspace{2cm}
+    \begin{minipage}{0.45\textwidth}
+        \begin{flushleft} \large
+            \textbf{Docente:}\\
+            M. Sc. Patricia Sonia Trino Camacho
+        \end{flushleft}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \begin{flushright} \large
+            \textbf{Estudiante (Grupo 4):}\\
+            Alex Arturo Jamachi Condori\\[0.1cm]
+            \small\texttt{alexjamachicondori@gmail.com}
+        \end{flushright}
+    \end{minipage}
+
+    \vfill
+    {\large La Paz -- Bolivia\par}
+    {\large Octubre de 2026\par}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ==============================================================================
+% 1. INTRODUCCIÓN Y PROPÓSITO
+% ==============================================================================
+\section{Introducción y Alcance del Sistema}
+
+El \textbf{Sistema de Gestión de Créditos para una Entidad Bancaria} es una plataforma de software transaccional, ergonómica y segura diseñada para administrar de punta a punta el ciclo operativo de intermediación financiera en colocación de activos de crédito. El sistema responde con rigor técnico a las directrices regulatorias de la \textbf{Autoridad de Supervisión del Sistema Financiero (ASFI)} de Bolivia y a la Ley N° 393 de Servicios Financieros.
+
+\subsection{Objetivos del Manual}
+\begin{itemize}[leftmargin=*]
+    \item Servir como instrumento formal de capacitación para los operadores bancarios según su rol jerárquico.
+    \item Detallar paso a paso los procedimientos operativos para cada caso de uso del sistema.
+    \item Proporcionar directrices exactas sobre validaciones de riesgo, límites de atribución crediticia y cascada de cobro.
+    \item Servir de manual de auditoría para la verificación de pistas inmutables y trazabilidad transaccional.
+\end{itemize}
+
+\subsection{Direcciones de Acceso al Entorno Operativo}
+El sistema se encuentra desplegado y accesible a través de dos canales:
+\begin{enumerate}
+    \item \textbf{Servidor en la Nube (AWS Lightsail):} 
+    \begin{itemize}
+        \item Dirección IP Directa: \url{http://13.220.246.62}
+        \item Canal Seguro SSL (Cloudflare): \url{https://recruitment-thing-ethics-reliable.trycloudflare.com}
+    \end{itemize}
+    \item \textbf{Entorno de Laboratorio / Local:} \url{http://localhost:5173}
+\end{enumerate}
+
+% ==============================================================================
+% 2. SEGURIDAD Y ACCESO (RBAC)
+% ==============================================================================
+\section{Seguridad de Acceso y Gestión de Sesión (RNF01, RF16)}
+
+El acceso al sistema está blindado mediante un modelo estricto de \textbf{Control de Acceso Basado en Roles (RBAC)} y autenticación con tokens criptográficos \textbf{JWT (JSON Web Tokens)}.
+
+\subsection{Políticas de Seguridad en Pantalla}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Temporizador de Inactividad (RNF01):} Cada sesión cuenta con un tiempo máximo de vida de \textbf{15 minutos} (900 segundos). El temporizador regresivo se visualiza permanentemente en la barra superior del sistema. Al expirar el tiempo, el sistema cierra la sesión de forma inmediata y solicita volver a autenticarse para evitar accesos no autorizados.
+    \item \textbf{Protección contra Fuerza Bruta:} Al acumularse \textbf{5 intentos fallidos consecutivos} de contraseña sobre una cuenta, el sistema bloquea preventivamente el usuario durante \textbf{30 minutos}, registrando la IP de origen en la bitácora de auditoría forense.
+\end{itemize}
+
+\subsection{Matriz de Usuarios y Credenciales Estandarizadas}
+Para efectos de evaluación y pruebas piloto, todas las cuentas oficiales comparten la contraseña bancaria:
+\begin{center}
+    \colorbox{bankGray}{\texttt{\textbf{Bancario2026!}}}
+\end{center}
+
+\begin{table}[h!]
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{llllX}
+        \toprule
+        \textbf{Rol RBAC} & \textbf{Login} & \textbf{Funcionario} & \textbf{Límite Atribución} & \textbf{Módulos Autorizados} \\
+        \midrule
+        \textbf{OFICIAL} & \texttt{atorrez} & Alvaro Torrez & Bs 0,00 & Clientes (P10), Solicitudes (P05). \\
+        \textbf{ANALISTA} & \texttt{lrojas} & Laura Rojas & Bs 0,00 & Solicitudes, Consulta Buró (P06), Garantías (P08). \\
+        \textbf{JEFE} & \texttt{cmendoza} & Carlos Mendoza & Bs 70.000,00 & Bandeja Aprobación (P02), Desembolsos (CU11), Reportes. \\
+        \textbf{CAJERO} & \texttt{cajero1} & Mario Fernandez & Bs 0,00 & Ventanilla de Caja y Pagos (CU12/CU13), Recibos. \\
+        \textbf{GERENTE} & \texttt{gerente1} & Sofia Valdivia & Sin Límite & Aprobación montos mayores (> Bs 70.000), Reportes Cartera. \\
+        \textbf{ADMINISTRADOR} & \texttt{admin} & Administrador & Total & Usuarios, Roles, Desbloqueo, Auditoría Forense. \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Matriz oficial de asignación de roles, atribuciones y credenciales del sistema.}
+\end{table}
+
+% ==============================================================================
+% 3. MÓDULO OFICIAL DE CRÉDITO
+% ==============================================================================
+\section{Módulo del Oficial de Crédito (\texttt{atorrez})}
+
+El Oficial de Crédito es el responsable de la prospección, recepción documental, registro del cliente y conformación de la carpeta crediticia inicial.
+
+\subsection{Registro y Mantenimiento de Clientes (RF01, RF02, P10)}
+\begin{enumerate}
+    \item Inicie sesión con el usuario \texttt{atorrez}.
+    \item En la barra de navegación superior, haga clic en el botón \textbf{Clientes (P10)}.
+    \item Para ingresar un cliente nuevo, presione el botón \textbf{+ Nuevo Cliente}.
+    \item Complete los campos obligatorios del formulario modal:
+    \begin{itemize}
+        \item \textbf{Cédula de Identidad (CI):} Debe ser única en el sistema bancario. Si el carnet ya existe, el sistema emitirá un bloqueo impidiendo duplicidades.
+        \item \textbf{Nombres y Apellidos Completos.}
+        \item \textbf{Dirección de Domicilio y Teléfono de Contacto.}
+        \item \textbf{Ingresos Mensuales Declarados (Bs):} Importe neto respaldado documentalmente.
+        \item \textbf{Egresos Mensuales Declarados (Bs):} Gastos fijos de subsistencia y deudas externas.
+    \end{itemize}
+    \item Haga clic en \textbf{Guardar Cliente}.
+\end{enumerate}
+
+\subsection{Registro de Solicitudes de Crédito (RF03, P05)}
+\begin{enumerate}
+    \item Seleccione la pestaña \textbf{Solicitudes de Crédito} y presione \textbf{+ Nueva Solicitud}.
+    \item Seleccione el cliente titular previamente creado en la lista desplegable.
+    \item Elija el \textbf{Tipo de Crédito}:
+    \begin{itemize}
+        \item \textbf{CONSUMO:} Tasa del $15.00\%$ anual (Plazos de 12 a 60 meses).
+        \item \textbf{VEHICULAR:} Tasa del $10.00\%$ anual (Plazos de 12 a 72 meses).
+        \item \textbf{VIVIENDA:} Tasa del $7.50\%$ anual (Plazos de 60 a 240 meses).
+        \item \textbf{MICROCRÉDITO:} Tasa del $18.00\%$ anual (Plazos de 6 a 36 meses).
+    \end{itemize}
+    \item Ingrese el \textbf{Monto Solicitado (Bs)} y el \textbf{Plazo en Meses}.
+    \item \textbf{Simulación Instantánea:} Observe que el sistema calcula automáticamente en tiempo real la \textbf{Cuota Mensual Estimada} bajo Sistema Francés y el indicador preliminar de relación cuota/ingreso (DTI).
+    \item Ingrese el destino de los fondos y presione \textbf{Registrar Solicitud}. La solicitud quedará en estado inicial \texttt{REGISTRADA}.
+\end{enumerate}
+
+% ==============================================================================
+% 4. MÓDULO ANALISTA DE RIESGOS
+% ==============================================================================
+\section{Módulo del Analista de Riesgos (\texttt{lrojas})}
+
+El Analista de Riesgos verifica la solvencia moral y financiera del prestatario, consulta las centrales de riesgo y valida el respaldo de garantías reales o personales.
+
+\subsection{Consulta al Buró de Información Crediticia ASFI (RF04, P06)}
+\begin{enumerate}
+    \item Inicie sesión con el usuario \texttt{lrojas} y diríjase al listado de solicitudes.
+    \item En la solicitud que se encuentre en estado \texttt{REGISTRADA}, presione el botón \textbf{Evaluar Solicitud}.
+    \item En el modal de evaluación, presione el botón \textbf{Consultar Buró de Riesgo}.
+    \item El sistema se comunicará con el adaptador simulado del Buró ASFI, devolviendo:
+    \begin{itemize}
+        \item \textbf{Score Crediticio (0 a 1000 puntos):} Valores mayores o iguales a 600 califican como solventes.
+        \item \textbf{Calificación Histórica:} \texttt{SIN MORA (A)}, \texttt{MORA LEVE (B)} o \texttt{MORA CRÍTICA (C/D)}.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Evaluación Financiera y Ratio DTI (RF05, RN02)}
+El analista introduce los ingresos y egresos formalmente verificados tras la inspección documental:
+\begin{equation}
+    DTI = \frac{\text{Cuota Mensual Estimada}}{\text{Ingresos Verificados} - \text{Egresos Verificados}} \times 100
+\end{equation}
+\begin{alertBox}{Regla Normativa ASFI (RN02)}
+    El ratio de endeudamiento (\textbf{DTI}) no puede superar el \textbf{40.00\%}. Si el resultado supera este umbral, el sistema marcará automáticamente la solicitud como con riesgo excesivo.
+\end{alertBox}
+
+\subsection{Constitución y Cobertura de Garantías (RF07, RN03, P08)}
+\begin{enumerate}
+    \item En la tabla de la solicitud, presione el botón \textbf{Garantías (P08)}.
+    \item Registre el tipo de bien (\texttt{PERSONAL}, \texttt{HIPOTECARIA} o \texttt{PRENDARIA}) y el valor comercial tasado.
+    \item \textbf{Regla del 120\% (RN03):} El sistema calcula automáticamente la cobertura porcentual:
+    \begin{equation}
+        \text{Cobertura} = \frac{\sum \text{Valor Comercial Garantías}}{\text{Monto Solicitado}} \times 100 \ge 120\%
+    \end{equation}
+    \item Si la cobertura es inferior al $120\%$, no se podrá emitir dictamen favorable.
+\end{enumerate}
+
+Una vez cumplidos los requisitos, el analista emite el dictamen formal: \texttt{FAVORABLE}, \texttt{OBSERVADO} o \texttt{RECHAZADO}. La solicitud pasa a estado \texttt{EN\_EVALUACION}.
+
+% ==============================================================================
+% 5. MÓDULO JEFE DE CRÉDITOS Y DESEMBOLSOS
+% ==============================================================================
+\section{Módulo del Jefe de Créditos y Desembolsos (\texttt{cmendoza})}
+
+El Jefe de Créditos ejerce la potestad de resolución y formalización jurídica del activo de crédito.
+
+\subsection{Bandeja de Aprobación y Límites de Atribución (RF08, RN06, P02)}
+\begin{enumerate}
+    \item Inicie sesión con el usuario \texttt{cmendoza}.
+    \item Acceda a la \textbf{Bandeja Aprobación (P02)}. Se listarán exclusivamente las solicitudes con dictamen emitido.
+    \item Presione el botón \textbf{Aprobar}.
+    \item \textbf{Control de Atribución Operativa (RN06):} El sistema verifica que el monto solicitado no sobrepase los \textbf{Bs 70.000,00} (atribución asignada al Jefe). Para montos superiores, el sistema restringe la operación e instruye su escalamiento a Gerencia General.
+    \item Confirme la aprobación. El sistema transiciona la solicitud a \texttt{APROBADA} y crea el registro de crédito en estado \texttt{PENDIENTE\_DESEMBOLSO}.
+\end{enumerate}
+
+\subsection{Contrato Legal y Plan de Amortización Francés (RF10, RF11)}
+Tras la aprobación se habilitan inmediatamente dos botones de auditoría:
+\begin{itemize}
+    \item \textbf{Ver Contrato Legal (RF10):} Despliega el documento oficial correlativo (\texttt{CT-2026-XXXXX}) con los datos del acreedor bancario, titular, C.I., capital prestado, tasa compensatoria, tasa penal y condiciones resolutivas.
+    \item \textbf{Ver Cronograma Francés (RF11):} Presenta la tabla completa de cuotas, desglosando período a período: Fecha de Vencimiento, Saldo Deudor Inicial, Cuota Fija, Capital Amortizado, Interés Compensatorio y Saldo Restante. Compruebe que la última cuota ajusta con exactitud los centavos de redondeo dejando el saldo en \textbf{Bs 0,00}.
+\end{itemize}
+
+\subsection{Desembolso en Core Bancario (RF12, CU11)}
+\begin{enumerate}
+    \item En la barra de navegación, ingrese a \textbf{Desembolsos Core}.
+    \item Localice el crédito formalizado en estado \texttt{PENDIENTE\_DESEMBOLSO}.
+    \item Presione el botón \textbf{Desembolsar Fondos}.
+    \item Confirme el diálogo del navegador. El sistema se comunica atómicamente con el Core Bancario, emitiendo el código de transacción único (ej. \texttt{CORE-TXN-307003}) y cambiando el estado del crédito a \texttt{VIGENTE}.
+\end{enumerate}
+
+% ==============================================================================
+% 6. MÓDULO CAJERO DE VENTANILLA
+% ==============================================================================
+\section{Módulo de Ventanilla y Cobranza en Caja (\texttt{cajero1})}
+
+El Cajero es el encargado de procesar los reembolsos de cartera, imputando los abonos bajo la normativa contable de prelación de pagos.
+
+\subsection{Búsqueda y Cobro de Cuotas (RF13, CU12)}
+\begin{enumerate}
+    \item Inicie sesión con el usuario \texttt{cajero1} e ingrese a \textbf{Caja y Cobranza}.
+    \item En el panel izquierdo, seleccione el crédito del cliente por su nombre o documento de identidad.
+    \item En el panel derecho se desplegará el saldo de capital vivo y la lista cronológica de cuotas pendientes.
+    \item En la primera cuota vencida o próxima a vencer, presione \textbf{Cobrar Cuota}.
+\end{enumerate}
+
+\subsection{Cascada Contable de Imputación de Pagos (RN10)}
+Cuando se registra el abono, el motor bancario aplica los fondos en el siguiente orden estricto:
+\begin{center}
+    \textbf{1° Interés Penal por Mora} $\longrightarrow$ \textbf{2° Interés Compensatorio} $\longrightarrow$ \textbf{3° Amortización a Capital}
+\end{center}
+\begin{tipBox}{Emisión de Comprobante Fiscal (RF14)}
+    Al procesar el cobro, el sistema genera de forma inmutable el \textbf{Comprobante Oficial de Caja} con código correlativo (\texttt{REC-XXXXX}), detallando el desglose exacto de los importes imputados, el cajero que procesó la transacción y el nuevo saldo deudor del cliente.
+\end{tipBox}
+
+\subsection{Control Diario de Mora (CU13)}
+El cajero cuenta con el botón \textbf{Ejecutar Control Diario de Mora}. Esta rutina evalúa las cuotas vencidas y actualiza el interés penal devengado día a día sobre el capital en mora a la tasa anual reglamentada.
+
+% ==============================================================================
+% 7. MÓDULOS GERENCIALES Y ADMINISTRATIVOS
+% ==============================================================================
+\section{Módulos de Gerencia y Administración}
+
+\subsection{Gerencia de Sucursal (\texttt{gerente1}): Reportes de Cartera (RF15)}
+El Gerente cuenta con el panel de \textbf{Reportes Ejecutivos de Cartera}, donde visualiza en tiempo real:
+\begin{itemize}
+    \item Total de créditos formalizados y colocados en Bolivianos.
+    \item Saldo de cartera vigente saludable.
+    \item Saldo de cartera en mora y porcentaje de morosidad institucional ($0.00\%$).
+    \item Total acumulado de cobranzas procesadas en caja.
+\end{itemize}
+
+\subsection{Administrador del Sistema (\texttt{admin}): Usuarios y Auditoría (RF16, RNF06)}
+\begin{itemize}
+    \item \textbf{Gestión de Usuarios:} Creación de nuevos operadores bancarios, asignación de roles RBAC, configuración de límites de atribución operativa y activación/desactivación de cuentas.
+    \item \textbf{Pistas de Auditoría Forense (RN12):} Módulo inalterable que audita en tiempo real cada transacción del sistema:
+    \begin{itemize}
+        \item Marca temporal con precisión de milisegundos.
+        \item Usuario responsable y su rol.
+        \item Operación ejecutada (\texttt{LOGIN}, \texttt{CREAR\_CLIENTE}, \texttt{REGISTRAR\_SOLICITUD}, \texttt{APROBAR\_CREDITO}, \texttt{DESEMBOLSAR}, \texttt{REGISTRAR\_PAGO}).
+        \item Dirección IP del cliente y resultado de la operación (\texttt{EXITOSO} / \texttt{FALLIDO}).
+    \end{itemize}
+\end{itemize}
+
+% ==============================================================================
+% 8. PREGUNTAS FRECUENTES Y RESOLUCIÓN DE INCIDENCIAS
+% ==============================================================================
+\section{Preguntas Frecuentes y Solución de Incidencias}
+
+\begin{description}
+    \item[¿Qué ocurre si la sesión se cierra automáticamente?]  
+    Por normativa de seguridad bancaria (RNF01), el sistema cierra la sesión tras 15 minutos sin interacción. Simplemente vuelva a introducir su login y contraseña.
+    
+    \item[¿Por qué un Jefe no puede aprobar un crédito de Bs 80.000?]  
+    Porque el límite de atribución operativa del rol Jefe de Créditos es de Bs 70.000,00 (RN06). Todo crédito superior debe ser aprobado por el usuario con rol \texttt{GERENTE}.
+    
+    \item[¿Por qué no se puede desembolsar un crédito?]  
+    Verifique que el crédito se encuentre en estado \texttt{PENDIENTE\_DESEMBOLSO}. Un crédito rechazado o aún en evaluación no puede recibir fondos del Core Bancario (RN09).
+\end{description}
+
+\vspace{1cm}
+\begin{center}
+    \hrulefill\\
+    \small\textbf{Sistema de Gestión de Créditos Bancarios · INF-241 UMSA}\\
+    \small Cifrado BCrypt · Sesión JWT 15 min · Trazabilidad Forense Inmutable · Normativa ASFI
+\end{center}
+
+\end{document}
