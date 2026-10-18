@@ -61,8 +61,8 @@ export const AprobarModal: React.FC<AprobarModalProps> = ({ solicitud, user, onC
                     </div>
                 )}
 
-                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', marginBottom: '1rem', border: '1px solid #e2e8f0', fontSize: '0.875rem' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                <div style={{ background: 'var(--bg-nested)', padding: '1.25rem', borderRadius: 'var(--radius)', marginBottom: '1rem', border: '1px solid var(--border-color)', fontSize: '0.875rem', boxShadow: '2px 2px 0px #1e0938' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                         <div>
                             <span style={{ color: 'var(--color-text-muted)' }}>Número de Solicitud:</span>
                             <div style={{ fontWeight: 600 }}>{solicitud.numeroSolicitud}</div>

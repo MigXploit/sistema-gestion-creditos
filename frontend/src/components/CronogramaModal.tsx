@@ -103,15 +103,15 @@ export const CronogramaModal: React.FC<CronogramaModalProps> = ({ solicitud, onC
                                     ))}
                                 </tbody>
                                 <tfoot>
-                                    <tr style={{ background: '#f8fafc', fontWeight: 700 }}>
-                                        <td colSpan={2}>TOTALES ACUMULADOS:</td>
-                                        <td style={{ textAlign: 'right', color: 'var(--color-primary)' }}>
+                                    <tr style={{ background: 'var(--bg-nested)', fontWeight: 700, borderTop: '2px solid var(--border-strong)' }}>
+                                        <td colSpan={2} style={{ color: 'var(--purple-300)' }}>TOTALES ACUMULADOS:</td>
+                                        <td style={{ textAlign: 'right', color: 'var(--teal-300)', fontFamily: 'var(--font-tech)' }}>
                                             Bs {totalCapital.toLocaleString('es-BO', { minimumFractionDigits: 2 })}
                                         </td>
-                                        <td style={{ textAlign: 'right' }}>
+                                        <td style={{ textAlign: 'right', color: 'var(--purple-300)', fontFamily: 'var(--font-tech)' }}>
                                             Bs {totalInteres.toLocaleString('es-BO', { minimumFractionDigits: 2 })}
                                         </td>
-                                        <td style={{ textAlign: 'right', color: 'var(--color-primary-dark)' }}>
+                                        <td style={{ textAlign: 'right', color: '#ffffff', fontFamily: 'var(--font-tech)', fontSize: '1rem' }}>
                                             Bs {totalMonto.toLocaleString('es-BO', { minimumFractionDigits: 2 })}
                                         </td>
                                         <td colSpan={2}></td>

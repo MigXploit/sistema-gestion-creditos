@@ -137,15 +137,12 @@ export const UsuariosView: React.FC = () => {
                                         </td>
                                         <td>
                                             <button
+                                                className="btn-secondary"
                                                 onClick={() => handleToggleEstado(u.idUsuario, u.activo)}
                                                 style={{
-                                                    padding: '0.3rem 0.6rem',
+                                                    padding: '0.3rem 0.65rem',
                                                     fontSize: '0.75rem',
-                                                    border: '1px solid var(--border-color)',
-                                                    borderRadius: '4px',
-                                                    background: 'white',
-                                                    cursor: 'pointer',
-                                                    fontWeight: 500
+                                                    cursor: 'pointer'
                                                 }}
                                             >
                                                 {u.activo ? 'Desactivar' : 'Activar'}

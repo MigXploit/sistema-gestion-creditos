@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:8080/api';
 
 export const api = {
     getToken(): string | null {
@@ -187,6 +187,10 @@ export const api = {
     },
 
     // --- CRÉDITOS, CONTRATO Y CRONOGRAMA (CU07, CU09, CU10 / P03, P05) ---
+    getCreditoById(idCredito: number) {
+        return this.request(`/creditos/${idCredito}`);
+    },
+
     getCreditoBySolicitud(idSolicitud: number) {
         return this.request(`/creditos/solicitud/${idSolicitud}`);
     },
@@ -197,5 +201,30 @@ export const api = {
 
     getContrato(idCredito: number) {
         return this.request(`/creditos/${idCredito}/contrato`);
+    },
+
+    // --- BLOQUE 3: DESEMBOLSO, CAJA / PAGOS, MORA Y REPORTES ---
+    desembolsarCredito(idCredito: number) {
+        return this.request(`/creditos/${idCredito}/desembolsar`, {
+            method: 'POST',
+        });
+    },
+
+    registrarPago(data: { idCuota: number; montoAbonado: number; formaPago?: string }) {
+        return this.request('/pagos', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    },
+
+    ejecutarControlMora() {
+        return this.request('/mora/ejecutar-control', {
+            method: 'POST',
+        });
+    },
+
+    getReporteResumen() {
+        return this.request('/reportes/resumen');
     }
 };
+

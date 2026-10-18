@@ -91,31 +91,31 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
                 </form>
 
                 <div className="login-footer-notice">
-                    <strong>P01:</strong> El menú se arma según el rol del usuario
+                    <strong>P01:</strong> Control de Acceso por Roles (RBAC) & Inactividad 15 min (RNF01)
                 </div>
 
-                <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b', marginBottom: '0.5rem' }}>
-                        Usuarios de prueba (Contraseña: Bancario2026!):
+                <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color)' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '0.75rem', fontFamily: 'var(--font-tech)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Acceso Rápido por Rol (Clave: Bancario2026!):
                     </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
                         <button type="button" onClick={() => handleSelectDemoUser('cmendoza')} style={quickBtnStyle}>
-                            Jefe (cmendoza)
+                            ⭐ JEFE
                         </button>
                         <button type="button" onClick={() => handleSelectDemoUser('atorrez')} style={quickBtnStyle}>
-                            Oficial (atorrez)
+                            📝 OFICIAL
                         </button>
                         <button type="button" onClick={() => handleSelectDemoUser('lrojas')} style={quickBtnStyle}>
-                            Analista (lrojas)
+                            🔍 ANALISTA
                         </button>
                         <button type="button" onClick={() => handleSelectDemoUser('cajero1')} style={quickBtnStyle}>
-                            Cajero (cajero1)
-                        </button>
-                        <button type="button" onClick={() => handleSelectDemoUser('admin')} style={quickBtnStyle}>
-                            Admin (admin)
+                            💵 CAJERO
                         </button>
                         <button type="button" onClick={() => handleSelectDemoUser('gerente1')} style={quickBtnStyle}>
-                            Gerente (gerente1)
+                            📊 GERENTE
+                        </button>
+                        <button type="button" onClick={() => handleSelectDemoUser('admin')} style={quickBtnStyle}>
+                            🛡️ ADMIN
                         </button>
                     </div>
                 </div>
@@ -125,11 +125,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
 };
 
 const quickBtnStyle: React.CSSProperties = {
-    padding: '0.25rem 0.5rem',
-    fontSize: '0.7rem',
-    background: '#f8fafc',
-    border: '1px solid #cbd5e1',
-    borderRadius: '4px',
+    padding: '0.45rem 0.6rem',
+    fontSize: '0.75rem',
+    background: 'rgba(26, 18, 46, 0.7)',
+    border: '1.5px solid var(--border-color)',
+    borderRadius: '6px',
     cursor: 'pointer',
-    color: '#334155'
+    color: '#cbd5e1',
+    fontFamily: 'var(--font-tech)',
+    fontWeight: 600,
+    letterSpacing: '0.04em',
+    transition: 'all 0.15s ease',
+    boxShadow: '2px 2px 0px #090612',
+    textAlign: 'center'
 };

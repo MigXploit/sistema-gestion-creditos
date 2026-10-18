@@ -58,12 +58,12 @@ export const ContratoModal: React.FC<ContratoModalProps> = ({ solicitud, onClose
                         Cargando información del contrato...
                     </div>
                 ) : contrato && credito ? (
-                    <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
-                        <div style={{ textAlign: 'center', borderBottom: '2px solid #cbd5e1', paddingBottom: '1rem', marginBottom: '1rem' }}>
-                            <h4 style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--color-primary-dark)' }}>
+                    <div style={{ background: 'var(--bg-nested)', padding: '1.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-color)', boxShadow: '4px 4px 0px #1e0938' }}>
+                        <div style={{ textAlign: 'center', borderBottom: '2px solid var(--border-strong)', paddingBottom: '1rem', marginBottom: '1.25rem' }}>
+                            <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#ffffff', letterSpacing: '0.04em' }}>
                                 CONTRATO DE PRÉSTAMO DE DINERO CON GARANTÍA
                             </h4>
-                            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-primary)', marginTop: '0.25rem' }}>
+                            <div style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--teal-300)', fontFamily: 'var(--font-mono)', marginTop: '0.35rem' }}>
                                 CÓDIGO DE CONTRATO: {contrato.numeroContrato}
                             </div>
                             <div style={{ marginTop: '0.5rem' }}>
@@ -73,32 +73,32 @@ export const ContratoModal: React.FC<ContratoModalProps> = ({ solicitud, onClose
                             </div>
                         </div>
 
-                        <div style={{ fontSize: '0.875rem', lineHeight: '1.6', color: '#334155' }}>
+                        <div style={{ fontSize: '0.875rem', lineHeight: '1.7', color: 'var(--text-body)' }}>
                             <p style={{ marginBottom: '0.75rem' }}>
                                 Conste por el presente documento privado de préstamo dinerario que surtirá efectos legales entre las partes:
                             </p>
                             <ul style={{ paddingLeft: '1.25rem', marginBottom: '1rem' }}>
                                 <li>
-                                    <strong>ENTIDAD ACREEDORA:</strong> Banco de Fomento y Crédito Boliviano S.A.
+                                    <strong style={{ color: 'var(--purple-300)' }}>ENTIDAD ACREEDORA:</strong> Entidad Bancaria (Sistema de Gestión de Créditos)
                                 </li>
                                 <li>
-                                    <strong>PARTE DEUDORA:</strong> {solicitud.nombreCompletoCliente}, con Cédula de Identidad N° <strong>{solicitud.ciCliente}</strong>.
+                                    <strong style={{ color: 'var(--purple-300)' }}>PARTE DEUDORA:</strong> {solicitud.nombreCompletoCliente}, con Cédula de Identidad N° <strong style={{ color: '#ffffff' }}>{solicitud.ciCliente}</strong>.
                                 </li>
                                 <li>
-                                    <strong>MONTO DEL CAPITAL:</strong> Bs {credito.montoAprobado.toLocaleString('es-BO', { minimumFractionDigits: 2 })} ({solicitud.tipoCredito}).
+                                    <strong style={{ color: 'var(--purple-300)' }}>MONTO DEL CAPITAL:</strong> <span style={{ fontFamily: 'var(--font-tech)', fontWeight: 700, color: 'var(--teal-300)' }}>Bs {credito.montoAprobado.toLocaleString('es-BO', { minimumFractionDigits: 2 })}</span> ({solicitud.tipoCredito}).
                                 </li>
                                 <li>
-                                    <strong>PLAZO DE REEMBOLSO:</strong> {credito.plazoMeses} cuotas mensuales sucesivas según el Cronograma Oficial.
+                                    <strong style={{ color: 'var(--purple-300)' }}>PLAZO DE REEMBOLSO:</strong> {credito.plazoMeses} cuotas mensuales sucesivas según el Cronograma Oficial.
                                 </li>
                                 <li>
-                                    <strong>TASA DE INTERÉS COMPENSATORIA:</strong> {credito.tasaInteres.toFixed(2)} % anual bajo Sistema Francés.
+                                    <strong style={{ color: 'var(--purple-300)' }}>TASA DE INTERÉS COMPENSATORIA:</strong> {credito.tasaInteres.toFixed(2)} % anual bajo Sistema Francés.
                                 </li>
                                 <li>
-                                    <strong>TASA DE INTERÉS PENAL POR MORA:</strong> {credito.tasaMora.toFixed(2)} % anual.
+                                    <strong style={{ color: 'var(--purple-300)' }}>TASA DE INTERÉS PENAL POR MORA:</strong> {credito.tasaMora.toFixed(2)} % anual.
                                 </li>
                             </ul>
 
-                            <div style={{ background: '#fff', padding: '0.75rem', borderRadius: '0.25rem', border: '1px dashed #cbd5e1', marginTop: '1rem' }}>
+                            <div style={{ background: 'rgba(124, 58, 237, 0.12)', padding: '1rem', borderRadius: 'var(--radius)', border: '1.5px dashed var(--purple-500)', marginTop: '1rem', color: 'var(--purple-200)' }}>
                                 <strong>CLÁUSULA DE GARANTÍA:</strong> El crédito queda garantizado con los bienes tasados y registrados en el sistema, constituyendo el presente contrato título ejecutivo bastante ante eventual ejecución judicial o extrajudicial.
                             </div>
                         </div>

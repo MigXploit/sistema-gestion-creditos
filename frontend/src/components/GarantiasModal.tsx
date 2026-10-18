@@ -80,8 +80,8 @@ export const GarantiasModal: React.FC<GarantiasModalProps> = ({ solicitud, user,
 
                 {/* Formulario para registrar garantía */}
                 {puedeRegistrar && solicitud.estado === 'REGISTRADA' && (
-                    <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', marginBottom: '1.5rem', border: '1px solid #e2e8f0' }}>
-                        <h4 style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--color-primary)' }}>
+                    <div style={{ background: 'var(--bg-nested)', padding: '1.25rem', borderRadius: 'var(--radius)', marginBottom: '1.5rem', border: '1px solid var(--border-color)', boxShadow: '2px 2px 0px #1e0938' }}>
+                        <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--purple-300)' }}>
                             + Registrar Nueva Garantía (CA10)
                         </h4>
                         <form onSubmit={handleCrear}>
@@ -121,14 +121,14 @@ export const GarantiasModal: React.FC<GarantiasModalProps> = ({ solicitud, user,
                                 />
                             </div>
 
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.75rem' }}>
                                 <div style={{ fontSize: '0.875rem' }}>
                                     Cobertura estimada:{' '}
-                                    <strong style={{ color: parseFloat(coberturaCalculada) >= 120 ? '#10b981' : '#f59e0b' }}>
+                                    <strong style={{ color: parseFloat(coberturaCalculada) >= 120 ? 'var(--teal-400)' : 'var(--amber-400)', fontFamily: 'var(--font-tech)' }}>
                                         {coberturaCalculada} %
                                     </strong>
                                     <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginLeft: '0.5rem' }}>
-                                        (Referencia normativa: $\ge 120\%$, Sección 13.5)
+                                        (Referencia normativa: ≥ 120%, Sección 13.5)
                                     </span>
                                 </div>
                                 <button type="submit" className="btn btn-primary" style={{ padding: '0.5rem 1rem' }}>

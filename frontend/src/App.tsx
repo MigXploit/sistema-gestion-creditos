@@ -4,6 +4,11 @@ import type { UsuarioSession } from './types';
 import { LoginScreen } from './components/LoginScreen';
 import { Layout } from './components/Layout';
 import { RoleDashboard } from './components/RoleDashboard';
+import { ClientesView } from './components/ClientesView';
+import { SolicitudesView } from './components/SolicitudesView';
+import { DesembolsosView } from './components/DesembolsosView';
+import { CajaPagosView } from './components/CajaPagosView';
+import { ReportesView } from './components/ReportesView';
 import { UsuariosView } from './components/UsuariosView';
 import { AuditoriaView } from './components/AuditoriaView';
 
@@ -17,7 +22,6 @@ export function App() {
         const token = api.getToken();
         if (storedUser && token) {
             setUser(storedUser);
-            // Si es administrador, abrir directamente usuarios
             if (storedUser.rol === 'ADMINISTRADOR') {
                 setCurrentView('usuarios');
             }
@@ -29,6 +33,10 @@ export function App() {
         setUser(session);
         if (session.rol === 'ADMINISTRADOR') {
             setCurrentView('usuarios');
+        } else if (session.rol === 'CAJERO') {
+            setCurrentView('caja');
+        } else if (session.rol === 'GERENTE') {
+            setCurrentView('reportes');
         } else {
             setCurrentView('dashboard');
         }
@@ -59,33 +67,32 @@ export function App() {
                 <RoleDashboard user={user} onNavigate={setCurrentView} />
             )}
 
+            {currentView === 'clientes' && (
+                <ClientesView user={user} />
+            )}
+
+            {(currentView === 'solicitudes' || currentView === 'bandeja' || currentView === 'evaluaciones' || currentView === 'garantias') && (
+                <SolicitudesView user={user} />
+            )}
+
+            {currentView === 'desembolsos' && (
+                <DesembolsosView user={user} />
+            )}
+
+            {currentView === 'caja' && (
+                <CajaPagosView user={user} />
+            )}
+
+            {currentView === 'reportes' && (
+                <ReportesView />
+            )}
+
             {currentView === 'usuarios' && (
                 <UsuariosView />
             )}
 
             {currentView === 'auditoria' && (
                 <AuditoriaView />
-            )}
-
-            {currentView !== 'dashboard' && currentView !== 'usuarios' && currentView !== 'auditoria' && (
-                <div className="card">
-                    <div className="card-header">
-                        <h3>Módulo: {currentView.toUpperCase()}</h3>
-                    </div>
-                    <div style={{ padding: '1.5rem', background: '#f8fafc', borderRadius: '8px', textAlign: 'center' }}>
-                        <p style={{ fontSize: '1rem', color: '#334155', marginBottom: '0.5rem' }}>
-                            Este caso de uso está asignado al <strong>Bloque 2</strong> (Originación y Evaluación) o <strong>Bloque 3</strong> (Desembolso y Pagos).
-                        </p>
-                        <span className="badge-dev-pill" style={{ background: '#fef3c7', color: '#92400e' }}>
-                            Próxima fase de implementación
-                        </span>
-                        <div style={{ marginTop: '1rem' }}>
-                            <button className="btn-secondary" onClick={() => setCurrentView('dashboard')}>
-                                Regresar al Inicio
-                            </button>
-                        </div>
-                    </div>
-                </div>
             )}
         </Layout>
     );

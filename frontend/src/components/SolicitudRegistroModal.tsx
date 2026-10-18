@@ -88,7 +88,7 @@ export const SolicitudRegistroModal: React.FC<SolicitudRegistroModalProps> = ({ 
                 {error && <div className="alert alert-error">{error}</div>}
 
                 {/* 1. Búsqueda de Cliente por CI */}
-                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', marginBottom: '1rem', border: '1px solid #e2e8f0' }}>
+                <div style={{ background: 'var(--bg-nested)', padding: '1.25rem', borderRadius: 'var(--radius)', marginBottom: '1.25rem', border: '1px solid var(--border-color)', boxShadow: '2px 2px 0px #1e0938' }}>
                     <form onSubmit={handleBuscarCliente} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end' }}>
                         <div style={{ flex: 1 }}>
                             <label className="form-label" style={{ fontSize: '0.8125rem' }}>Buscar Cliente por CI *</label>
@@ -106,12 +106,12 @@ export const SolicitudRegistroModal: React.FC<SolicitudRegistroModalProps> = ({ 
                     </form>
 
                     {clienteEncontrado && (
-                        <div style={{ marginTop: '0.75rem', background: '#fff', padding: '0.75rem', borderRadius: '0.25rem', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}>
+                        <div style={{ marginTop: '0.75rem', background: 'var(--bg-surface)', padding: '0.85rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-color)', fontSize: '0.875rem' }}>
                             <div>
-                                Cliente: <strong>{clienteEncontrado.nombres} {clienteEncontrado.apellidos}</strong> (CI: {clienteEncontrado.ci})
+                                Cliente: <strong style={{ color: '#ffffff' }}>{clienteEncontrado.nombres} {clienteEncontrado.apellidos}</strong> (CI: <span style={{ fontFamily: 'var(--font-mono)' }}>{clienteEncontrado.ci}</span>)
                             </div>
-                            <div style={{ color: 'var(--color-primary)', fontWeight: 600 }}>
-                                Ingresos Mensuales Comprobados: Bs {clienteEncontrado.ingresosMensuales.toLocaleString('es-BO', { minimumFractionDigits: 2 })}
+                            <div style={{ color: 'var(--teal-300)', fontWeight: 600, marginTop: '0.25rem' }}>
+                                Ingresos Mensuales Comprobados: <span style={{ fontFamily: 'var(--font-tech)' }}>Bs {clienteEncontrado.ingresosMensuales.toLocaleString('es-BO', { minimumFractionDigits: 2 })}</span>
                             </div>
                         </div>
                     )}
@@ -171,9 +171,9 @@ export const SolicitudRegistroModal: React.FC<SolicitudRegistroModalProps> = ({ 
                     </div>
 
                     {/* 3. Checklist de Documentación (P11) */}
-                    <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', marginBottom: '1.5rem', border: '1px solid #e2e8f0' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                            <h4 style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-primary)' }}>
+                    <div style={{ background: 'var(--bg-nested)', padding: '1.25rem', borderRadius: 'var(--radius)', marginBottom: '1.5rem', border: '1px solid var(--border-color)', boxShadow: '2px 2px 0px #1e0938' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
+                            <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--purple-300)' }}>
                                 Checklist de Documentación Requerida (P11 – RN03 / CA05)
                             </h4>
                             <span className={`badge ${documentacionCompleta ? 'badge-success' : 'badge-danger'}`}>
@@ -181,27 +181,27 @@ export const SolicitudRegistroModal: React.FC<SolicitudRegistroModalProps> = ({ 
                             </span>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.875rem' }}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.875rem' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--text-body)' }}>
                                 <input type="checkbox" checked={docCi} onChange={e => setDocCi(e.target.checked)} />
                                 Fotocopia Cédula de Identidad vigente
                             </label>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--text-body)' }}>
                                 <input type="checkbox" checked={docServicios} onChange={e => setDocServicios(e.target.checked)} />
                                 Factura reciente de servicios básicos (Luz/Agua)
                             </label>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--text-body)' }}>
                                 <input type="checkbox" checked={docIngresos} onChange={e => setDocIngresos(e.target.checked)} />
                                 Respaldo de Ingresos (Boletas de pago / Extracto)
                             </label>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--text-body)' }}>
                                 <input type="checkbox" checked={docGarantia} onChange={e => setDocGarantia(e.target.checked)} />
                                 Documentación de Respaldo de Garantía
                             </label>
                         </div>
 
                         {!documentacionCompleta && (
-                            <div style={{ fontSize: '0.75rem', color: '#b91c1c', marginTop: '0.5rem' }}>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--rose-400)', marginTop: '0.75rem' }}>
                                 * Advertencia RN03: Si la documentación está incompleta, el sistema permitirá registrar la solicitud en estado REGISTRADA pero bloqueará el inicio de la evaluación hasta regularizar los requisitos (CA05).
                             </div>
                         )}

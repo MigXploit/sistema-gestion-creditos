@@ -10,7 +10,7 @@ interface EvaluacionModalProps {
 }
 
 export const EvaluacionModal: React.FC<EvaluacionModalProps> = ({ solicitud, user, onClose, onSuccess }) => {
-    const [evaluacion, setEvaluacion] = useState<EvaluacionItem | null>(null);
+    const [_evaluacion, setEvaluacion] = useState<EvaluacionItem | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -172,9 +172,9 @@ export const EvaluacionModal: React.FC<EvaluacionModalProps> = ({ solicitud, use
                 ) : (
                     <form onSubmit={handleEmitirDictamen}>
                         {/* 1. SECCIÓN BURÓ DE RIESGO (CU03 / RF04 / CA06, CA07) */}
-                        <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', marginBottom: '1rem', border: '1px solid #e2e8f0' }}>
+                        <div style={{ background: 'var(--bg-nested)', padding: '1.25rem', borderRadius: 'var(--radius)', marginBottom: '1rem', border: '1px solid var(--border-color)' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                                <h4 style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-primary)' }}>
+                                <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--purple-300)' }}>
                                     1. Verificación de Historial en Buró de Crédito (CU03 / CA06)
                                 </h4>
                                 {esAnalista && (
@@ -194,17 +194,17 @@ export const EvaluacionModal: React.FC<EvaluacionModalProps> = ({ solicitud, use
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.875rem' }}>
                                     <div>
                                         <span style={{ color: 'var(--color-text-muted)' }}>Referencia Buró:</span>
-                                        <div style={{ fontWeight: 600 }}>{buroResult.referencia || '—'}</div>
+                                        <div style={{ fontWeight: 600, fontFamily: 'var(--font-mono)' }}>{buroResult.referencia || '—'}</div>
                                     </div>
                                     <div>
                                         <span style={{ color: 'var(--color-text-muted)' }}>Historial:</span>
-                                        <div style={{ fontWeight: 600, color: buroResult.estadoHistorial === 'SIN MORA' ? '#10b981' : '#ef4444' }}>
+                                        <div style={{ fontWeight: 600, color: buroResult.estadoHistorial === 'SIN MORA' ? 'var(--teal-400)' : 'var(--rose-400)' }}>
                                             {buroResult.estadoHistorial || '—'}
                                         </div>
                                     </div>
                                     <div>
                                         <span style={{ color: 'var(--color-text-muted)' }}>Score Crediticio:</span>
-                                        <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--color-primary)' }}>
+                                        <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--teal-300)', fontFamily: 'var(--font-tech)' }}>
                                             {buroResult.score || '—'} / 850
                                         </div>
                                     </div>
@@ -225,9 +225,9 @@ export const EvaluacionModal: React.FC<EvaluacionModalProps> = ({ solicitud, use
                         </div>
 
                         {/* 2. SECCIÓN CAPACIDAD DE PAGO Y RATIOS (CU04 / RF05 / CA08) */}
-                        <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', marginBottom: '1rem', border: '1px solid #e2e8f0' }}>
+                        <div style={{ background: 'var(--bg-nested)', padding: '1.25rem', borderRadius: 'var(--radius)', marginBottom: '1rem', border: '1px solid var(--border-color)' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                                <h4 style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-primary)' }}>
+                                <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--purple-300)' }}>
                                     2. Capacidad de Pago y Ratios Financieros (CU04 / CA08)
                                 </h4>
                                 {esAnalista && (
@@ -281,22 +281,22 @@ export const EvaluacionModal: React.FC<EvaluacionModalProps> = ({ solicitud, use
                             </div>
 
                             {capacidadCalculada !== null && (
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', background: '#fff', padding: '0.75rem', borderRadius: '0.25rem', border: '1px solid #e2e8f0' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', background: 'var(--bg-surface)', padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-color)' }}>
                                     <div>
                                         <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Capacidad de Pago (Excedente):</span>
-                                        <div style={{ fontWeight: 700, color: 'var(--color-primary)' }}>
+                                        <div style={{ fontWeight: 700, color: 'var(--teal-300)', fontFamily: 'var(--font-tech)' }}>
                                             Bs {capacidadCalculada.toLocaleString('es-BO', { minimumFractionDigits: 2 })}
                                         </div>
                                     </div>
                                     <div>
                                         <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Cuota Estimada (Francés):</span>
-                                        <div style={{ fontWeight: 600 }}>
+                                        <div style={{ fontWeight: 600, fontFamily: 'var(--font-tech)' }}>
                                             Bs {cuotaEstimada ? cuotaEstimada.toLocaleString('es-BO', { minimumFractionDigits: 2 }) : '—'}
                                         </div>
                                     </div>
                                     <div>
                                         <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Ratio DTI:</span>
-                                        <div style={{ fontWeight: 700, color: ratioDti && ratioDti <= 40 ? '#10b981' : '#f59e0b' }}>
+                                        <div style={{ fontWeight: 700, color: ratioDti && ratioDti <= 40 ? 'var(--teal-400)' : 'var(--amber-400)', fontFamily: 'var(--font-tech)' }}>
                                             {ratioDti !== null ? `${ratioDti}%` : '—'}
                                         </div>
                                     </div>
@@ -313,8 +313,8 @@ export const EvaluacionModal: React.FC<EvaluacionModalProps> = ({ solicitud, use
                         </div>
 
                         {/* 3. SECCIÓN DICTAMEN DE RIESGO (CU05 / RF06 / CA09) */}
-                        <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', marginBottom: '1.5rem', border: '1px solid #e2e8f0' }}>
-                            <h4 style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--color-primary)' }}>
+                        <div style={{ background: 'var(--bg-nested)', padding: '1.25rem', borderRadius: 'var(--radius)', marginBottom: '1.5rem', border: '1px solid var(--border-color)' }}>
+                            <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--purple-300)' }}>
                                 3. Emisión de Dictamen y Nivel de Riesgo (CU05 / CA09)
                             </h4>
 
