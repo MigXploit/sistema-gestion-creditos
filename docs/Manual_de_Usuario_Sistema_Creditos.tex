@@ -4,7 +4,7 @@
 \usepackage[spanish,es-tabla]{babel}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage[letterpaper,margin=2.5cm]{geometry}
+\usepackage[letterpaper,top=2.0cm,bottom=2.0cm,left=2.5cm,right=2.5cm,headheight=14pt]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{tabularx}
@@ -38,8 +38,11 @@
 
 % Formato de titulos
 \titleformat{\section}{\color{bankPrimary}\normalfont\Large\bfseries}{\thesection.}{1em}{}[\titlerule]
+\titlespacing*{\section}{0pt}{14pt}{6pt}
 \titleformat{\subsection}{\color{bankSecondary}\normalfont\large\bfseries}{\thesubsection.}{1em}{}
+\titlespacing*{\subsection}{0pt}{10pt}{4pt}
 \titleformat{\subsubsection}{\color{bankDark}\normalfont\normalsize\bfseries}{\thesubsubsection.}{1em}{}
+\titlespacing*{\subsubsection}{0pt}{8pt}{3pt}
 
 % Cajas de alerta y notas
 \newtcolorbox{bankBox}[2][]{
@@ -77,27 +80,29 @@
 % ==============================================================================
 \begin{titlepage}
     \centering
-    \vspace*{0.2cm}
-    \includegraphics[height=2.8cm]{logo_umsa.png}\\[0.4cm]
+    \vspace*{0.3cm}
+    \includegraphics[height=3.6cm]{logo_umsa.png}\\[0.4cm]
     
-    {\scshape\Large UNIVERSIDAD MAYOR DE SAN ANDRÉS\par}
+    {\scshape\Large\bfseries UNIVERSIDAD MAYOR DE SAN ANDRÉS\par}
+    \vspace{0.1cm}
     {\scshape\large FACULTAD DE CIENCIAS PURAS Y NATURALES\par}
+    \vspace{0.1cm}
     {\scshape\large CARRERA DE INFORMÁTICA\par}
     
-    \vspace{0.8cm}
+    \vspace{0.9cm}
     \hrule height 2pt
-    \vspace{0.3cm}
+    \vspace{0.35cm}
     {\LARGE\bfseries\color{bankPrimary} MANUAL DE USUARIO Y GUÍA DE OPERACIÓN DEL SISTEMA\par}
-    \vspace{0.3cm}
+    \vspace{0.35cm}
     {\Large\bfseries\color{bankSecondary} SISTEMA INTEGRAL DE GESTIÓN CREDITICIA\par}
-    \vspace{0.3cm}
+    \vspace{0.35cm}
     \hrule height 1pt
     
-    \vspace{0.8cm}
+    \vspace{0.9cm}
     {\large\bfseries MATERIA: INF-241 ANÁLISIS Y DISEÑO DE SISTEMAS I}\\[0.2cm]
     {\normalsize Paralelo ``B'' · Semestre II/2026}\par
     
-    \vspace{1.0cm}
+    \vspace{1.2cm}
     \begin{minipage}{0.48\textwidth}
         \textbf{Docente:}\\
         M. Sc. Patricia Sonia Trino Camacho\\[0.3cm]
@@ -118,8 +123,9 @@
     \end{minipage}
     
     \vfill
-    {\large\bfseries La Paz -- Bolivia}\\[0.1cm]
+    {\large\bfseries La Paz -- Bolivia}\\[0.15cm]
     {\normalsize Octubre de 2026}
+    \vspace*{0.3cm}
 \end{titlepage}
 
 % ==============================================================================
