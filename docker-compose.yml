@@ -1,24 +1,26 @@
 version: "3.9"
 
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: creditos_db
+  # Base de Datos MySQL 8.0
+  mysql:
+    image: mysql:8.0
+    container_name: creditos_mysql
     restart: unless-stopped
     environment:
-      POSTGRES_DB: creditos_db
-      POSTGRES_USER: creditos_user
-      POSTGRES_PASSWORD: creditos_pass
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: creditos_db
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
+      - ./database/mysql:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U creditos_user -d creditos_db"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  # Servidor Backend API (Node.js Express)
   backend:
     build:
       context: ./backend
@@ -26,16 +28,22 @@ services:
     container_name: creditos_backend
     restart: unless-stopped
     depends_on:
-      postgres:
+      mysql:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/creditos_db
-      SPRING_DATASOURCE_USERNAME: creditos_user
-      SPRING_DATASOURCE_PASSWORD: creditos_pass
-      SPRING_PROFILES_ACTIVE: docker
+      NODE_ENV: production
+      PORT: 8080
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: creditos_db
+      JWT_SECRET: Bancario2026_UMSA_INF241_ClaveSecretaSuperSegura_Key!
+      JWT_EXPIRES_IN: 15m
     ports:
       - "8080:8080"
 
+  # Cliente Web Frontend (React + Nginx)
   frontend:
     build:
       context: ./frontend
@@ -48,4 +56,4 @@ services:
       - "3000:80"
 
 volumes:
-  postgres_data:
+  mysql_data:
