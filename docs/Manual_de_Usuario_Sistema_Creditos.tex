@@ -77,7 +77,7 @@
 % ==============================================================================
 \begin{titlepage}
     \centering
-    \vspace*{1cm}
+    \vspace*{0.8cm}
     
     {\scshape\Large UNIVERSIDAD MAYOR DE SAN ANDRÉS\par}
     {\scshape\large FACULTAD DE CIENCIAS PURAS Y NATURALES\par}
@@ -86,36 +86,62 @@
     \vspace{1.5cm}
     \hrule height 2pt
     \vspace{0.4cm}
-    {\Huge\bfseries\color{bankPrimary} MANUAL DE USUARIO Y GUÍA DE OPERACIÓN TÉCNICA\par}
+    {\Huge\bfseries\color{bankPrimary} MANUAL DE USUARIO Y GUÍA DE OPERACIÓN DEL SISTEMA\par}
     \vspace{0.4cm}
     {\Large\bfseries\color{bankSecondary} SISTEMA INTEGRAL DE GESTIÓN CREDITICIA\par}
     \vspace{0.4cm}
     \hrule height 1pt
     
-    \vspace{1.5cm}
+    \vspace{1.2cm}
     {\large\bfseries MATERIA: INF-241 ANÁLISIS Y DISEÑO DE SISTEMAS I}\\[0.2cm]
     {\normalsize Paralelo ``B'' · Semestre II/2026}\par
     
-    \vspace{2cm}
-    \begin{minipage}{0.45\textwidth}
-        \begin{flushleft} \large
-            \textbf{Docente:}\\
-            M. Sc. Patricia Sonia Trino Camacho
-        \end{flushleft}
+    \vspace{1.5cm}
+    \begin{minipage}{0.48\textwidth}
+        \textbf{Docente:}\\
+        M. Sc. Patricia Sonia Trino Camacho\\[0.3cm]
+        \textbf{Institución:}\\
+        Universidad Mayor de San Andrés\\
+        Facultad de Ciencias Puras y Naturales\\
+        Carrera de Informática
     \end{minipage}
     \hfill
-    \begin{minipage}{0.45\textwidth}
-        \begin{flushright} \large
-            \textbf{Estudiante (Grupo 4):}\\
-            Alex Arturo Jamachi Condori\\[0.1cm]
-            \small\texttt{alexjamachicondori@gmail.com}
-        \end{flushright}
+    \begin{minipage}{0.48\textwidth}
+        \textbf{Integrantes del Grupo 4:}\\
+        \small
+        $\bullet$ Bustillos Choque Miguel Angel\\
+        $\bullet$ Callisaya Sumi Saúl Walter\\
+        $\bullet$ Jamachi Condori Alex Arturo\\
+        $\bullet$ Patty Mamani Royer Marcos\\
+        $\bullet$ Rojas Guachalla Ranulfo Antonio
     \end{minipage}
-
+    
     \vfill
-    {\large La Paz -- Bolivia\par}
-    {\large Octubre de 2026\par}
+    {\large\bfseries La Paz -- Bolivia}\\[0.1cm]
+    {\normalsize Octubre de 2026}
 \end{titlepage}
+
+% ==============================================================================
+% CONTROL DE VERSIONES
+% ==============================================================================
+\section*{Control del Documento}
+\begin{table}[h!]
+    \centering
+    \begin{tabularx}{\textwidth}{llllX}
+        \toprule
+        \textbf{Versión} & \textbf{Fecha} & \textbf{Autor} & \textbf{Revisión} & \textbf{Descripción del Cambio} \\
+        \midrule
+        1.0.0 & 11/10/2026 & Grupo 4 & M. Sc. P. Trino & Primera Entrega: Especificación formal y diseño base. \\
+        2.0.0 & 17/10/2026 & Grupo 4 & Auxiliar Cátedra & Segunda Entrega: Sistema operativo, cascada y RTM 100\%. \\
+        2.1.0 & 18/10/2026 & Alex Jamachi & Grupo 4 & Incorporación de interfaces reales del sistema y despliegue AWS. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\vspace{0.5cm}
+\begin{bankBox}{Resumen Operativo}
+El presente manual describe de manera exhaustiva el funcionamiento del \textbf{Sistema de Gestión de Créditos Bancarios}, incorporando las capturas reales de cada una de las pantallas e interfaces del sistema en producción. Proporciona instrucciones detalladas para cada uno de los roles autorizados (Oficial, Analista, Jefe, Cajero, Gerente y Administrador), abarcando desde la admisión del prestatario y la evaluación de solvencia hasta la liquidación del desembolso, la cobranza en ventanilla bajo estricta cascada contable y la bitácora inmutable de auditoría forense.
+\end{bankBox}
 
 \newpage
 \tableofcontents
@@ -131,7 +157,7 @@ El \textbf{Sistema de Gestión de Créditos para una Entidad Bancaria} es una pl
 \subsection{Objetivos del Manual}
 \begin{itemize}[leftmargin=*]
     \item Servir como instrumento formal de capacitación para los operadores bancarios según su rol jerárquico.
-    \item Detallar paso a paso los procedimientos operativos para cada caso de uso del sistema.
+    \item Detallar paso a paso los procedimientos operativos para cada caso de uso del sistema acompañados de sus respectivas capturas de pantalla.
     \item Proporcionar directrices exactas sobre validaciones de riesgo, límites de atribución crediticia y cascada de cobro.
     \item Servir de manual de auditoría para la verificación de pistas inmutables y trazabilidad transaccional.
 \end{itemize}
@@ -153,6 +179,13 @@ El sistema se encuentra desplegado y accesible a través de dos canales:
 \section{Seguridad de Acceso y Gestión de Sesión (RNF01, RF16)}
 
 El acceso al sistema está blindado mediante un modelo estricto de \textbf{Control de Acceso Basado en Roles (RBAC)} y autenticación con tokens criptográficos \textbf{JWT (JSON Web Tokens)}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{img/aws_deploy_login.png}
+    \caption{Pantalla de Inicio de Sesión y Autenticación de Operadores Bancarios.}
+    \label{fig:login}
+\end{figure}
 
 \subsection{Políticas de Seguridad en Pantalla}
 \begin{itemize}[leftmargin=*]
@@ -184,6 +217,13 @@ Para efectos de evaluación y pruebas piloto, todas las cuentas oficiales compar
     \caption{Matriz oficial de asignación de roles, atribuciones y credenciales del sistema.}
 \end{table}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{img/aws_deploy_dashboard.png}
+    \caption{Interfaz Principal del Sistema: Navegación Superior Institucional y Estadísticas Operativas.}
+    \label{fig:dashboard}
+\end{figure}
+
 % ==============================================================================
 % 3. MÓDULO OFICIAL DE CRÉDITO
 % ==============================================================================
@@ -195,8 +235,9 @@ El Oficial de Crédito es el responsable de la prospección, recepción document
 \begin{enumerate}
     \item Inicie sesión con el usuario \texttt{atorrez}.
     \item En la barra de navegación superior, haga clic en el botón \textbf{Clientes (P10)}.
+    \item Se desplegará el padrón general de prestatarios registrados en la entidad bancaria (Figura~\ref{fig:clientes_lista}).
     \item Para ingresar un cliente nuevo, presione el botón \textbf{+ Nuevo Cliente}.
-    \item Complete los campos obligatorios del formulario modal:
+    \item En el formulario modal (Figura~\ref{fig:cliente_modal}), complete los campos requeridos:
     \begin{itemize}
         \item \textbf{Cédula de Identidad (CI):} Debe ser única en el sistema bancario. Si el carnet ya existe, el sistema emitirá un bloqueo impidiendo duplicidades.
         \item \textbf{Nombres y Apellidos Completos.}
@@ -207,10 +248,24 @@ El Oficial de Crédito es el responsable de la prospección, recepción document
     \item Haga clic en \textbf{Guardar Cliente}.
 \end{enumerate}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{img/piloto_02_clientes_lista.png}
+    \caption{Módulo de Clientes: Padrón de Prestatarios Registrados y Acciones de Edición.}
+    \label{fig:clientes_lista}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/piloto_02_cliente_modal.png}
+    \caption{Formulario Modal de Admisión y Registro de Nuevo Cliente (RF01).}
+    \label{fig:cliente_modal}
+\end{figure}
+
 \subsection{Registro de Solicitudes de Crédito (RF03, P05)}
 \begin{enumerate}
-    \item Seleccione la pestaña \textbf{Solicitudes de Crédito} y presione \textbf{+ Nueva Solicitud}.
-    \item Seleccione el cliente titular previamente creado en la lista desplegable.
+    \item Seleccione la pestaña \textbf{Solicitudes de Crédito} para acceder a la bandeja general (Figura~\ref{fig:solicitudes_lista}) y presione \textbf{+ Nueva Solicitud}.
+    \item En el formulario modal desplegado (Figura~\ref{fig:solicitud_modal}), seleccione el cliente titular previamente creado en la lista desplegable.
     \item Elija el \textbf{Tipo de Crédito}:
     \begin{itemize}
         \item \textbf{CONSUMO:} Tasa del $15.00\%$ anual (Plazos de 12 a 60 meses).
@@ -223,6 +278,20 @@ El Oficial de Crédito es el responsable de la prospección, recepción document
     \item Ingrese el destino de los fondos y presione \textbf{Registrar Solicitud}. La solicitud quedará en estado inicial \texttt{REGISTRADA}.
 \end{enumerate}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{img/piloto_03_solicitudes_lista.png}
+    \caption{Bandeja General de Solicitudes de Crédito y Estados de Originación.}
+    \label{fig:solicitudes_lista}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/piloto_03_solicitud_modal.png}
+    \caption{Formulario Modal de Originación y Simulación en Tiempo Real de Cuota Francesa (RF03).}
+    \label{fig:solicitud_modal}
+\end{figure}
+
 % ==============================================================================
 % 4. MÓDULO ANALISTA DE RIESGOS
 % ==============================================================================
@@ -234,13 +303,20 @@ El Analista de Riesgos verifica la solvencia moral y financiera del prestatario,
 \begin{enumerate}
     \item Inicie sesión con el usuario \texttt{lrojas} y diríjase al listado de solicitudes.
     \item En la solicitud que se encuentre en estado \texttt{REGISTRADA}, presione el botón \textbf{Evaluar Solicitud}.
-    \item En el modal de evaluación, presione el botón \textbf{Consultar Buró de Riesgo}.
+    \item En el modal de evaluación, presione el botón \textbf{Consultar Buró de Riesgo} (Figura~\ref{fig:eval_buro}).
     \item El sistema se comunicará con el adaptador simulado del Buró ASFI, devolviendo:
     \begin{itemize}
         \item \textbf{Score Crediticio (0 a 1000 puntos):} Valores mayores o iguales a 600 califican como solventes.
         \item \textbf{Calificación Histórica:} \texttt{SIN MORA (A)}, \texttt{MORA LEVE (B)} o \texttt{MORA CRÍTICA (C/D)}.
     \end{itemize}
 \end{enumerate}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/piloto_04_evaluacion_buro.png}
+    \caption{Consulta y Verificación de Score Crediticio en el Buró ASFI (RF04).}
+    \label{fig:eval_buro}
+\end{figure}
 
 \subsection{Evaluación Financiera y Ratio DTI (RF05, RN02)}
 El analista introduce los ingresos y egresos formalmente verificados tras la inspección documental:
@@ -251,16 +327,37 @@ El analista introduce los ingresos y egresos formalmente verificados tras la ins
     El ratio de endeudamiento (\textbf{DTI}) no puede superar el \textbf{40.00\%}. Si el resultado supera este umbral, el sistema marcará automáticamente la solicitud como con riesgo excesivo.
 \end{alertBox}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/piloto_04_evaluacion_favorable.png}
+    \caption{Evaluación Financiera: Dictamen Técnico y Cálculo del Ratio Cuota/Ingreso DTI (RF05, RF06).}
+    \label{fig:eval_favorable}
+\end{figure}
+
 \subsection{Constitución y Cobertura de Garantías (RF07, RN03, P08)}
 \begin{enumerate}
     \item En la tabla de la solicitud, presione el botón \textbf{Garantías (P08)}.
-    \item Registre el tipo de bien (\texttt{PERSONAL}, \texttt{HIPOTECARIA} o \texttt{PRENDARIA}) y el valor comercial tasado.
+    \item En el modal correspondiente (Figura~\ref{fig:garantia_modal}), registre el tipo de bien (\texttt{PERSONAL}, \texttt{HIPOTECARIA} o \texttt{PRENDARIA}) y el valor comercial tasado.
     \item \textbf{Regla del 120\% (RN03):} El sistema calcula automáticamente la cobertura porcentual:
     \begin{equation}
         \text{Cobertura} = \frac{\sum \text{Valor Comercial Garantías}}{\text{Monto Solicitado}} \times 100 \ge 120\%
     \end{equation}
-    \item Si la cobertura es inferior al $120\%$, no se podrá emitir dictamen favorable.
+    \item Si la cobertura es inferior al $120\%$, no se podrá emitir dictamen favorable. La confirmación visual de cumplimiento se refleja de inmediato (Figura~\ref{fig:garantia_registrada}).
 \end{enumerate}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/piloto_05_garantia_modal.png}
+    \caption{Registro y Tasación Pericial de Garantías Reales y Personales (RF07).}
+    \label{fig:garantia_modal}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{img/piloto_05_garantia_registrada.png}
+    \caption{Verificación del Cumplimiento de Cobertura Patrimonial Mínima del 120\% (RN03).}
+    \label{fig:garantia_registrada}
+\end{figure}
 
 Una vez cumplidos los requisitos, el analista emite el dictamen formal: \texttt{FAVORABLE}, \texttt{OBSERVADO} o \texttt{RECHAZADO}. La solicitud pasa a estado \texttt{EN\_EVALUACION}.
 
@@ -275,25 +372,53 @@ El Jefe de Créditos ejerce la potestad de resolución y formalización jurídic
 \begin{enumerate}
     \item Inicie sesión con el usuario \texttt{cmendoza}.
     \item Acceda a la \textbf{Bandeja Aprobación (P02)}. Se listarán exclusivamente las solicitudes con dictamen emitido.
-    \item Presione el botón \textbf{Aprobar}.
+    \item Presione el botón \textbf{Aprobar} (Figura~\ref{fig:aprobar_modal}).
     \item \textbf{Control de Atribución Operativa (RN06):} El sistema verifica que el monto solicitado no sobrepase los \textbf{Bs 70.000,00} (atribución asignada al Jefe). Para montos superiores, el sistema restringe la operación e instruye su escalamiento a Gerencia General.
     \item Confirme la aprobación. El sistema transiciona la solicitud a \texttt{APROBADA} y crea el registro de crédito en estado \texttt{PENDIENTE\_DESEMBOLSO}.
 \end{enumerate}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/piloto_06_aprobar_modal.png}
+    \caption{Modal de Aprobación Jerárquica y Verificación de Límite de Atribución (RN06, RF08).}
+    \label{fig:aprobar_modal}
+\end{figure}
+
 \subsection{Contrato Legal y Plan de Amortización Francés (RF10, RF11)}
 Tras la aprobación se habilitan inmediatamente dos botones de auditoría:
 \begin{itemize}
-    \item \textbf{Ver Contrato Legal (RF10):} Despliega el documento oficial correlativo (\texttt{CT-2026-XXXXX}) con los datos del acreedor bancario, titular, C.I., capital prestado, tasa compensatoria, tasa penal y condiciones resolutivas.
-    \item \textbf{Ver Cronograma Francés (RF11):} Presenta la tabla completa de cuotas, desglosando período a período: Fecha de Vencimiento, Saldo Deudor Inicial, Cuota Fija, Capital Amortizado, Interés Compensatorio y Saldo Restante. Compruebe que la última cuota ajusta con exactitud los centavos de redondeo dejando el saldo en \textbf{Bs 0,00}.
+    \item \textbf{Ver Contrato Legal (RF10):} Despliega el documento oficial correlativo (\texttt{CT-2026-XXXXX}) con los datos del acreedor bancario, titular, C.I., capital prestado, tasa compensatoria, tasa penal y condiciones resolutivas (Figura~\ref{fig:contrato_legal}).
+    \item \textbf{Ver Cronograma Francés (RF11):} Presenta la tabla completa de cuotas (Figura~\ref{fig:cronograma_frances}), desglosando período a período: Fecha de Vencimiento, Saldo Deudor Inicial, Cuota Fija, Capital Amortizado, Interés Compensatorio y Saldo Restante. Compruebe que la última cuota ajusta con exactitud los centavos de redondeo dejando el saldo en \textbf{Bs 0,00}.
 \end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{img/piloto_06_contrato_legal.png}
+    \caption{Emisión del Contrato Legal Correlativo con Condiciones Resolutivas (RF10).}
+    \label{fig:contrato_legal}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{img/piloto_06_cronograma_frances.png}
+    \caption{Plan de Amortización Francés con Compensación del Centavo en la Última Cuota (RF11).}
+    \label{fig:cronograma_frances}
+\end{figure}
 
 \subsection{Desembolso en Core Bancario (RF12, CU11)}
 \begin{enumerate}
     \item En la barra de navegación, ingrese a \textbf{Desembolsos Core}.
     \item Localice el crédito formalizado en estado \texttt{PENDIENTE\_DESEMBOLSO}.
     \item Presione el botón \textbf{Desembolsar Fondos}.
-    \item Confirme el diálogo del navegador. El sistema se comunica atómicamente con el Core Bancario, emitiendo el código de transacción único (ej. \texttt{CORE-TXN-307003}) y cambiando el estado del crédito a \texttt{VIGENTE}.
+    \item Confirme el diálogo del navegador. El sistema se comunica atómicamente con el Core Bancario, emitiendo el código de transacción único (ej. \texttt{CORE-TXN-307003}) y cambiando el estado del crédito a \texttt{VIGENTE} (Figura~\ref{fig:desembolso_confirmado}).
 \end{enumerate}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{img/piloto_07_desembolso_confirmado.png}
+    \caption{Confirmación de Desembolso Atómico de Fondos en el Core Bancario (RF12).}
+    \label{fig:desembolso_confirmado}
+\end{figure}
 
 % ==============================================================================
 % 6. MÓDULO CAJERO DE VENTANILLA
@@ -316,8 +441,15 @@ Cuando se registra el abono, el motor bancario aplica los fondos en el siguiente
     \textbf{1° Interés Penal por Mora} $\longrightarrow$ \textbf{2° Interés Compensatorio} $\longrightarrow$ \textbf{3° Amortización a Capital}
 \end{center}
 \begin{tipBox}{Emisión de Comprobante Fiscal (RF14)}
-    Al procesar el cobro, el sistema genera de forma inmutable el \textbf{Comprobante Oficial de Caja} con código correlativo (\texttt{REC-XXXXX}), detallando el desglose exacto de los importes imputados, el cajero que procesó la transacción y el nuevo saldo deudor del cliente.
+    Al procesar el cobro, el sistema genera de forma inmutable el \textbf{Comprobante Oficial de Caja} con código correlativo (\texttt{REC-XXXXX}), detallando el desglose exacto de los importes imputados, el cajero que procesó la transacción y el nuevo saldo deudor del cliente (Figura~\ref{fig:caja_recibo}).
 \end{tipBox}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{img/piloto_08_caja_recibo.png}
+    \caption{Ventanilla de Cobranza, Cascada de Pagos e Impresión del Comprobante Oficial (RF13, RF14).}
+    \label{fig:caja_recibo}
+\end{figure}
 
 \subsection{Control Diario de Mora (CU13)}
 El cajero cuenta con el botón \textbf{Ejecutar Control Diario de Mora}. Esta rutina evalúa las cuotas vencidas y actualiza el interés penal devengado día a día sobre el capital en mora a la tasa anual reglamentada.
@@ -328,7 +460,7 @@ El cajero cuenta con el botón \textbf{Ejecutar Control Diario de Mora}. Esta ru
 \section{Módulos de Gerencia y Administración}
 
 \subsection{Gerencia de Sucursal (\texttt{gerente1}): Reportes de Cartera (RF15)}
-El Gerente cuenta con el panel de \textbf{Reportes Ejecutivos de Cartera}, donde visualiza en tiempo real:
+El Gerente cuenta con el panel de \textbf{Reportes Ejecutivos de Cartera} (Figura~\ref{fig:reportes_cartera}), donde visualiza en tiempo real:
 \begin{itemize}
     \item Total de créditos formalizados y colocados en Bolivianos.
     \item Saldo de cartera vigente saludable.
@@ -336,17 +468,38 @@ El Gerente cuenta con el panel de \textbf{Reportes Ejecutivos de Cartera}, donde
     \item Total acumulado de cobranzas procesadas en caja.
 \end{itemize}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{img/piloto_09_reportes_cartera.png}
+    \caption{Panel de Reportes Ejecutivos de Cartera: Colocación, Saldos y Morosidad (RF15).}
+    \label{fig:reportes_cartera}
+\end{figure}
+
 \subsection{Administrador del Sistema (\texttt{admin}): Usuarios y Auditoría (RF16, RNF06)}
 \begin{itemize}
-    \item \textbf{Gestión de Usuarios:} Creación de nuevos operadores bancarios, asignación de roles RBAC, configuración de límites de atribución operativa y activación/desactivación de cuentas.
-    \item \textbf{Pistas de Auditoría Forense (RN12):} Módulo inalterable que audita en tiempo real cada transacción del sistema:
+    \item \textbf{Pistas de Auditoría Forense (RN12):} Módulo inalterable que audita en tiempo real cada transacción del sistema (Figura~\ref{fig:auditoria_inmutable}):
     \begin{itemize}
         \item Marca temporal con precisión de milisegundos.
         \item Usuario responsable y su rol.
         \item Operación ejecutada (\texttt{LOGIN}, \texttt{CREAR\_CLIENTE}, \texttt{REGISTRAR\_SOLICITUD}, \texttt{APROBAR\_CREDITO}, \texttt{DESEMBOLSAR}, \texttt{REGISTRAR\_PAGO}).
         \item Dirección IP del cliente y resultado de la operación (\texttt{EXITOSO} / \texttt{FALLIDO}).
     \end{itemize}
+    \item \textbf{Gestión de Usuarios (RBAC):} Creación de nuevos operadores bancarios, asignación de roles, configuración de límites de atribución operativa y activación/desactivación de cuentas (Figura~\ref{fig:usuarios_rbac}).
 \end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{img/piloto_10_auditoria_inmutable.png}
+    \caption{Bitácora Forense de Pistas de Auditoría Inmutables (RN12, RNF03).}
+    \label{fig:auditoria_inmutable}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.88\textwidth]{img/piloto_11_usuarios_rbac.png}
+    \caption{Módulo de Administración de Operadores Bancarios y Privilegios RBAC (RF16).}
+    \label{fig:usuarios_rbac}
+\end{figure}
 
 % ==============================================================================
 % 8. PREGUNTAS FRECUENTES Y RESOLUCIÓN DE INCIDENCIAS
