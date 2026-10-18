@@ -4,7 +4,6 @@
 **Facultad de Ciencias Puras y Naturales - Carrera de Informatica**  
 **Materia:** INF-241 Analisis y Diseno de Sistemas I (Paralelo "B")  
 **Docente:** M. Sc. Patricia Sonia Trino Camacho  
-**Estudiante:** Alex Arturo Jamachi Condori (Grupo 4)  
 **Fecha:** Octubre 2026  
 
 ---
