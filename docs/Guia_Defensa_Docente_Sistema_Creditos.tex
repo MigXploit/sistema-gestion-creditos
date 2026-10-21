@@ -1,0 +1,369 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=2.2cm,right=2.2cm,headheight=14pt]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage[colorlinks=true,linkcolor=bankpurple,urlcolor=bankblue,citecolor=bankblue]{hyperref}
+
+% Paleta de colores bancaria y universitaria
+\definecolor{bankblue}{RGB}{15, 37, 75}
+\definecolor{bankpurple}{RGB}{109, 40, 217}
+\definecolor{bankdark}{RGB}{15, 23, 42}
+\definecolor{bankgray}{RGB}{71, 85, 105}
+\definecolor{bankgreen}{RGB}{15, 118, 110}
+\definecolor{bankamber}{RGB}{180, 83, 9}
+\definecolor{bankred}{RGB}{190, 18, 60}
+\definecolor{boxbg}{RGB}{248, 250, 252}
+
+% Estilo de Cajas tcolorbox para estudio
+\newtcolorbox{respuestabox}[1]{
+    enhanced,
+    breakable,
+    colback=boxbg,
+    colframe=bankpurple,
+    arc=4mm,
+    fonttitle=\bfseries\color{white},
+    colbacktitle=bankpurple,
+    title={\small \textbf{RESPUESTA AL DOCENTE:} #1},
+    boxrule=1.2pt,
+    left=8pt, right=8pt, top=6pt, bottom=6pt,
+    shadow={2pt}{-2pt}{0pt}{black!20}
+}
+
+\newtcolorbox{formulabox}[1]{
+    enhanced,
+    colback=white,
+    colframe=bankgreen,
+    arc=3mm,
+    fonttitle=\bfseries\color{white},
+    colbacktitle=bankgreen,
+    title={\small \textbf{REGLA DE NEGOCIO / FÓRMULA ASFI:} #1},
+    boxrule=1pt,
+    left=8pt, right=8pt, top=5pt, bottom=5pt
+}
+
+\newtcolorbox{preguntatrampabox}[1]{
+    enhanced,
+    breakable,
+    colback=white,
+    colframe=bankamber,
+    arc=3mm,
+    fonttitle=\bfseries\color{white},
+    colbacktitle=bankamber,
+    title={\small \textbf{PREGUNTA TÍPICA / CLAVE DEL DOCENTE:} #1},
+    boxrule=1.2pt,
+    left=8pt, right=8pt, top=6pt, bottom=6pt
+}
+
+\newtcolorbox{demobox}{
+    enhanced,
+    colback=white,
+    colframe=bankblue,
+    arc=3mm,
+    fonttitle=\bfseries\color{white},
+    colbacktitle=bankblue,
+    title={\small \textbf{CÓMO DEMOSTRARLO EN VIVO EN LA APLICACIÓN}},
+    boxrule=1pt,
+    left=8pt, right=8pt, top=5pt, bottom=5pt
+}
+
+% Encabezados y pies de página
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{\color{bankblue}UMSA $\cdot$ INF-241 Análisis y Diseño de Sistemas I}}
+\fancyhead[R]{\small\textbf{\color{bankpurple}Guía de Defensa ante Docente}}
+\fancyfoot[L]{\footnotesize\color{bankgray}Sistema de Gestión de Créditos Bancarios $\cdot$ Aplicación Ejecutable}
+\fancyfoot[R]{\small\textbf{\color{bankdark}\thepage}}
+\renewcommand{\headrulewidth}{0.8pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Formato de títulos
+\titleformat{\section}{\large\bfseries\color{bankblue}}{\thesection.}{0.5em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries\color{bankpurple}}{\thesubsection}{0.5em}{}
+
+\setlist[itemize]{noitemsep, topsep=2pt}
+\setlist[enumerate]{noitemsep, topsep=2pt}
+
+\begin{document}
+
+% ==============================================================================
+% CABECERA EJECUTIVA / CARÁTULA COMPACTA
+% ==============================================================================
+\begin{center}
+    \includegraphics[width=2.4cm]{logo_umsa.png}\\[0.35cm]
+    {\large\textbf{\color{bankblue}UNIVERSIDAD MAYOR DE SAN ANDRÉS}}\\[0.1cm]
+    {\normalsize\textbf{\color{bankdark}FACULTAD DE CIENCIAS PURAS Y NATURALES $\cdot$ CARRERA DE INFORMÁTICA}}\\[0.1cm]
+    {\small\textbf{\color{bankpurple}INF-241: ANÁLISIS Y DISEÑO DE SISTEMAS I $\cdot$ SEMESTRE II/2026}}\\[0.35cm]
+    \begin{tcolorbox}[colback=bankpurple!10,colframe=bankpurple,arc=3mm,center,width=0.98\textwidth,halign=center]
+        \Large\textbf{\color{bankdark}GUÍA TÉCNICA Y BALOTARIO PARA DEFENSA ANTE EL DOCENTE}\\[0.15cm]
+        \small\textbf{\color{bankpurple}Evaluación de los 7 Requerimientos del Producto: Aplicación Ejecutable y Código Fuente}
+    \end{tcolorbox}
+    \vspace{0.15cm}
+    {\footnotesize\textbf{Estudiante:} Alex Jamachi \quad $\cdot$ \quad \textbf{Docente Revisor:} Catedrático INF-241 \quad $\cdot$ \quad \textbf{Stack:} Node.js + MySQL + React 19}
+\end{center}
+
+\vspace{-0.2cm}
+\noindent\rule{\textwidth}{1.2pt}
+\vspace{0.1cm}
+
+\noindent Esta guía condensa las \textbf{respuestas conceptuales, fórmulas financieras, reglas de negocio bancarias (ASFI) y pasos de demostración práctica} para responder con solvencia técnica a los 7 puntos exigidos en la rúbrica de evaluación de la aplicación ejecutable.
+
+% ==============================================================================
+% REQUERIMIENTO 1
+% ==============================================================================
+\section{Gestionar Usuarios y Clientes}
+
+\begin{respuestabox}{¿Cómo gestiona el sistema los usuarios y los clientes?}
+El sistema implementa una estricta segregación de funciones mediante \textbf{Control de Acceso Basado en Roles (RBAC, Sección 16.2)} para los funcionarios bancarios y un modelo de datos con \textbf{integridad relacional de identidad única} para los clientes:
+\begin{itemize}
+    \item \textbf{Usuarios del Banco (6 Roles):} Administrador, Jefe de Créditos, Oficial de Crédito, Analista de Riesgos, Cajero y Gerente de Sucursal. Cada uno accede únicamente a las rutas y módulos autorizados por su token JWT (vigencia de 15 minutos de inactividad, RNF01).
+    \item \textbf{Bloqueo por Fuerza Bruta (RNF01):} Tras 5 intentos fallidos de autenticación, la cuenta se bloquea automáticamente por 30 minutos (\texttt{intentos\_fallidos = 5}, \texttt{bloqueado\_hasta}).
+    \item \textbf{Clientes Bancarios:} Registro con validación en servidor de Cédula de Identidad (CI) única (\texttt{UNIQUE KEY uk\_cliente\_ci}). Si se intenta duplicar, el motor relacional MySQL rechaza la transacción con código de error HTTP 409 (\textit{Conflict}).
+\end{itemize}
+\end{respuestabox}
+
+\begin{preguntatrampabox}{Preguntas del Docente sobre Usuarios y Clientes}
+\begin{enumerate}
+    \item \textbf{¿Dónde se valida que un cliente no esté repetido?}\\
+    \textit{Respuesta:} En doble capa. En frontend se valida el formato y en backend en \texttt{clienteService.js} (\texttt{SELECT id\_cliente FROM cliente WHERE ci = ?}), respaldado por la restricción de unicidad \texttt{UNIQUE (ci)} en la base de datos MySQL.
+    \item \textbf{¿Qué mecanismo asegura que el Cajero no cree usuarios o apruebe créditos?}\\
+    \textit{Respuesta:} El middleware \texttt{requerirRoles('ADMINISTRADOR')} y \texttt{requerirRoles('JEFE', 'GERENTE')}. A nivel API, el token JWT viaja en la cabecera \texttt{Authorization: Bearer} e intercepta la petición antes de llegar al servicio, retornando HTTP 403 si el rol no coincide.
+\end{enumerate}
+\end{preguntatrampabox}
+
+\begin{demobox}
+\textbf{Paso a Paso en la App:}
+\begin{enumerate}
+    \item Iniciar sesión con el usuario \textbf{atorrez} (Oficial) o \textbf{admin}.
+    \item Ingresar al menú \textbf{Clientes (P10)}.
+    \item Mostrar la tabla de clientes existentes y registrar uno nuevo. Intentar registrar un CI repetido para mostrar el rechazo controlado del sistema.
+\end{enumerate}
+\end{demobox}
+
+% ==============================================================================
+% REQUERIMIENTO 2
+% ==============================================================================
+\section{Registrar Solicitudes de Crédito}
+
+\begin{respuestabox}{¿Cómo opera el registro de solicitudes y qué datos exige?}
+El registro de solicitudes (CU02 / RF03) formaliza el trámite crediticio bajo el principio bancario de no aprobación inmediata:
+\begin{itemize}
+    \item \textbf{Datos Capturados:} Cliente titular (búsqueda por CI en tiempo real), Tipo de Crédito (\texttt{CONSUMO}, \texttt{COMERCIAL}, \texttt{VIVIENDA}), Monto Solicitado (Bs), Plazo en meses (ej. 12, 24, 36) y Destino específico del fondo.
+    \item \textbf{Checklist Documental Obligatorio:} Validación de 3 recaudos normativos: 1) Cédula de Identidad vigente, 2) Respaldo de Ingresos / Boletas de pago, 3) Factura de luz/agua de domicilio.
+    \item \textbf{Generación de Código Único:} Se asigna un identificador correlativo con máscara bancaria \texttt{SOL-2026-XXXXX} y la solicitud nace en estado inicial \textbf{REGISTRADA}.
+\end{itemize}
+\end{respuestabox}
+
+\begin{preguntatrampabox}{¿Por qué la solicitud no se aprueba al momento de registrarla?}
+\textit{Respuesta:} Por la \textbf{Ley de Servicios Financieros N° 393 y la normativa ASFI}. Ningún crédito bancario puede aprobarse sin pasar por la evaluación obligatoria de riesgo y capacidad de pago realizada por un funcionario independiente (el Analista de Riesgos). Esto previene el fraude interno y el sobreendeudamiento.
+\end{preguntatrampabox}
+
+\begin{demobox}
+\textbf{Paso a Paso en la App:}
+\begin{enumerate}
+    \item Con el rol \textbf{atorrez} (Oficial), abrir \textbf{Solicitudes (P11)}.
+    \item Pulsar \textbf{+ Nueva Solicitud}, escribir el CI de un cliente existente, ingresar Monto (ej. Bs 35.000), Plazo (24 meses) y marcar los 3 checks de documentación.
+    \item Al guardar, la solicitud queda en estado \textbf{REGISTRADA} lista para el Analista.
+\end{enumerate}
+\end{demobox}
+
+% ==============================================================================
+% REQUERIMIENTO 3
+% ==============================================================================
+\section{Evaluar la Capacidad de Pago mediante Reglas de Negocio}
+
+\begin{respuestabox}{¿Qué criterios matemáticos y normativos utiliza el sistema?}
+La evaluación crediticia (CU03, CU04, CU05 / RF04, RF05, RF06) integra dos fuentes de información: la consulta al Buró de Información Crediticia externo y el análisis de flujos de ingresos/egresos del cliente.
+\end{respuestabox}
+
+\begin{formulabox}{Fórmulas Financieras y Ratios ASFI Implementados}
+\begin{enumerate}
+    \item \textbf{Capacidad de Pago Disponible:}
+    $$\text{CapacidadPago} = \text{IngresosMensualesDeclarados} - \text{EgresosMensualesFamiliares}$$
+    \item \textbf{Cuota Mensual Estimada (Sistema Francés):}
+    $$\text{Cuota} = M \times \frac{i \times (1+i)^n}{(1+i)^n - 1} \quad \text{donde } i = \frac{\text{TasaAnual}}{12}, \; n = \text{plazo meses}, \; M = \text{monto}$$
+    \item \textbf{Relación Cuota-Ingreso (\textit{Debt-To-Income} -- DTI):}
+    $$\text{DTI} = \left( \frac{\text{Cuota}}{\text{IngresosMensualesDeclarados}} \right) \times 100\%$$
+    \item \textbf{Regla de Oro de Emisión de Dictamen (ASFI):}
+    \begin{itemize}
+        \item Si $\text{DTI} \le 40\%$, $\text{Cuota} \le \text{CapacidadPago}$ y Buró $\ne$ 'CON\_MORA' $\implies$ \textbf{FAVORABLE}.
+        \item Si $\text{DTI} > 40\%$ o Buró = 'CON\_MORA' $\implies$ \textbf{DESFAVORABLE}.
+    \end{itemize}
+    \item \textbf{Garantías de Respaldo (CU06 / RF07):}
+    $$\text{PorcentajeCobertura} = \left( \frac{\text{ValorComercialGarantia}}{\text{MontoSolicitado}} \right) \times 100\% \ge 120\%$$
+\end{enumerate}
+\end{formulabox}
+
+\begin{preguntatrampabox}{Preguntas del Docente sobre Evaluación}
+\begin{enumerate}
+    \item \textbf{¿Qué pasa si un cliente tiene ingresos de Bs 10.000 y pide un crédito con cuota de Bs 4.500?}\\
+    \textit{Respuesta:} Su DTI es $\frac{4500}{10000} \times 100\% = 45\%$. Dado que $45\% > 40\%$, el sistema emite automáticamente un dictamen \textbf{DESFAVORABLE} por sobreendeudamiento.
+    \item \textbf{¿Dónde se calcula el buró de riesgo?}\\
+    \textit{Respuesta:} En \texttt{backend/src/servicios/buroRiesgoService.js}. Emula la central de riesgos de la ASFI consultando antecedentes por CI, retornando score de 300 a 900 y calificación histórica.
+\end{enumerate}
+\end{preguntatrampabox}
+
+\begin{demobox}
+\textbf{Paso a Paso en la App:}
+\begin{enumerate}
+    \item Iniciar sesión como \textbf{lrojas} (Analista de Riesgos).
+    \item Ir a \textbf{Evaluaciones (P13)}, seleccionar la solicitud pendiente.
+    \item Pulsar \textbf{Consultar Buró} (muestra score crediticio).
+    \item Ingresar Ingresos y Gastos del cliente; el sistema calcula en vivo el DTI y la Capacidad de Pago, habilitando el dictamen \textbf{FAVORABLE}.
+\end{enumerate}
+\end{demobox}
+
+% ==============================================================================
+% REQUERIMIENTO 4
+% ==============================================================================
+\section{Aprobar o Rechazar Solicitudes según Permisos}
+
+\begin{respuestabox}{¿Cómo se aplican los límites de atribución reglamentarios?}
+El sistema no permite que cualquier usuario apruebe créditos de cualquier monto. Aplica la \textbf{Matriz de Límites de Atribución Bancaria (Sección 13.5)}:
+\begin{itemize}
+    \item \textbf{Jefe de Créditos (\texttt{cmendoza}):} Límite máximo de atribución hasta \textbf{Bs 70.000,00}.
+    \item \textbf{Gerente de Sucursal (\texttt{gerente1}):} Atribución superior para montos mayores a \textbf{Bs 70.000,00} (sin límite operativo ordinario).
+    \item \textbf{Efecto Transaccional Atómico de la Aprobación:}
+    Al aprobarse, el backend ejecuta una transacción ACID en MySQL: 1) Cambia estado a \texttt{APROBADA}, 2) Crea registro formal en tabla \texttt{credito} con código \texttt{CRE-2026-XXXX}, 3) Redacta el contrato legal \texttt{CT-2026-XXXX}, 4) Genera las cuotas del cronograma francés en tabla \texttt{cuota}.
+\end{itemize}
+\end{respuestabox}
+
+\begin{preguntatrampabox}{¿Qué sucede si el Jefe intenta aprobar una solicitud de Bs 85.000?}
+\textit{Respuesta:} El backend compara \texttt{solicitud.montoSolicitado > usuario.limiteAtribucion}. Al verificar que $85.000 > 70.000$, la transacción se cancela y se retorna una excepción HTTP 403: \textit{"Operación no autorizada: El monto supera su límite reglamentario de atribución (Bs 70.000). Requiere dictamen de Gerencia"}.
+\end{preguntatrampabox}
+
+\begin{demobox}
+\textbf{Paso a Paso en la App:}
+\begin{enumerate}
+    \item Iniciar sesión como \textbf{cmendoza} (Jefe) para aprobar créditos $\le \text{Bs } 70.000$, o como \textbf{gerente1} para montos superiores.
+    \item Entrar a \textbf{Bandeja de Aprobación (P02)}.
+    \item Pulsar \textbf{Aprobar Crédito} y confirmar. El sistema genera de inmediato el N° de Crédito, Contrato y Cronograma de Pagos.
+\end{enumerate}
+\end{demobox}
+
+% ==============================================================================
+% REQUERIMIENTO 5
+% ==============================================================================
+\section{Generar Cronogramas de Amortización}
+
+\begin{respuestabox}{¿Qué método matemático se utiliza y cómo se garantiza la extinción a cero?}
+El sistema implementa el estándar bancario boliviano: el \textbf{Sistema Francés de Amortización con Cuota Constante} (\texttt{amortizacionService.js}):
+\begin{itemize}
+    \item En cada período $k \in \{1, \dots, n\}$, la cuota total se desglosa en \textbf{interés compensatorio} y \textbf{capital amortizado}:
+    $$I_k = \text{SaldoCapital}_{k-1} \times i \qquad \text{y} \qquad A_k = \text{Cuota} - I_k$$
+    $$\text{SaldoCapital}_k = \text{SaldoCapital}_{k-1} - A_k$$
+    \item \textbf{Ajuste de Redondeo en la Última Cuota ($k = n$):}\\
+    Por efecto de los decimales de la tasa periódica, en la cuota final se fuerza:
+    $$A_n = \text{SaldoCapital}_{n-1} \qquad \text{garantizando que } \text{SaldoCapital}_n = \text{Bs } 0.00$$
+    El capital se extingue con exactitud matemática a dos decimales.
+\end{itemize}
+\end{respuestabox}
+
+\begin{preguntatrampabox}{¿Por qué en las primeras cuotas se paga más interés que en las últimas?}
+\textit{Respuesta:} Porque en el Sistema Francés el interés se calcula sobre el \textbf{saldo deudor remanente}. Al inicio del crédito el saldo deudor es máximo, por lo que el interés $I_k$ es alto. A medida que pasan los meses y el saldo baja, el interés decrece y la porción de capital $A_k$ crece exponencialmente.
+\end{preguntatrampabox}
+
+\begin{demobox}
+\textbf{Paso a Paso en la App:}
+\begin{enumerate}
+    \item En la lista de Solicitudes o en el módulo de Caja, pulsar en \textbf{Ver Cronograma}.
+    \item Mostrar la tabla completa de cuotas con fecha de vencimiento, capital, interés y saldo decreciente hasta Bs 0.00.
+\end{enumerate}
+\end{demobox}
+
+% ==============================================================================
+% REQUERIMIENTO 6
+% ==============================================================================
+\section{Registrar Pagos y Saldos Pendientes}
+
+\begin{respuestabox}{¿Cómo se imputan contablemente los pagos recibidos en ventanilla?}
+El módulo de Caja (CU12 / RF13) ejecutado por el rol \textbf{CAJERO} aplica la \textbf{Prelación Legal e Imputación en Cascada Obligatoria}:
+\begin{enumerate}
+    \item \textbf{1° Nivel -- Interés Moratorio:} Se cancelan primero los recargos por mora acumulados.
+    \item \textbf{2° Nivel -- Interés Compensatorio:} Se amortiza el interés devengado ordinario del período.
+    \item \textbf{3° Nivel -- Capital Vivo:} El excedente remanente reduce directamente el capital adeudado.
+\end{enumerate}
+\textbf{Control de Mora (CU13 / RF14):} Job diario que busca cuotas vencidas y calcula el recargo moratorio:
+$$\text{MoraCalculada} = \text{CapitalCuota} \times \left( \frac{\text{TasaMoraAnual}}{100 \times 360} \right) \times \text{DiasAtraso}$$
+Tras el pago, se emite un comprobante fiscal \texttt{REC-00XXX} con firma electrónica y fecha/hora.
+\end{respuestabox}
+
+\begin{preguntatrampabox}{Si una cuota es de Bs 1.000 y el cliente entrega solo Bs 300, ¿qué hace el sistema?}
+\textit{Respuesta:} El sistema admite pagos parciales. Imputa primero la mora e interés devengado; la cuota permanece en estado \texttt{PENDIENTE} con un \texttt{saldo\_pendiente = 700.00 Bs}. No se da por extinguida hasta liquidar el 100\% de la cuota.
+\end{preguntatrampabox}
+
+\begin{demobox}
+\textbf{Paso a Paso en la App:}
+\begin{enumerate}
+    \item Iniciar sesión como \textbf{cajero1} (Cajero de Ventanilla).
+    \item Ir a \textbf{Caja · Cobranzas (P08)}. Buscar el crédito por CI o N° de Crédito.
+    \item Seleccionar la cuota exigible y pulsar \textbf{Cobrar}. Confirmar el pago en efectivo y mostrar en pantalla el \textbf{Comprobante Fiscal de Pago (Recibo REC-XXXXX)}.
+\end{enumerate}
+\end{demobox}
+
+% ==============================================================================
+% REQUERIMIENTO 7
+% ==============================================================================
+\section{Consultar el Estado de Cada Crédito}
+
+\begin{respuestabox}{¿Cuál es el ciclo de vida y cómo se monitorea la cartera?}
+El sistema implementa una \textbf{Máquina de Estados Finita} que gobierna la vida del crédito desde su concepción hasta su extinción:
+\begin{center}
+    \texttt{REGISTRADA} $\longrightarrow$ \texttt{EN\_EVALUACION} $\longrightarrow$ \texttt{APROBADA} $\longrightarrow$ \texttt{VIGENTE} $\rightleftarrows$ \texttt{EN\_MORA} $\longrightarrow$ \texttt{CANCELADA}
+\end{center}
+\begin{itemize}
+    \item \textbf{Vigente $\to$ En Mora:} Al vencer una cuota sin pago, el crédito pasa a \texttt{EN\_MORA}.
+    \item \textbf{En Mora $\to$ Vigente:} Al liquidar las cuotas atrasadas, el crédito regresa a \texttt{VIGENTE}.
+    \item \textbf{Cancelado:} Cuando el saldo capital restante del crédito alcanza \texttt{0.00 Bs}.
+    \item \textbf{Centro de Reportes Gerenciales (CU14 / RF15):} Panel con KPIs de Cartera Colocada, Saldo Vigente, Cartera en Mora, Índice de Morosidad (\%) y Total Recaudado en Caja.
+    \item \textbf{Pistas de Auditoría Inmutables (RNF06 / RN12):} Cada cambio de estado queda sellado en la tabla \texttt{auditoria} con usuario, fecha, hora e IP de origen.
+\end{itemize}
+\end{respuestabox}
+
+\begin{preguntatrampabox}{¿Cómo demuestras que los registros de auditoría no se pueden borrar?}
+\textit{Respuesta:} La tabla relacional \texttt{auditoria} en MySQL solo tiene permisos de inserción (\texttt{INSERT}) y lectura (\texttt{SELECT}). Ninguna ruta de la API provee endpoints \texttt{DELETE} o \texttt{UPDATE} sobre esta entidad, garantizando el principio de no repudio.
+\end{preguntatrampabox}
+
+% ==============================================================================
+% MATRIZ RÁPIDA DE USUARIOS Y DEMOSTRACIÓN
+% ==============================================================================
+\vspace{0.2cm}
+\section{Matriz de Usuarios para la Demostración en Vivo}
+
+\noindent Utiliza esta tabla rápida durante la defensa para iniciar sesión con el rol solicitado por el docente:
+
+\begin{center}
+\small
+\begin{tabular}{lllll}
+\toprule
+\textbf{Rol Bancario} & \textbf{Usuario} & \textbf{Contraseña} & \textbf{Módulo Clave} & \textbf{Qué demostrar al docente} \\
+\midrule
+\textbf{OFICIAL} & \texttt{atorrez} & \texttt{Bancario2026!} & Clientes / Solicitudes & Registrar cliente (CI único) y nueva solicitud. \\
+\textbf{ANALISTA} & \texttt{lrojas} & \texttt{Bancario2026!} & Evaluaciones (P13) & Consultar Buró y calcular DTI $\le 40\%$. \\
+\textbf{JEFE} & \texttt{cmendoza} & \texttt{Bancario2026!} & Aprobación (P02) & Aprobar créditos $\le \text{Bs } 70.000$ y generar contrato. \\
+\textbf{GERENTE} & \texttt{gerente1} & \texttt{Bancario2026!} & Reportes / Aprobación & Aprobar créditos $> \text{Bs } 70.000$ y ver KPIs de mora. \\
+\textbf{CAJERO} & \texttt{cajero1} & \texttt{Bancario2026!} & Caja / Cobros (P08) & Cobrar cuota en cascada y emitir recibo fiscal. \\
+\textbf{ADMIN} & \texttt{admin} & \texttt{Bancario2026!} & Usuarios / Auditoría & Ver trazas forenses de auditoría y desbloqueo. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.2cm}
+\begin{tcolorbox}[colback=bankdark,colframe=bankpurple,arc=3mm,center,width=\textwidth]
+    \centering\small\color{white}
+    \textbf{Acceso en Producción a la Aplicación Ejecutable (AWS Cloudflare):}\\
+    \url{https://recruitment-thing-ethics-reliable.trycloudflare.com}\\
+    \textit{Interruptor de Modo Claro / Modo Oscuro disponible en la barra superior.}
+\end{tcolorbox}
+
+\end{document}
