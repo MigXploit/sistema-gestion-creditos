@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import type { SolicitudItem, UsuarioSession } from '../types';
+import { RefreshCw, CreditCard } from 'lucide-react';
 
 interface DesembolsosViewProps {
     user: UsuarioSession;
@@ -60,8 +61,9 @@ export const DesembolsosView: React.FC<DesembolsosViewProps> = ({ user: _user })
                     </p>
                 </div>
 
-                <button className="btn btn-secondary" onClick={cargarSolicitudes}>
-                    🔄 Refrescar Lista
+                <button className="btn btn-secondary" onClick={cargarSolicitudes} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <RefreshCw size={15} />
+                    Refrescar Lista
                 </button>
             </div>
 
@@ -107,11 +109,12 @@ export const DesembolsosView: React.FC<DesembolsosViewProps> = ({ user: _user })
                                         {sol.idCredito && (
                                             <button
                                                 className="btn btn-primary"
-                                                style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
+                                                style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                                                 onClick={() => handleDesembolsar(sol.idCredito!, sol.numeroCredito)}
                                                 disabled={desembolsandoId === sol.idCredito}
                                             >
-                                                {desembolsandoId === sol.idCredito ? 'Procesando...' : '🏦 Desembolsar'}
+                                                <CreditCard size={14} />
+                                                {desembolsandoId === sol.idCredito ? 'Procesando...' : 'Desembolsar'}
                                             </button>
                                         )}
                                     </td>

@@ -15,7 +15,9 @@ import {
     LogOut,
     ChevronRight,
     Menu,
-    X
+    X,
+    Sun,
+    Moon
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -27,6 +29,21 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ user, currentView, onNavigate, onLogout, children }) => {
+    // Modo Claro / Modo Oscuro persistente
+    const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+        const saved = localStorage.getItem('theme');
+        return (saved === 'light' || saved === 'dark') ? saved : 'dark';
+    });
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+    };
+
     // Contador regresivo de sesión (15 min = 900 seg, RNF01)
     const [timeLeft, setTimeLeft] = useState(900);
     const [isScrolled, setIsScrolled] = useState(false);
@@ -157,6 +174,17 @@ export const Layout: React.FC<LayoutProps> = ({ user, currentView, onNavigate, o
 
                     {/* Acciones del Usuario en el extremo derecho */}
                     <div className="header-actions">
+                        {/* Selector de Modo Claro / Modo Oscuro */}
+                        <button
+                            type="button"
+                            className="btn-theme-toggle"
+                            onClick={toggleTheme}
+                            title={theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
+                            aria-label="Cambiar tema de color"
+                        >
+                            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+                        </button>
+
                         {/* Enlace al repositorio GitHub del proyecto */}
                         <a
                             href="https://github.com/MigXploit/sistema-gestion-creditos"
@@ -231,6 +259,28 @@ export const Layout: React.FC<LayoutProps> = ({ user, currentView, onNavigate, o
                                 );
                             })}
                             <div className="mobile-drawer-footer">
+                                <button
+                                    type="button"
+                                    onClick={toggleTheme}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        width: '100%',
+                                        padding: '0.65rem 1rem',
+                                        borderRadius: 'var(--radius)',
+                                        background: 'var(--bg-surface)',
+                                        border: '1px solid var(--border-color)',
+                                        color: 'var(--text-heading)',
+                                        fontSize: '0.85rem',
+                                        fontWeight: 600,
+                                        marginBottom: '0.75rem',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    {theme === 'dark' ? <Sun size={16} color="var(--amber-400)" /> : <Moon size={16} color="var(--purple-600)" />}
+                                    <span>{theme === 'dark' ? 'Activar Modo Claro' : 'Activar Modo Oscuro'}</span>
+                                </button>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', fontSize: '0.8rem', color: 'var(--amber-400)' }}>
                                     <Clock size={14} />
                                     <span>Sesión: {formatTime(timeLeft)} restantes</span>

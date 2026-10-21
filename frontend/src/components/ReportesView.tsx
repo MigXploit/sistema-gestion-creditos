@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
+import { RefreshCw } from 'lucide-react';
 
 export const ReportesView: React.FC = () => {
     const [reporte, setReporte] = useState<any | null>(null);
@@ -38,16 +39,17 @@ export const ReportesView: React.FC = () => {
             <div className="card" style={{ marginBottom: '1.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                     <div>
-                        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e3a8a' }}>
+                        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-heading)' }}>
                             Reporte Ejecutivo de Cartera y Morosidad (Gerencia · CU14 / RF15 / CA23)
                         </h2>
-                        <p style={{ fontSize: '0.875rem', color: '#64748b' }}>
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
                             Métricas consolidadas de colocación crediticia, recaudación y salud de cartera
                         </p>
                     </div>
 
-                    <button className="btn btn-secondary" onClick={cargarReporte}>
-                        🔄 Actualizar Métricas
+                    <button className="btn btn-secondary" onClick={cargarReporte} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <RefreshCw size={15} />
+                        Actualizar Métricas
                     </button>
                 </div>
             </div>

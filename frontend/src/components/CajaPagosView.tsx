@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import type { SolicitudItem, CuotaItem, UsuarioSession } from '../types';
+import { Clock, Receipt, CheckCircle, Search, RefreshCw } from 'lucide-react';
 
 interface CajaPagosViewProps {
     user: UsuarioSession;
@@ -12,6 +13,7 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
     const [creditoInfo, setCreditoInfo] = useState<any | null>(null);
     const [cronograma, setCronograma] = useState<CuotaItem[]>([]);
     const [cuotaParaPagar, setCuotaParaPagar] = useState<CuotaItem | null>(null);
+    const [filtroBusqueda, setFiltroBusqueda] = useState('');
 
     const [montoPagar, setMontoPagar] = useState<string>('');
     const [formaPago, setFormaPago] = useState<string>('EFECTIVO');
@@ -25,7 +27,8 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
     const cargarCreditos = async () => {
         try {
             setLoading(true);
-            const data = await api.getSolicitudes('APROBADA');
+            setError(null);
+            const data = await api.getSolicitudes();
             setSolicitudes(data.filter((s: SolicitudItem) => s.idCredito));
         } catch (err: any) {
             setError(err.message || 'Error al cargar créditos');
@@ -138,8 +141,13 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
                     </div>
 
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button className="btn btn-secondary" onClick={cargarCreditos} disabled={loading} title="Actualizar créditos">
+                            <RefreshCw size={15} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+                            Actualizar
+                        </button>
                         <button className="btn btn-secondary" onClick={handleEjecutarMora} disabled={loading}>
-                            🕒 Ejecutar Control Diario de Mora (CU13)
+                            <Clock size={15} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+                            Ejecutar Control Diario de Mora (CU13)
                         </button>
                     </div>
                 </div>
@@ -151,12 +159,37 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
                 {/* Panel Izquierdo: Selección de Crédito */}
                 <div className="card">
-                    <h3 style={{ fontSize: '1.05rem', marginBottom: '1rem', color: 'var(--text-heading)' }}>Créditos Formalizados</h3>
+                    <h3 style={{ fontSize: '1.05rem', marginBottom: '0.75rem', color: 'var(--text-heading)' }}>Créditos Formalizados</h3>
+                    
+                    {/* Buscador Rápido de Crédito por CI o Nombre */}
+                    <div style={{ position: 'relative', marginBottom: '0.85rem' }}>
+                        <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Buscar por CI, cliente o N°..."
+                            value={filtroBusqueda}
+                            onChange={e => setFiltroBusqueda(e.target.value)}
+                            style={{ paddingLeft: '32px', fontSize: '0.85rem' }}
+                        />
+                    </div>
+
                     {loading && solicitudes.length === 0 ? (
                         <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Cargando créditos...</p>
                     ) : (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '500px', overflowY: 'auto' }}>
-                            {solicitudes.map(sol => (
+                            {solicitudes
+                                .filter(sol => {
+                                    if (!filtroBusqueda.trim()) return true;
+                                    const term = filtroBusqueda.toLowerCase();
+                                    return (
+                                        (sol.nombreCompletoCliente || '').toLowerCase().includes(term) ||
+                                        (sol.ciCliente || '').toLowerCase().includes(term) ||
+                                        (sol.numeroCredito || '').toLowerCase().includes(term) ||
+                                        (sol.numeroSolicitud || '').toLowerCase().includes(term)
+                                    );
+                                })
+                                .map(sol => (
                                 <div
                                     key={sol.idSolicitud}
                                     onClick={() => seleccionarSolicitud(sol)}
@@ -258,7 +291,9 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
                             {reciboGenerado && (
                                 <div style={{ background: 'rgba(13, 148, 136, 0.12)', border: '1.5px solid var(--teal-500)', boxShadow: '4px 4px 0px #1e0938', padding: '1.25rem', borderRadius: 'var(--radius)', marginBottom: '1.5rem' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <h4 style={{ color: 'var(--teal-300)', margin: 0, fontWeight: 700 }}>🧾 Comprobante Fiscal: {reciboGenerado.numeroRecibo}</h4>
+                                        <h4 style={{ color: 'var(--teal-300)', margin: 0, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                            <Receipt size={16} /> Comprobante Fiscal: {reciboGenerado.numeroRecibo}
+                                        </h4>
                                         <span style={{ fontSize: '0.8rem', color: 'var(--teal-400)', fontFamily: 'var(--font-mono)' }}>Fecha: {reciboGenerado.fechaPago}</span>
                                     </div>
                                     <p style={{ fontSize: '0.875rem', color: 'var(--text-body)', margin: '0.5rem 0' }}>
@@ -315,7 +350,9 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
                                                             Cobrar
                                                         </button>
                                                     ) : (
-                                                        <span style={{ color: 'var(--teal-400)', fontSize: '0.75rem', fontWeight: 600 }}>✓ Pagada</span>
+                                                        <span style={{ color: 'var(--teal-400)', fontSize: '0.75rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                                                            <CheckCircle size={13} /> Pagada
+                                                        </span>
                                                     )}
                                                 </td>
                                             </tr>

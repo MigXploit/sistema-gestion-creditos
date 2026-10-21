@@ -188,7 +188,6 @@ sistema-gestion-creditos/
 |   |   `-- servidor.js          # Punto de entrada de la aplicacion backend
 |   |-- test-integracion.js      # Suite de pruebas automatizadas de integracion
 |   `-- package.json
-|-- backend-java/                # Backend previo en Spring Boot (preservado como archivo)
 |-- database/                    # Scripts de base de datos relacional MySQL
 |   `-- mysql/
 |       |-- 01_schema_mysql.sql  # DDL: Creacion de 10 tablas, indices y restricciones

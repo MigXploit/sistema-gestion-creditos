@@ -6,6 +6,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 :root {
+  color-scheme: dark light;
   /* 1. Canvas & Superficies (Detalle's Library Palette) */
   --bg-void: #0B0A10;
   --bg-canvas: #0B0A10;
@@ -112,6 +113,285 @@
   --color-success: var(--teal-400);
   --color-danger: var(--rose-400);
   --color-warning: var(--amber-400);
+}
+
+/* ==========================================================================
+   TEMA CLARO (LIGHT MODE COMPLETO)
+   ========================================================================== */
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* 1. Canvas & Superficies en Modo Claro */
+  --bg-void: #f8fafc;
+  --bg-canvas: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #f8fafc;
+  --bg-nested: #f1f5f9;
+  --bg-overlay: rgba(248, 250, 252, 0.94);
+  --bg-main: var(--bg-canvas);
+  --bg-sidebar: #ffffff;
+  --bg-sidebar-hover: #f1f5f9;
+  --bg-sidebar-active: #7c3aed;
+  --card-bg: #ffffff;
+
+  /* 2. Escala Púrpura (Contraste equilibrado para fondo blanco) */
+  --purple-950: #f5f3ff;
+  --purple-900: #ede9fe;
+  --purple-800: #ddd6fe;
+  --purple-700: #c4b5fd;
+  --purple-600: #7c3aed;
+  --purple-500: #6d28d9;
+  --purple-dark: #5b21b6;
+  --purple-400: #6d28d9;
+  --purple-300: #4c1d95;
+  --purple-200: #31135e;
+  --purple-100: #1e0938;
+
+  /* 3. Escala Teal / Éxito */
+  --teal-900: #f0fdfa;
+  --teal-700: #99f6e4;
+  --teal-600: #2dd4bf;
+  --teal-500: #0d9488;
+  --teal-400: #0f766e;
+  --teal-300: #115e59;
+  --success: #0f766e;
+  --success-bg: rgba(15, 118, 110, 0.1);
+
+  /* 4. Escala Rosa / Peligro */
+  --rose-900: #fff1f2;
+  --rose-700: #fecdd3;
+  --rose-600: #f43f5e;
+  --rose-500: #be123c;
+  --rose-300: #9f1239;
+  --danger: #be123c;
+  --danger-bg: rgba(190, 18, 60, 0.1);
+
+  /* 5. Escala Ámbar / Alerta */
+  --amber-800: #fffbeb;
+  --amber-600: #fde68a;
+  --amber-500: #b45309;
+  --amber-400: #92400e;
+  --warning: #b45309;
+  --warning-bg: rgba(180, 83, 9, 0.1);
+
+  /* 6. Tipografía & Textos */
+  --text-main: #0f172a;
+  --text-heading: #0f172a;
+  --text-body: #334155;
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
+  --text-violet: #6d28d9;
+  --text-teal: #0f766e;
+
+  /* 7. Bordes */
+  --border-color: #e2e8f0;
+  --border-muted: #f1f5f9;
+  --border-strong: #cbd5e1;
+  --border-glow: #7c3aed;
+
+  /* 8. Sombras */
+  --shadow-hard-sm: 2px 2px 0px #cbd5e1;
+  --shadow-hard-md: 3px 3px 0px #cbd5e1;
+  --shadow-hard-lg: 5px 5px 0px #94a3b8;
+  --shadow-glow: 0 0 20px rgba(124, 58, 237, 0.08);
+  --shadow: var(--shadow-hard-sm), 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-lg: var(--shadow-hard-md), 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-card: 3px 3px 0px #e2e8f0, 0 4px 16px rgba(0, 0, 0, 0.06);
+
+  /* 10. Aliases */
+  --color-primary: #6d28d9;
+  --color-primary-dark: #0f172a;
+  --color-primary-light: #5b21b6;
+  --color-text-muted: #64748b;
+  --color-text: #0f172a;
+  --color-surface: #ffffff;
+  --color-border: #e2e8f0;
+  --color-success: #0f766e;
+  --color-danger: #be123c;
+  --color-warning: #b45309;
+}
+
+[data-theme="light"] .header-container {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .floating-header.scrolled .header-container {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(124, 58, 237, 0.3);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .brand-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .brand-subtitle {
+  color: #64748b;
+}
+
+[data-theme="light"] .ambient-orb {
+  opacity: 0.12;
+}
+
+[data-theme="light"] .card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 3px 3px 0px #e2e8f0, 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .table {
+  color: #334155;
+}
+
+[data-theme="light"] .table th {
+  background: #f8fafc;
+  color: #0f172a;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+[data-theme="light"] .table td {
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+[data-theme="light"] .form-control {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1.5px solid #cbd5e1;
+}
+
+[data-theme="light"] .form-control:focus {
+  border-color: #6d28d9;
+  background: #ffffff;
+}
+
+[data-theme="light"] .btn-secondary {
+  background: #ffffff;
+  color: #334155;
+  border: 1.5px solid #cbd5e1;
+  box-shadow: 2px 2px 0px #e2e8f0;
+}
+
+[data-theme="light"] .btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+[data-theme="light"] .nav-pill {
+  color: #64748b;
+}
+
+[data-theme="light"] .nav-pill:hover {
+  background: rgba(109, 40, 217, 0.06);
+  color: #6d28d9;
+}
+
+[data-theme="light"] .nav-pill.active {
+  background: rgba(109, 40, 217, 0.12);
+  color: #6d28d9;
+  border: 1.5px solid rgba(109, 40, 217, 0.35);
+}
+
+[data-theme="light"] .modal-content {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #0f172a;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .footer-library {
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .footer-brand span {
+  color: #0f172a;
+}
+
+[data-theme="light"] .footer-copy {
+  color: #64748b;
+}
+
+[data-theme="light"] .session-timer-pill {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+[data-theme="light"] .btn-github-icon {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+[data-theme="light"] .btn-logout-icon {
+  background: #fff1f2;
+  border-color: #fecdd3;
+  color: #be123c;
+}
+
+[data-theme="light"] .fluid-breadcrumb {
+  color: #64748b;
+}
+
+[data-theme="light"] .breadcrumb-active {
+  color: #6d28d9;
+}
+
+[data-theme="light"] .login-container {
+  background: #f1f5f9;
+}
+
+[data-theme="light"] .login-card {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  box-shadow: 4px 4px 0px #cbd5e1, 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .login-header h1 {
+  color: #0f172a;
+}
+
+[data-theme="light"] .login-header p {
+  color: #64748b;
+}
+
+/* Botón switch de tema */
+.btn-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(26, 18, 46, 0.65);
+  border: 1.5px solid var(--border-color);
+  color: var(--amber-400);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 2px 2px 0px #090612;
+}
+
+.btn-theme-toggle:hover {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: var(--purple-400);
+  transform: translateY(-1px);
+  box-shadow: 3px 3px 0px #1e0938;
+}
+
+[data-theme="light"] .btn-theme-toggle {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #6d28d9;
+  box-shadow: 2px 2px 0px #e2e8f0;
+}
+
+[data-theme="light"] .btn-theme-toggle:hover {
+  background: #f8fafc;
+  border-color: #6d28d9;
+  box-shadow: 3px 3px 0px #cbd5e1;
 }
 
 /* ==========================================================================

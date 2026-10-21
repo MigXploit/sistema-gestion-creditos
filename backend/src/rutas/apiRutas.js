@@ -19,8 +19,8 @@ export const enrutadorApi = Router();
 // ==============================================================================
 enrutadorApi.post('/auth/login', async (req, res, next) => {
     try {
-        const login = req.body.login || req.body.nombreUsuario;
-        const password = req.body.password || req.body.contrasenia;
+        const login = req.body.login || req.body.username || req.body.nombreUsuario;
+        const password = req.body.password || req.body.contrasenia || req.body.clave;
         const ipOrigen = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
         const respuesta = await usuarioService.autenticar(login, password, ipOrigen);
         res.json(respuesta);
@@ -56,7 +56,7 @@ enrutadorApi.put('/clientes/:id', autenticarTokenJwt, requerirRoles('OFICIAL', '
     }
 });
 
-enrutadorApi.get('/clientes', autenticarTokenJwt, requerirRoles('OFICIAL', 'ANALISTA', 'JEFE', 'GERENTE', 'ADMINISTRADOR'), async (req, res, next) => {
+enrutadorApi.get('/clientes', autenticarTokenJwt, requerirRoles('OFICIAL', 'ANALISTA', 'JEFE', 'GERENTE', 'CAJERO', 'ADMINISTRADOR'), async (req, res, next) => {
     try {
         const respuesta = await clienteService.listarTodos();
         res.json(respuesta);
@@ -65,7 +65,7 @@ enrutadorApi.get('/clientes', autenticarTokenJwt, requerirRoles('OFICIAL', 'ANAL
     }
 });
 
-enrutadorApi.get('/clientes/:id', autenticarTokenJwt, requerirRoles('OFICIAL', 'ANALISTA', 'JEFE', 'GERENTE', 'ADMINISTRADOR'), async (req, res, next) => {
+enrutadorApi.get('/clientes/:id', autenticarTokenJwt, requerirRoles('OFICIAL', 'ANALISTA', 'JEFE', 'GERENTE', 'CAJERO', 'ADMINISTRADOR'), async (req, res, next) => {
     try {
         const respuesta = await clienteService.buscarPorId(req.params.id);
         res.json(respuesta);
@@ -74,7 +74,7 @@ enrutadorApi.get('/clientes/:id', autenticarTokenJwt, requerirRoles('OFICIAL', '
     }
 });
 
-enrutadorApi.get('/clientes/ci/:ci', autenticarTokenJwt, requerirRoles('OFICIAL', 'ANALISTA', 'JEFE', 'GERENTE', 'ADMINISTRADOR'), async (req, res, next) => {
+enrutadorApi.get('/clientes/ci/:ci', autenticarTokenJwt, requerirRoles('OFICIAL', 'ANALISTA', 'JEFE', 'GERENTE', 'CAJERO', 'ADMINISTRADOR'), async (req, res, next) => {
     try {
         const respuesta = await clienteService.buscarPorCi(req.params.ci);
         res.json(respuesta);
@@ -106,7 +106,7 @@ enrutadorApi.post('/solicitudes/:id/iniciar-evaluacion', autenticarTokenJwt, req
     }
 });
 
-enrutadorApi.get('/solicitudes', autenticarTokenJwt, requerirRoles('OFICIAL', 'ANALISTA', 'JEFE', 'GERENTE', 'ADMINISTRADOR'), async (req, res, next) => {
+enrutadorApi.get('/solicitudes', autenticarTokenJwt, requerirRoles('OFICIAL', 'ANALISTA', 'JEFE', 'GERENTE', 'CAJERO', 'ADMINISTRADOR'), async (req, res, next) => {
     try {
         const estadoFiltro = req.query.estado;
         const respuesta = await solicitudService.listarTodas(estadoFiltro);
@@ -116,7 +116,7 @@ enrutadorApi.get('/solicitudes', autenticarTokenJwt, requerirRoles('OFICIAL', 'A
     }
 });
 
-enrutadorApi.get('/solicitudes/:id', autenticarTokenJwt, requerirRoles('OFICIAL', 'ANALISTA', 'JEFE', 'GERENTE', 'ADMINISTRADOR'), async (req, res, next) => {
+enrutadorApi.get('/solicitudes/:id', autenticarTokenJwt, requerirRoles('OFICIAL', 'ANALISTA', 'JEFE', 'GERENTE', 'CAJERO', 'ADMINISTRADOR'), async (req, res, next) => {
     try {
         const respuesta = await solicitudService.buscarPorId(req.params.id);
         res.json(respuesta);
@@ -290,7 +290,7 @@ enrutadorApi.post('/pagos', autenticarTokenJwt, requerirRoles('CAJERO', 'ADMINIS
     }
 });
 
-enrutadorApi.post('/mora/ejecutar-control', autenticarTokenJwt, requerirRoles('ADMINISTRADOR', 'JEFE', 'GERENTE'), async (req, res, next) => {
+enrutadorApi.post('/mora/ejecutar-control', autenticarTokenJwt, requerirRoles('ADMINISTRADOR', 'JEFE', 'GERENTE', 'CAJERO'), async (req, res, next) => {
     try {
         const ipOrigen = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
         const respuesta = await pagoService.ejecutarControlMora(req.usuario.login, ipOrigen);

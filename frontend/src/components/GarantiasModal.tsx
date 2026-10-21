@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import type { GarantiaItem, SolicitudItem, UsuarioSession } from '../types';
+import { X } from 'lucide-react';
 
 interface GarantiasModalProps {
     solicitud: SolicitudItem;
@@ -71,8 +72,8 @@ export const GarantiasModal: React.FC<GarantiasModalProps> = ({ solicitud, user,
                             Solicitud: <strong>{solicitud.numeroSolicitud}</strong> | Cliente: <strong>{solicitud.nombreCompletoCliente}</strong> | Monto: <strong>Bs {solicitud.montoSolicitado.toLocaleString('es-BO', { minimumFractionDigits: 2 })}</strong>
                         </p>
                     </div>
-                    <button className="btn btn-secondary" onClick={onClose} style={{ padding: '0.25rem 0.5rem' }}>
-                        ✕
+                    <button className="btn btn-secondary" onClick={onClose} style={{ padding: '0.25rem 0.5rem', display: 'flex', alignItems: 'center' }}>
+                        <X size={16} />
                     </button>
                 </div>
 

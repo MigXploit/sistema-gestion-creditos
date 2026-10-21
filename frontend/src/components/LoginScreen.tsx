@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { api } from '../services/api';
 import type { UsuarioSession } from '../types';
+import { Award, FileText, Search, DollarSign, BarChart3, Shield } from 'lucide-react';
 
 interface LoginScreenProps {
     onLoginSuccess: (user: UsuarioSession) => void;
@@ -100,22 +101,22 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
                         <button type="button" onClick={() => handleSelectDemoUser('cmendoza')} style={quickBtnStyle}>
-                            ⭐ JEFE
+                            <Award size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> JEFE
                         </button>
                         <button type="button" onClick={() => handleSelectDemoUser('atorrez')} style={quickBtnStyle}>
-                            📝 OFICIAL
+                            <FileText size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> OFICIAL
                         </button>
                         <button type="button" onClick={() => handleSelectDemoUser('lrojas')} style={quickBtnStyle}>
-                            🔍 ANALISTA
+                            <Search size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> ANALISTA
                         </button>
                         <button type="button" onClick={() => handleSelectDemoUser('cajero1')} style={quickBtnStyle}>
-                            💵 CAJERO
+                            <DollarSign size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> CAJERO
                         </button>
                         <button type="button" onClick={() => handleSelectDemoUser('gerente1')} style={quickBtnStyle}>
-                            📊 GERENTE
+                            <BarChart3 size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> GERENTE
                         </button>
                         <button type="button" onClick={() => handleSelectDemoUser('admin')} style={quickBtnStyle}>
-                            🛡️ ADMIN
+                            <Shield size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> ADMIN
                         </button>
                     </div>
                 </div>

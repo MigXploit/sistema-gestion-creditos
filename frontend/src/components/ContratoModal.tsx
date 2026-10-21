@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import type { ContratoItem, CreditoItem, SolicitudItem } from '../types';
+import { X } from 'lucide-react';
 
 interface ContratoModalProps {
     solicitud: SolicitudItem;
@@ -46,8 +47,8 @@ export const ContratoModal: React.FC<ContratoModalProps> = ({ solicitud, onClose
                             Instrumento público de formalización contractual y reconocimiento de obligaciones
                         </p>
                     </div>
-                    <button className="btn btn-secondary" onClick={onClose} style={{ padding: '0.25rem 0.5rem' }}>
-                        ✕
+                    <button className="btn btn-secondary" onClick={onClose} style={{ padding: '0.25rem 0.5rem', display: 'flex', alignItems: 'center' }}>
+                        <X size={16} />
                     </button>
                 </div>
 

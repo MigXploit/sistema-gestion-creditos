@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import type { EvaluacionItem, ResultadoBuro, SolicitudItem, UsuarioSession } from '../types';
+import { X } from 'lucide-react';
 
 interface EvaluacionModalProps {
     solicitud: SolicitudItem;
@@ -159,8 +160,8 @@ export const EvaluacionModal: React.FC<EvaluacionModalProps> = ({ solicitud, use
                             Solicitud: <strong>{solicitud.numeroSolicitud}</strong> | Cliente: <strong>{solicitud.nombreCompletoCliente}</strong> (CI: {solicitud.ciCliente}) | Monto: <strong>Bs {solicitud.montoSolicitado.toLocaleString('es-BO', { minimumFractionDigits: 2 })}</strong> | Plazo: <strong>{solicitud.plazoMeses} meses</strong>
                         </p>
                     </div>
-                    <button className="btn btn-secondary" onClick={onClose} style={{ padding: '0.25rem 0.5rem' }}>
-                        ✕
+                    <button className="btn btn-secondary" onClick={onClose} style={{ padding: '0.25rem 0.5rem', display: 'flex', alignItems: 'center' }}>
+                        <X size={16} />
                     </button>
                 </div>
 
