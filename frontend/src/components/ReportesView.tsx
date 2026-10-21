@@ -56,38 +56,38 @@ export const ReportesView: React.FC = () => {
 
             {/* Tarjetas KPI */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '1.75rem' }}>
-                <div className="card" style={{ borderLeft: '4px solid var(--purple-500)', background: 'var(--bg-nested)', boxShadow: '3px 3px 0px #1e0938' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--purple-400)', fontWeight: 700, fontFamily: 'var(--font-tech)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>MONTO TOTAL COLOCADO</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff', marginTop: '0.35rem', fontFamily: 'var(--font-mono)' }}>
+                <div className="card kpi-card kpi-purple">
+                    <div className="kpi-label kpi-label-purple">MONTO TOTAL COLOCADO</div>
+                    <div className="kpi-value kpi-value-purple">
                         Bs {indicadoresGenerales?.montoTotalColocadoBs.toLocaleString('es-BO', { minimumFractionDigits: 2 })}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>{indicadoresGenerales?.totalCreditosEmitidos} créditos formalizados</div>
+                    <div className="kpi-subtext">{indicadoresGenerales?.totalCreditosEmitidos} créditos formalizados</div>
                 </div>
 
-                <div className="card" style={{ borderLeft: '4px solid var(--teal-500)', background: 'var(--bg-nested)', boxShadow: '3px 3px 0px #042f2e' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--teal-400)', fontWeight: 700, fontFamily: 'var(--font-tech)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>CARTERA VIGENTE AL DÍA</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--teal-300)', marginTop: '0.35rem', fontFamily: 'var(--font-mono)' }}>
+                <div className="card kpi-card kpi-teal">
+                    <div className="kpi-label kpi-label-teal">CARTERA VIGENTE AL DÍA</div>
+                    <div className="kpi-value kpi-value-teal">
                         Bs {indicadoresGenerales?.saldoCarteraVigenteBs.toLocaleString('es-BO', { minimumFractionDigits: 2 })}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--teal-400)', marginTop: '0.35rem' }}>Saldo vivo recuperable</div>
+                    <div className="kpi-subtext kpi-subtext-teal">Saldo vivo recuperable</div>
                 </div>
 
-                <div className="card" style={{ borderLeft: '4px solid var(--rose-500)', background: 'var(--bg-nested)', boxShadow: '3px 3px 0px #4c0519' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--rose-400)', fontWeight: 700, fontFamily: 'var(--font-tech)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>CARTERA EN MORA</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--rose-300)', marginTop: '0.35rem', fontFamily: 'var(--font-mono)' }}>
+                <div className="card kpi-card kpi-rose">
+                    <div className="kpi-label kpi-label-rose">CARTERA EN MORA</div>
+                    <div className="kpi-value kpi-value-rose">
                         Bs {indicadoresGenerales?.saldoCarteraMoraBs.toLocaleString('es-BO', { minimumFractionDigits: 2 })}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--rose-400)', marginTop: '0.35rem' }}>
+                    <div className="kpi-subtext kpi-subtext-rose">
                         Índice de mora: <strong>{indicadoresGenerales?.indiceMorosidadPorcentaje}%</strong>
                     </div>
                 </div>
 
-                <div className="card" style={{ borderLeft: '4px solid var(--amber-500)', background: 'var(--bg-nested)', boxShadow: '3px 3px 0px #451a03' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--amber-400)', fontWeight: 700, fontFamily: 'var(--font-tech)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>TOTAL RECAUDADO (CAJA)</div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--amber-300)', marginTop: '0.35rem', fontFamily: 'var(--font-mono)' }}>
+                <div className="card kpi-card kpi-amber">
+                    <div className="kpi-label kpi-label-amber">TOTAL RECAUDADO (CAJA)</div>
+                    <div className="kpi-value kpi-value-amber">
                         Bs {indicadoresGenerales?.totalRecaudadoPagosBs.toLocaleString('es-BO', { minimumFractionDigits: 2 })}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>Capital + Interés + Mora</div>
+                    <div className="kpi-subtext">Capital + Interés + Mora</div>
                 </div>
             </div>
 
@@ -95,21 +95,21 @@ export const ReportesView: React.FC = () => {
             <div className="card" style={{ marginBottom: '1.75rem' }}>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.25rem' }}>Distribución de Trámites por Etapa Operativa</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
-                    <div style={{ background: 'rgba(14, 165, 233, 0.1)', padding: '1.25rem', borderRadius: '10px', textAlign: 'center', border: '1.5px solid rgba(14, 165, 233, 0.35)', boxShadow: '2px 2px 0px #090612' }}>
-                        <div style={{ fontSize: '0.75rem', color: '#7dd3fc', fontFamily: 'var(--font-tech)', fontWeight: 700, textTransform: 'uppercase' }}>REGISTRADAS</div>
-                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#38bdf8', fontFamily: 'var(--font-mono)', marginTop: '0.25rem' }}>{solicitudesPorEstado?.REGISTRADA || 0}</div>
+                    <div className="kpi-stage-box kpi-stage-registrada">
+                        <div className="kpi-stage-label">REGISTRADAS</div>
+                        <div className="kpi-stage-count">{solicitudesPorEstado?.REGISTRADA || 0}</div>
                     </div>
-                    <div style={{ background: 'rgba(217, 119, 6, 0.1)', padding: '1.25rem', borderRadius: '10px', textAlign: 'center', border: '1.5px solid rgba(245, 158, 11, 0.35)', boxShadow: '2px 2px 0px #090612' }}>
-                        <div style={{ fontSize: '0.75rem', color: '#fde68a', fontFamily: 'var(--font-tech)', fontWeight: 700, textTransform: 'uppercase' }}>EN EVALUACIÓN</div>
-                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fbbf24', fontFamily: 'var(--font-mono)', marginTop: '0.25rem' }}>{solicitudesPorEstado?.EN_EVALUACION || 0}</div>
+                    <div className="kpi-stage-box kpi-stage-evaluacion">
+                        <div className="kpi-stage-label">EN EVALUACIÓN</div>
+                        <div className="kpi-stage-count">{solicitudesPorEstado?.EN_EVALUACION || 0}</div>
                     </div>
-                    <div style={{ background: 'rgba(13, 148, 136, 0.1)', padding: '1.25rem', borderRadius: '10px', textAlign: 'center', border: '1.5px solid rgba(20, 184, 166, 0.35)', boxShadow: '2px 2px 0px #090612' }}>
-                        <div style={{ fontSize: '0.75rem', color: '#99f6e4', fontFamily: 'var(--font-tech)', fontWeight: 700, textTransform: 'uppercase' }}>APROBADAS</div>
-                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#2dd4bf', fontFamily: 'var(--font-mono)', marginTop: '0.25rem' }}>{solicitudesPorEstado?.APROBADA || 0}</div>
+                    <div className="kpi-stage-box kpi-stage-aprobada">
+                        <div className="kpi-stage-label">APROBADAS</div>
+                        <div className="kpi-stage-count">{solicitudesPorEstado?.APROBADA || 0}</div>
                     </div>
-                    <div style={{ background: 'rgba(225, 29, 72, 0.1)', padding: '1.25rem', borderRadius: '10px', textAlign: 'center', border: '1.5px solid rgba(244, 63, 94, 0.35)', boxShadow: '2px 2px 0px #090612' }}>
-                        <div style={{ fontSize: '0.75rem', color: '#fecdd3', fontFamily: 'var(--font-tech)', fontWeight: 700, textTransform: 'uppercase' }}>RECHAZADAS</div>
-                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f43f5e', fontFamily: 'var(--font-mono)', marginTop: '0.25rem' }}>{solicitudesPorEstado?.RECHAZADA || 0}</div>
+                    <div className="kpi-stage-box kpi-stage-rechazada">
+                        <div className="kpi-stage-label">RECHAZADAS</div>
+                        <div className="kpi-stage-count">{solicitudesPorEstado?.RECHAZADA || 0}</div>
                     </div>
                 </div>
             </div>

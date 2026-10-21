@@ -243,8 +243,8 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
 
                             {/* Formulario de Pago Modal/Inline */}
                             {cuotaParaPagar && (
-                                <div style={{ background: 'rgba(217, 119, 6, 0.1)', border: '1.5px solid var(--amber-500)', boxShadow: '4px 4px 0px #1e0938', padding: '1.25rem', borderRadius: 'var(--radius)', marginBottom: '1.5rem' }}>
-                                    <h4 style={{ color: 'var(--amber-300)', marginBottom: '0.5rem', fontWeight: 700 }}>
+                                <div className="caja-cobro-box">
+                                    <h4 className="caja-cobro-title">
                                         Cobro de Cuota N° {cuotaParaPagar.numeroCuota} (Vence: {cuotaParaPagar.fechaVencimiento})
                                     </h4>
                                     <form onSubmit={handleProcesarPago} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', alignItems: 'flex-end' }}>
@@ -289,21 +289,21 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
 
                             {/* Recibo Emitido */}
                             {reciboGenerado && (
-                                <div style={{ background: 'rgba(13, 148, 136, 0.12)', border: '1.5px solid var(--teal-500)', boxShadow: '4px 4px 0px #1e0938', padding: '1.25rem', borderRadius: 'var(--radius)', marginBottom: '1.5rem' }}>
+                                <div className="caja-recibo-box">
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <h4 style={{ color: 'var(--teal-300)', margin: 0, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                        <h4 className="caja-recibo-title">
                                             <Receipt size={16} /> Comprobante Fiscal: {reciboGenerado.numeroRecibo}
                                         </h4>
                                         <span style={{ fontSize: '0.8rem', color: 'var(--teal-400)', fontFamily: 'var(--font-mono)' }}>Fecha: {reciboGenerado.fechaPago}</span>
                                     </div>
                                     <p style={{ fontSize: '0.875rem', color: 'var(--text-body)', margin: '0.5rem 0' }}>
-                                        Cuota N° {reciboGenerado.numeroCuota} · Total Cobrado: <strong style={{ color: 'var(--teal-300)', fontFamily: 'var(--font-tech)' }}>Bs {reciboGenerado.montoTotal.toFixed(2)}</strong> ({reciboGenerado.formaPago})
+                                        Cuota N° {reciboGenerado.numeroCuota} · Total Cobrado: <strong style={{ color: 'var(--teal-500)', fontFamily: 'var(--font-tech)' }}>Bs {reciboGenerado.montoTotal.toFixed(2)}</strong> ({reciboGenerado.formaPago})
                                     </p>
-                                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: 'var(--teal-300)', flexWrap: 'wrap' }}>
+                                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: 'var(--text-body)', flexWrap: 'wrap' }}>
                                         <span>Mora: Bs {reciboGenerado.montoMora.toFixed(2)}</span>
                                         <span>Interés: Bs {reciboGenerado.montoInteres.toFixed(2)}</span>
                                         <span>Capital: Bs {reciboGenerado.montoCapital.toFixed(2)}</span>
-                                        <span style={{ color: 'var(--text-heading)' }}>Saldo Deudor Restante: Bs {reciboGenerado.saldoCapitalCredito.toFixed(2)}</span>
+                                        <span style={{ color: 'var(--text-heading)', fontWeight: 700 }}>Saldo Deudor Restante: Bs {reciboGenerado.saldoCapitalCredito.toFixed(2)}</span>
                                     </div>
                                 </div>
                             )}

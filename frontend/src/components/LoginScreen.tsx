@@ -100,22 +100,22 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
                         Acceso Rápido por Rol (Clave: Bancario2026!):
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
-                        <button type="button" onClick={() => handleSelectDemoUser('cmendoza')} style={quickBtnStyle}>
+                        <button type="button" onClick={() => handleSelectDemoUser('cmendoza')} className="login-quick-btn">
                             <Award size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> JEFE
                         </button>
-                        <button type="button" onClick={() => handleSelectDemoUser('atorrez')} style={quickBtnStyle}>
+                        <button type="button" onClick={() => handleSelectDemoUser('atorrez')} className="login-quick-btn">
                             <FileText size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> OFICIAL
                         </button>
-                        <button type="button" onClick={() => handleSelectDemoUser('lrojas')} style={quickBtnStyle}>
+                        <button type="button" onClick={() => handleSelectDemoUser('lrojas')} className="login-quick-btn">
                             <Search size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> ANALISTA
                         </button>
-                        <button type="button" onClick={() => handleSelectDemoUser('cajero1')} style={quickBtnStyle}>
+                        <button type="button" onClick={() => handleSelectDemoUser('cajero1')} className="login-quick-btn">
                             <DollarSign size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> CAJERO
                         </button>
-                        <button type="button" onClick={() => handleSelectDemoUser('gerente1')} style={quickBtnStyle}>
+                        <button type="button" onClick={() => handleSelectDemoUser('gerente1')} className="login-quick-btn">
                             <BarChart3 size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> GERENTE
                         </button>
-                        <button type="button" onClick={() => handleSelectDemoUser('admin')} style={quickBtnStyle}>
+                        <button type="button" onClick={() => handleSelectDemoUser('admin')} className="login-quick-btn">
                             <Shield size={13} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> ADMIN
                         </button>
                     </div>
@@ -123,20 +123,4 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
             </div>
         </div>
     );
-};
-
-const quickBtnStyle: React.CSSProperties = {
-    padding: '0.45rem 0.6rem',
-    fontSize: '0.75rem',
-    background: 'rgba(26, 18, 46, 0.7)',
-    border: '1.5px solid var(--border-color)',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    color: '#cbd5e1',
-    fontFamily: 'var(--font-tech)',
-    fontWeight: 600,
-    letterSpacing: '0.04em',
-    transition: 'all 0.15s ease',
-    boxShadow: '2px 2px 0px #090612',
-    textAlign: 'center'
 };
