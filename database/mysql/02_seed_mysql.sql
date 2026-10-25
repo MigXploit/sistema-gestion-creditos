@@ -15,7 +15,7 @@ INSERT INTO `usuario` (`id_usuario`, `nombre_completo`, `login`, `clave_hash`, `
 (2, 'Ana Torrez', 'atorrez', '$2a$10$fuwKKF7MN3xord0A.RUop.WCKpp2PxsAQQSz3vB.8XbT1quSTw/U2', 'OFICIAL', 0.00, 1, 0),
 (3, 'Luis Rojas', 'lrojas', '$2a$10$fuwKKF7MN3xord0A.RUop.WCKpp2PxsAQQSz3vB.8XbT1quSTw/U2', 'ANALISTA', 0.00, 1, 0),
 (4, 'Cajero de Prueba', 'cajero1', '$2a$10$fuwKKF7MN3xord0A.RUop.WCKpp2PxsAQQSz3vB.8XbT1quSTw/U2', 'CAJERO', 0.00, 1, 0),
-(5, 'Gerente de Prueba', 'gerente1', '$2a$10$fuwKKF7MN3xord0A.RUop.WCKpp2PxsAQQSz3vB.8XbT1quSTw/U2', 'GERENTE', 0.00, 1, 0),
+(5, 'Gerente de Prueba', 'gerente1', '$2a$10$fuwKKF7MN3xord0A.RUop.WCKpp2PxsAQQSz3vB.8XbT1quSTw/U2', 'GERENTE', 500000.00, 1, 0),
 (6, 'Administrador del Sistema', 'admin', '$2a$10$fuwKKF7MN3xord0A.RUop.WCKpp2PxsAQQSz3vB.8XbT1quSTw/U2', 'ADMINISTRADOR', 0.00, 1, 0)
 ON DUPLICATE KEY UPDATE `nombre_completo` = VALUES(`nombre_completo`);
 

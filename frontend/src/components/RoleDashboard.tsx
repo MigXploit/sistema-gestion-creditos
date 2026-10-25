@@ -119,6 +119,13 @@ export const RoleDashboard: React.FC<RoleDashboardProps> = ({ user, onNavigate }
 
                     {user.rol === 'GERENTE' && (
                         <>
+                            <div className="module-card" onClick={() => onNavigate('bandeja')}>
+                                <h4>Aprobación Gerencial (P02 / CU07)</h4>
+                                <p>Resolución colegiada de créditos escalados (&gt; Bs 70.000) en base al informe y dictamen técnico.</p>
+                                <span className="badge-dev-pill badge-enabled">
+                                    Habilitado
+                                </span>
+                            </div>
                             <div className="module-card" onClick={() => onNavigate('reportes')}>
                                 <h4>P09: Centro de Reportes</h4>
                                 <p>Consultas y KPIs consolidados de cartera, mora y pagos (CU14 - RF15).</p>

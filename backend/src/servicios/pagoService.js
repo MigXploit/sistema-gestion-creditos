@@ -1,6 +1,7 @@
 import { estaEnModoMemoria, baseDatosEnMemoria, obtenerPool } from '../config/baseDeDatos.js';
 import { coreBancarioService } from './coreBancarioService.js';
 import { auditoriaService } from './auditoriaService.js';
+import { notificacionService } from './notificacionService.js';
 import { ReglaNegocioError } from '../middleware/manejadorErrores.js';
 import { ESTADOS_CREDITO, ESTADOS_CUOTA, ESTADOS_CONTRATO } from '../config/reglasNegocio.js';
 
@@ -254,6 +255,32 @@ export const pagoService = {
                 ipOrigen: ipOrigen,
             });
 
+            let notifResMemoria = null;
+            try {
+                const solMem = baseDatosEnMemoria.solicitudes.find(s => s.id_solicitud === credito.id_solicitud);
+                const cliMem = solMem ? baseDatosEnMemoria.clientes.find(c => c.id_cliente === solMem.id_cliente) : null;
+                const emailCli = cliMem?.email || (cliMem ? `${cliMem.nombres.toLowerCase().replace(/\s+/g, '.')}@gmail.com` : 'cliente@banco-umsa.edu.bo');
+                const nomCli = cliMem ? `${cliMem.nombres} ${cliMem.apellidos}` : 'Cliente Bancario';
+                notifResMemoria = await notificacionService.enviarNotificacionPago({
+                    destinatario: emailCli,
+                    nombreCliente: nomCli,
+                    numeroRecibo: numeroRecibo,
+                    numeroCredito: credito.numero_credito,
+                    numeroCuota: cuota.numero_cuota,
+                    montoTotal: monto,
+                    montoMora: pagoMora,
+                    montoInteres: pagoInteres,
+                    montoCapital: pagoCapital,
+                    saldoCapitalCredito: credito.saldo_capital,
+                    formaPago: metodoPago,
+                    fechaPago: fechaPagoHoy,
+                    usernameOperador,
+                    ipOrigen
+                });
+            } catch (errNotif) {
+                console.warn('Error al enviar notificacion de pago en memoria:', errNotif.message);
+            }
+
             return {
                 idPago: nuevoIdPago,
                 numeroRecibo: numeroRecibo,
@@ -269,6 +296,7 @@ export const pagoService = {
                 estadoCredito: credito.estado,
                 fechaPago: fechaPagoHoy,
                 formaPago: metodoPago,
+                notificacionEmail: notifResMemoria,
             };
         }
 
@@ -350,6 +378,46 @@ export const pagoService = {
                 ipOrigen: ipOrigen,
             });
 
+            // Enviar notificación por correo al cliente
+            let notifRes = null;
+            try {
+                const [infoClientes] = await pool.query(
+                    `SELECT c.nombres, c.apellidos, c.email, cr.numero_credito
+                     FROM cuota cu
+                     JOIN credito cr ON cu.id_credito = cr.id_credito
+                     JOIN solicitud_credito s ON cr.id_solicitud = s.id_solicitud
+                     JOIN cliente c ON s.id_cliente = c.id_cliente
+                     WHERE cu.id_cuota = ?`,
+                    [id]
+                );
+                let nomCli = 'Cliente Bancario';
+                let emailCli = 'cliente@banco-umsa.edu.bo';
+                let numCred = credito.numero_credito;
+                if (infoClientes.length > 0) {
+                    nomCli = `${infoClientes[0].nombres} ${infoClientes[0].apellidos}`.trim();
+                    emailCli = infoClientes[0].email || `${infoClientes[0].nombres.toLowerCase().replace(/\s+/g, '.')}@gmail.com`;
+                    numCred = infoClientes[0].numero_credito;
+                }
+                notifRes = await notificacionService.enviarNotificacionPago({
+                    destinatario: emailCli,
+                    nombreCliente: nomCli,
+                    numeroRecibo: numeroRecibo,
+                    numeroCredito: numCred,
+                    numeroCuota: cuota.numero_cuota,
+                    montoTotal: monto,
+                    montoMora: pagoMora,
+                    montoInteres: pagoInteres,
+                    montoCapital: pagoCapital,
+                    saldoCapitalCredito: nuevoSaldoCapital,
+                    formaPago: metodoPago,
+                    fechaPago: fechaPagoHoy,
+                    usernameOperador,
+                    ipOrigen
+                });
+            } catch (errNotif) {
+                console.warn('Error al enviar notificación:', errNotif.message);
+            }
+
             return {
                 idPago: idPago,
                 numeroRecibo: numeroRecibo,
@@ -365,6 +433,7 @@ export const pagoService = {
                 estadoCredito: nuevoEstadoCredito,
                 fechaPago: fechaPagoHoy,
                 formaPago: metodoPago,
+                notificacionEmail: notifRes,
             };
         } catch (error) {
             await conexionTransaccional.rollback();
@@ -384,20 +453,20 @@ export const pagoService = {
 
         if (estaEnModoMemoria()) {
             for (const cuota of baseDatosEnMemoria.cuotas) {
-                if (cuota.estado === ESTADOS_CUOTA.PENDIENTE && cuota.fecha_vencimiento < fechaHoy) {
-                    const diasAtraso = Math.floor((new Date(fechaHoy) - new Date(cuota.fecha_vencimiento)) / (1000 * 60 * 60 * 24));
+                if ((cuota.estado === ESTADOS_CUOTA.PENDIENTE || cuota.estado === ESTADOS_CUOTA.VENCIDA) && cuota.fecha_vencimiento < fechaHoy) {
+                    const diasAtraso = Math.max(1, Math.floor((new Date(fechaHoy) - new Date(cuota.fecha_vencimiento)) / (1000 * 60 * 60 * 24)));
                     const credito = baseDatosEnMemoria.creditos.find(c => c.id_credito === cuota.id_credito);
                     const tasaMoraAnual = credito ? parseFloat(credito.tasa_mora || 18.0) : 18.0;
 
-                    // Mora diaria = Saldo capital de cuota * (tasaMora / 360) * diasAtraso
+                    // Mora diaria = Saldo capital de cuota * (tasaMora / 360) * diasAtraso (CU13 / RF14)
                     const moraCalculada = Math.round((parseFloat(cuota.capital) * (tasaMoraAnual / 100.0 / 360.0) * diasAtraso) * 100) / 100;
 
                     cuota.dias_mora = diasAtraso;
                     cuota.interes_mora = moraCalculada;
                     cuota.estado = ESTADOS_CUOTA.VENCIDA;
-                    cuota.saldo_pendiente = Math.round((parseFloat(cuota.monto) + moraCalculada) * 100) / 100;
+                    cuota.saldo_pendiente = Math.round((parseFloat(cuota.capital) + parseFloat(cuota.interes_comp) + moraCalculada) * 100) / 100;
 
-                    if (credito && credito.estado === ESTADOS_CREDITO.VIGENTE) {
+                    if (credito && (credito.estado === ESTADOS_CREDITO.VIGENTE || credito.estado === ESTADOS_CREDITO.EN_MORA)) {
                         credito.estado = ESTADOS_CREDITO.EN_MORA;
                     }
                     cuotasAfectadas++;
@@ -427,22 +496,22 @@ export const pagoService = {
             `SELECT c.*, cr.tasa_mora, cr.estado AS estadoCredito
              FROM cuota c
              JOIN credito cr ON c.id_credito = cr.id_credito
-             WHERE c.estado = 'PENDIENTE' AND c.fecha_vencimiento < ?`,
+             WHERE c.estado IN ('PENDIENTE', 'VENCIDA') AND c.fecha_vencimiento < ?`,
             [fechaHoy]
         );
 
         for (const c of cuotasVencidas) {
-            const diasAtraso = Math.floor((new Date(fechaHoy) - new Date(c.fecha_vencimiento)) / (1000 * 60 * 60 * 24));
+            const diasAtraso = Math.max(1, Math.floor((new Date(fechaHoy) - new Date(c.fecha_vencimiento)) / (1000 * 60 * 60 * 24)));
             const tasaMoraAnual = parseFloat(c.tasa_mora || 18.0);
             const moraCalculada = Math.round((parseFloat(c.capital) * (tasaMoraAnual / 100.0 / 360.0) * diasAtraso) * 100) / 100;
-            const nuevoSaldo = Math.round((parseFloat(c.monto) + moraCalculada) * 100) / 100;
+            const nuevoSaldo = Math.round((parseFloat(c.capital) + parseFloat(c.interes_comp) + moraCalculada) * 100) / 100;
 
             await pool.query(
                 `UPDATE cuota SET dias_mora = ?, interes_mora = ?, estado = 'VENCIDA', saldo_pendiente = ? WHERE id_cuota = ?`,
                 [diasAtraso, moraCalculada, nuevoSaldo, c.id_cuota]
             );
             await pool.query(
-                `UPDATE credito SET estado = 'EN_MORA' WHERE id_credito = ? AND estado = 'VIGENTE'`,
+                `UPDATE credito SET estado = 'EN_MORA' WHERE id_credito = ? AND estado IN ('VIGENTE', 'EN_MORA')`,
                 [c.id_credito]
             );
             cuotasAfectadas++;

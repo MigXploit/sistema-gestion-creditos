@@ -35,13 +35,14 @@ export interface ClienteItem {
     nombres: string;
     apellidos: string;
     telefono?: string;
+    email?: string;
     direccion?: string;
     ingresosMensuales: number;
     fechaRegistro: string;
 }
 
 export type TipoCredito = 'CONSUMO' | 'VEHICULAR' | 'VIVIENDA' | 'MICROCREDITO';
-export type EstadoSolicitud = 'REGISTRADA' | 'EN_EVALUACION' | 'APROBADA' | 'RECHAZADA';
+export type EstadoSolicitud = 'REGISTRADA' | 'EN_EVALUACION' | 'DERIVADA_A_GERENCIA' | 'APROBADA' | 'RECHAZADA';
 
 export interface SolicitudItem {
     idSolicitud: number;
@@ -49,6 +50,7 @@ export interface SolicitudItem {
     fechaSolicitud: string;
     idCliente: number;
     ciCliente: string;
+    emailCliente?: string;
     nombreCompletoCliente: string;
     montoSolicitado: number;
     plazoMeses: number;
@@ -72,6 +74,12 @@ export interface GarantiaItem {
     valorTasacion: number;
     coberturaPorcentaje: number;
     estado: string;
+    documentosAdjuntos?: Array<{
+        nombre: string;
+        tipo: string;
+        tamanio?: string;
+        datos?: string;
+    }>;
 }
 
 export interface ResultadoBuro {

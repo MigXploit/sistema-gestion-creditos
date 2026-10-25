@@ -13,7 +13,7 @@ export const clienteService = {
      * CA02: Si el CI ya existe, devuelve el cliente existente sin duplicar.
      */
     async registrarCliente(datosCliente, usernameOperador, ipOrigen) {
-        const { ci, nombres, apellidos, telefono, direccion, ingresosMensuales } = datosCliente;
+        const { ci, nombres, apellidos, telefono, email, direccion, ingresosMensuales } = datosCliente;
 
         if (!ci || !ci.trim()) {
             throw new ReglaNegocioError('El número de documento de identidad (CI) es obligatorio (CA01).');
@@ -46,6 +46,7 @@ export const clienteService = {
                 nombres: nombres.trim(),
                 apellidos: apellidos.trim(),
                 telefono: telefono ? telefono.trim() : null,
+                email: email ? email.trim() : null,
                 direccion: direccion ? direccion.trim() : null,
                 ingresos_mensuales: ingresosNumericos,
                 fecha_registro: fechaRegistroHoy,
@@ -74,9 +75,9 @@ export const clienteService = {
         }
 
         const [resultadoInsert] = await pool.query(
-            `INSERT INTO cliente (ci, nombres, apellidos, telefono, direccion, ingresos_mensuales, fecha_registro)
-             VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [ciLimpio, nombres.trim(), apellidos.trim(), telefono ? telefono.trim() : null, direccion ? direccion.trim() : null, ingresosNumericos, fechaRegistroHoy]
+            `INSERT INTO cliente (ci, nombres, apellidos, telefono, email, direccion, ingresos_mensuales, fecha_registro)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [ciLimpio, nombres.trim(), apellidos.trim(), telefono ? telefono.trim() : null, email ? email.trim() : null, direccion ? direccion.trim() : null, ingresosNumericos, fechaRegistroHoy]
         );
 
         const nuevoId = resultadoInsert.insertId;
@@ -197,6 +198,7 @@ export const clienteService = {
             nombres: fila.nombres,
             apellidos: fila.apellidos,
             telefono: fila.telefono || undefined,
+            email: fila.email || undefined,
             direccion: fila.direccion || undefined,
             ingresosMensuales: parseFloat(fila.ingresos_mensuales),
             fechaRegistro: fila.fecha_registro instanceof Date

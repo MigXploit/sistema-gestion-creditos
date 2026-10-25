@@ -197,7 +197,7 @@ export const usuarioService = {
         if (!rol) throw new ReglaNegocioError('El rol es obligatorio.');
 
         const claveHash = bcrypt.hashSync(password, 10);
-        const limite = parseFloat(limiteAtribucion || 0);
+        const limite = parseFloat(limiteAtribucion || (rol === 'JEFE' ? 70000 : (rol === 'GERENTE' ? 500000 : 0)));
 
         if (estaEnModoMemoria()) {
             const existente = baseDatosEnMemoria.usuarios.find(u => u.login === login.trim());

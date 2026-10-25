@@ -180,6 +180,58 @@ export const solicitudService = {
         return this.buscarPorId(id);
     },
 
+    /**
+     * Derivar solicitud a Gerencia cuando excede límite de atribución (Jefe > Bs 70.000).
+     */
+    async derivarAGerencia(idSolicitud, datosDerivacion, usernameOperador, ipOrigen) {
+        const id = parseInt(idSolicitud, 10);
+        const motivo = datosDerivacion?.motivo || 'Monto fuera de atribución del Jefe de Créditos (> Bs 70.000). Se deriva a Gerencia para revisión de dictamen y aprobación colegiada.';
+
+        if (estaEnModoMemoria()) {
+            const solicitud = baseDatosEnMemoria.solicitudes.find(s => s.id_solicitud === id);
+            if (!solicitud) throw new ReglaNegocioError(`Solicitud no encontrada con ID: ${id}`);
+            if (solicitud.estado !== ESTADOS_SOLICITUD.EN_EVALUACION) {
+                throw new ReglaNegocioError(`Solo se pueden derivar a Gerencia solicitudes en estado EN_EVALUACION. Estado actual: ${solicitud.estado}`);
+            }
+            solicitud.estado = ESTADOS_SOLICITUD.DERIVADA_A_GERENCIA;
+
+            await auditoriaService.registrarEvento({
+                username: usernameOperador,
+                operacion: 'DERIVAR_A_GERENCIA',
+                entidad: 'SOLICITUD_CREDITO',
+                idEntidad: id,
+                resultado: 'EXITOSO',
+                detalles: `Solicitud ${solicitud.numero_solicitud} derivada a Gerencia por ${usernameOperador}. Motivo: ${motivo}`,
+                ipOrigen: ipOrigen,
+            });
+
+            return this.buscarPorId(id);
+        }
+
+        const pool = obtenerPool();
+        const [filas] = await pool.query('SELECT * FROM solicitud_credito WHERE id_solicitud = ?', [id]);
+        if (filas.length === 0) throw new ReglaNegocioError(`Solicitud no encontrada con ID: ${id}`);
+        const solicitud = filas[0];
+
+        if (solicitud.estado !== ESTADOS_SOLICITUD.EN_EVALUACION) {
+            throw new ReglaNegocioError(`Solo se pueden derivar a Gerencia solicitudes en estado EN_EVALUACION. Estado actual: ${solicitud.estado}`);
+        }
+
+        await pool.query('UPDATE solicitud_credito SET estado = ? WHERE id_solicitud = ?', [ESTADOS_SOLICITUD.DERIVADA_A_GERENCIA, id]);
+
+        await auditoriaService.registrarEvento({
+            username: usernameOperador,
+            operacion: 'DERIVAR_A_GERENCIA',
+            entidad: 'SOLICITUD_CREDITO',
+            idEntidad: id,
+            resultado: 'EXITOSO',
+            detalles: `Solicitud ${solicitud.numero_solicitud} derivada a Gerencia por ${usernameOperador}. Motivo: ${motivo}`,
+            ipOrigen: ipOrigen,
+        });
+
+        return this.buscarPorId(id);
+    },
+
     async listarTodas(filtroEstado) {
         if (estaEnModoMemoria()) {
             let lista = baseDatosEnMemoria.solicitudes;
@@ -191,7 +243,7 @@ export const solicitudService = {
 
         const pool = obtenerPool();
         let querySql = `
-            SELECT s.*, c.ci AS ciCliente, CONCAT(c.nombres, ' ', c.apellidos) AS nombreCompletoCliente,
+            SELECT s.*, c.ci AS ciCliente, c.email AS emailCliente, CONCAT(c.nombres, ' ', c.apellidos) AS nombreCompletoCliente,
                    e.resultado AS resultadoEvaluacion, e.id_evaluacion,
                    cr.id_credito, cr.numero_credito
             FROM solicitud_credito s
@@ -220,7 +272,7 @@ export const solicitudService = {
 
         const pool = obtenerPool();
         const [filas] = await pool.query(
-            `SELECT s.*, c.ci AS ciCliente, CONCAT(c.nombres, ' ', c.apellidos) AS nombreCompletoCliente,
+            `SELECT s.*, c.ci AS ciCliente, c.email AS emailCliente, CONCAT(c.nombres, ' ', c.apellidos) AS nombreCompletoCliente,
                     e.resultado AS resultadoEvaluacion, e.id_evaluacion,
                     cr.id_credito, cr.numero_credito
              FROM solicitud_credito s
@@ -245,6 +297,7 @@ export const solicitudService = {
             fechaSolicitud: s.fecha_solicitud,
             idCliente: s.id_cliente,
             ciCliente: cliente.ci || '',
+            emailCliente: cliente.email || undefined,
             nombreCompletoCliente: cliente.nombres ? `${cliente.nombres} ${cliente.apellidos}` : '',
             montoSolicitado: parseFloat(s.monto_solicitado || s.montoSolicitado),
             plazoMeses: s.plazo_meses || s.plazoMeses,
@@ -269,6 +322,7 @@ export const solicitudService = {
                 : String(fila.fecha_solicitud).split('T')[0],
             idCliente: fila.id_cliente,
             ciCliente: fila.ciCliente,
+            emailCliente: fila.emailCliente || undefined,
             nombreCompletoCliente: fila.nombreCompletoCliente,
             montoSolicitado: parseFloat(fila.monto_solicitado),
             plazoMeses: fila.plazo_meses,

@@ -149,6 +149,13 @@ export const api = {
         });
     },
 
+    derivarSolicitud(id: number, data: { motivo?: string }) {
+        return this.request(`/solicitudes/${id}/derivar`, {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    },
+
     // --- GARANTÍAS (CU06 / RF07 / P12) ---
     getGarantiasBySolicitud(idSolicitud: number) {
         return this.request(`/garantias/solicitud/${idSolicitud}`);

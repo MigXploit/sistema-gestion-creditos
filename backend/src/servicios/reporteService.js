@@ -24,6 +24,7 @@ export const reporteService = {
             const conteoSolicitudesPorEstado = {
                 REGISTRADA: solicitudes.filter(s => s.estado === 'REGISTRADA').length,
                 EN_EVALUACION: solicitudes.filter(s => s.estado === 'EN_EVALUACION').length,
+                DERIVADA_A_GERENCIA: solicitudes.filter(s => s.estado === 'DERIVADA_A_GERENCIA').length,
                 APROBADA: solicitudes.filter(s => s.estado === 'APROBADA').length,
                 RECHAZADA: solicitudes.filter(s => s.estado === 'RECHAZADA').length,
             };
@@ -88,7 +89,7 @@ export const reporteService = {
             ? Math.round((saldoMora / (saldoVigente + saldoMora)) * 10000) / 100
             : 0;
 
-        const conteoEstados = { REGISTRADA: 0, EN_EVALUACION: 0, APROBADA: 0, RECHAZADA: 0 };
+        const conteoEstados = { REGISTRADA: 0, EN_EVALUACION: 0, DERIVADA_A_GERENCIA: 0, APROBADA: 0, RECHAZADA: 0 };
         for (const row of solicitudesConteo) {
             conteoEstados[row.estado] = row.cantidad;
         }

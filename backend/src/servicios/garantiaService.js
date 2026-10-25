@@ -36,6 +36,9 @@ export const garantiaService = {
             // Cobertura = (Valor Tasación / Monto Solicitado) * 100
             const cobertura = montoSolicitado > 0 ? Math.round(((valor * 100) / montoSolicitado) * 100) / 100 : 0;
 
+            const documentos = datosGarantia.documentosAdjuntos || datosGarantia.documentos || [];
+            const documentosStr = typeof documentos === 'string' ? documentos : JSON.stringify(documentos);
+
             const nuevoId = baseDatosEnMemoria.contadores.idGarantia++;
             const nuevaGarantia = {
                 id_garantia: nuevoId,
@@ -46,6 +49,7 @@ export const garantiaService = {
                 valor_tasacion: valor,
                 cobertura_porcentaje: cobertura,
                 estado: ESTADOS_GARANTIA.VIGENTE,
+                documentos_adjuntos: documentosStr,
             };
 
             baseDatosEnMemoria.garantias.push(nuevaGarantia);
@@ -56,7 +60,7 @@ export const garantiaService = {
                 entidad: 'GARANTIA',
                 idEntidad: nuevoId,
                 resultado: 'EXITOSO',
-                detalles: `Garantía tipo: ${tipo} registrada para solicitud ${numeroSolicitud} por valor Bs ${valor} (Cobertura: ${cobertura}%)`,
+                detalles: `Garantía tipo: ${tipo} registrada para solicitud ${numeroSolicitud} por valor Bs ${valor} (Cobertura: ${cobertura}%) con ${documentos.length} documento(s) adjunto(s)`,
                 ipOrigen: ipOrigen,
             });
 
@@ -71,11 +75,13 @@ export const garantiaService = {
         numeroSolicitud = solicitudes[0].numero_solicitud;
 
         const cobertura = montoSolicitado > 0 ? Math.round(((valor * 100) / montoSolicitado) * 100) / 100 : 0;
+        const documentos = datosGarantia.documentosAdjuntos || datosGarantia.documentos || [];
+        const documentosStr = typeof documentos === 'string' ? documentos : JSON.stringify(documentos);
 
         const [resultadoInsert] = await pool.query(
-            `INSERT INTO garantia (id_solicitud, tipo, descripcion, valor_tasacion, cobertura_porcentaje, estado)
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [idSol, tipo.trim(), descripcion.trim(), valor, cobertura, ESTADOS_GARANTIA.VIGENTE]
+            `INSERT INTO garantia (id_solicitud, tipo, descripcion, valor_tasacion, cobertura_porcentaje, estado, documentos_adjuntos)
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [idSol, tipo.trim(), descripcion.trim(), valor, cobertura, ESTADOS_GARANTIA.VIGENTE, documentosStr]
         );
 
         const nuevoId = resultadoInsert.insertId;
@@ -86,7 +92,7 @@ export const garantiaService = {
             entidad: 'GARANTIA',
             idEntidad: nuevoId,
             resultado: 'EXITOSO',
-            detalles: `Garantía tipo: ${tipo} registrada para solicitud ${numeroSolicitud} por valor Bs ${valor} (Cobertura: ${cobertura}%)`,
+            detalles: `Garantía tipo: ${tipo} registrada para solicitud ${numeroSolicitud} por valor Bs ${valor} (Cobertura: ${cobertura}%) con ${documentos.length} documento(s) adjunto(s)`,
             ipOrigen: ipOrigen,
         });
 
@@ -98,6 +104,7 @@ export const garantiaService = {
             valorTasacion: valor,
             coberturaPorcentaje: cobertura,
             estado: ESTADOS_GARANTIA.VIGENTE,
+            documentosAdjuntos: Array.isArray(documentos) ? documentos : [],
         };
     },
 
@@ -126,6 +133,14 @@ export const garantiaService = {
     },
 
     mapearAGarantiaDto(g) {
+        let docs = [];
+        try {
+            if (g.documentos_adjuntos) {
+                docs = typeof g.documentos_adjuntos === 'string' ? JSON.parse(g.documentos_adjuntos) : g.documentos_adjuntos;
+            }
+        } catch (e) {
+            docs = [];
+        }
         return {
             idGarantia: g.id_garantia,
             idSolicitud: g.id_solicitud,
@@ -135,6 +150,7 @@ export const garantiaService = {
             valorTasacion: parseFloat(g.valor_tasacion),
             coberturaPorcentaje: g.cobertura_porcentaje ? parseFloat(g.cobertura_porcentaje) : 0,
             estado: g.estado,
+            documentosAdjuntos: Array.isArray(docs) ? docs : [],
         };
     }
 };

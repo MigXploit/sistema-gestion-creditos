@@ -125,8 +125,19 @@ enrutadorApi.get('/solicitudes/:id', autenticarTokenJwt, requerirRoles('OFICIAL'
     }
 });
 
-// CU07: Aprobar crédito
-enrutadorApi.post('/solicitudes/:id/aprobar', autenticarTokenJwt, requerirRoles('JEFE', 'ADMINISTRADOR'), async (req, res, next) => {
+// Derivar a instancia superior (Gerente) cuando excede atribución
+enrutadorApi.post('/solicitudes/:id/derivar', autenticarTokenJwt, requerirRoles('JEFE', 'ADMINISTRADOR'), async (req, res, next) => {
+    try {
+        const ipOrigen = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+        const respuesta = await solicitudService.derivarAGerencia(req.params.id, req.body || {}, req.usuario.login, ipOrigen);
+        res.json(respuesta);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// CU07: Aprobar crédito (Jefe, Gerente o Administrador)
+enrutadorApi.post('/solicitudes/:id/aprobar', autenticarTokenJwt, requerirRoles('JEFE', 'GERENTE', 'ADMINISTRADOR'), async (req, res, next) => {
     try {
         const ipOrigen = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
         const respuesta = await creditoService.aprobarCredito(req.params.id, req.body || {}, req.usuario.login, ipOrigen);
@@ -136,8 +147,8 @@ enrutadorApi.post('/solicitudes/:id/aprobar', autenticarTokenJwt, requerirRoles(
     }
 });
 
-// CU08: Rechazar crédito
-enrutadorApi.post('/solicitudes/:id/rechazar', autenticarTokenJwt, requerirRoles('JEFE', 'ADMINISTRADOR'), async (req, res, next) => {
+// CU08: Rechazar crédito (Jefe, Gerente o Administrador)
+enrutadorApi.post('/solicitudes/:id/rechazar', autenticarTokenJwt, requerirRoles('JEFE', 'GERENTE', 'ADMINISTRADOR'), async (req, res, next) => {
     try {
         const ipOrigen = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
         const respuesta = await creditoService.rechazarCredito(req.params.id, req.body || {}, req.usuario.login, ipOrigen);
@@ -267,7 +278,7 @@ enrutadorApi.get('/creditos/:id/contrato', autenticarTokenJwt, requerirRoles('JE
 });
 
 // CU11: Desembolsar crédito
-enrutadorApi.post('/creditos/:id/desembolsar', autenticarTokenJwt, requerirRoles('OFICIAL', 'JEFE', 'ADMINISTRADOR'), async (req, res, next) => {
+enrutadorApi.post('/creditos/:id/desembolsar', autenticarTokenJwt, requerirRoles('OFICIAL', 'JEFE', 'GERENTE', 'ADMINISTRADOR'), async (req, res, next) => {
     try {
         const ipOrigen = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
         const respuesta = await pagoService.desembolsarCredito(req.params.id, req.usuario.login, ipOrigen);

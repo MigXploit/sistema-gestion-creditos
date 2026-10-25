@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import type { SolicitudItem, CuotaItem, UsuarioSession } from '../types';
-import { Clock, Receipt, CheckCircle, Search, RefreshCw } from 'lucide-react';
+import { Clock, Receipt, CheckCircle, Search, RefreshCw, Download, Mail } from 'lucide-react';
+import { pdfService } from '../services/pdfService';
 
 interface CajaPagosViewProps {
     user: UsuarioSession;
@@ -287,14 +288,26 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
                                 </div>
                             )}
 
-                            {/* Recibo Emitido */}
+                            {/* Recibo Emitido con opción de PDF y Notificación */}
                             {reciboGenerado && (
                                 <div className="caja-recibo-box">
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <h4 className="caja-recibo-title">
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+                                        <h4 className="caja-recibo-title" style={{ margin: 0 }}>
                                             <Receipt size={16} /> Comprobante Fiscal: {reciboGenerado.numeroRecibo}
                                         </h4>
-                                        <span style={{ fontSize: '0.8rem', color: 'var(--teal-400)', fontFamily: 'var(--font-mono)' }}>Fecha: {reciboGenerado.fechaPago}</span>
+                                        <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                                            <button
+                                                type="button"
+                                                className="btn btn-primary"
+                                                style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: 'var(--purple-600)', color: '#fff' }}
+                                                onClick={() => pdfService.emitirFacturaPDF(reciboGenerado, solicitudSeleccionada, creditoInfo)}
+                                                title="Descargar comprobante tributario oficial en PDF"
+                                            >
+                                                <Download size={14} />
+                                                Descargar Factura PDF
+                                            </button>
+                                            <span style={{ fontSize: '0.8rem', color: 'var(--teal-400)', fontFamily: 'var(--font-mono)' }}>Fecha: {reciboGenerado.fechaPago}</span>
+                                        </div>
                                     </div>
                                     <p style={{ fontSize: '0.875rem', color: 'var(--text-body)', margin: '0.5rem 0' }}>
                                         Cuota N° {reciboGenerado.numeroCuota} · Total Cobrado: <strong style={{ color: 'var(--teal-500)', fontFamily: 'var(--font-tech)' }}>Bs {reciboGenerado.montoTotal.toFixed(2)}</strong> ({reciboGenerado.formaPago})
@@ -305,6 +318,14 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
                                         <span>Capital: Bs {reciboGenerado.montoCapital.toFixed(2)}</span>
                                         <span style={{ color: 'var(--text-heading)', fontWeight: 700 }}>Saldo Deudor Restante: Bs {reciboGenerado.saldoCapitalCredito.toFixed(2)}</span>
                                     </div>
+                                    {reciboGenerado.notificacionEmail && (
+                                        <div style={{ marginTop: '0.75rem', padding: '0.5rem 0.75rem', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '6px', fontSize: '0.8rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                                            <Mail size={14} />
+                                            <span>
+                                                Notificación oficial de pago enviada a: <strong>{reciboGenerado.notificacionEmail.destinatario}</strong> ({reciboGenerado.notificacionEmail.simulado ? 'Notificación ASFI Registrada' : 'Correo SMTP Enviado'})
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

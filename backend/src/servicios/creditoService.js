@@ -25,8 +25,8 @@ export const creditoService = {
             const solicitud = baseDatosEnMemoria.solicitudes.find(s => s.id_solicitud === id);
             if (!solicitud) throw new ReglaNegocioError(`Solicitud no encontrada con ID: ${id}`);
 
-            if (solicitud.estado !== ESTADOS_SOLICITUD.EN_EVALUACION) {
-                throw new ReglaNegocioError(`Solo se pueden aprobar solicitudes en estado EN_EVALUACION. Estado actual: ${solicitud.estado}`);
+            if (solicitud.estado !== ESTADOS_SOLICITUD.EN_EVALUACION && solicitud.estado !== ESTADOS_SOLICITUD.DERIVADA_A_GERENCIA) {
+                throw new ReglaNegocioError(`Solo se pueden aprobar solicitudes en estado EN_EVALUACION o DERIVADA_A_GERENCIA. Estado actual: ${solicitud.estado}`);
             }
 
             // CA11: Validación estricta de evaluación previa FAVORABLE
@@ -40,23 +40,26 @@ export const creditoService = {
                 );
             }
 
-            // CA13: Validación de límite de atribución (Bs 70.000 para Jefe de Créditos)
+            // CA13: Validación de límite de atribución (Bs 70.000 para Jefe de Créditos; Gerente/Admin ampliado)
             const usuarioOperador = baseDatosEnMemoria.usuarios.find(u => u.login === usernameOperador);
-            const limiteAtribucion = usuarioOperador ? parseFloat(usuarioOperador.limite_atribucion) : UMBRALES_FINANCIEROS_EVALUACION.limiteAtribucionJefeCreditosBs;
+            const esGerenteOAdmin = usuarioOperador && (usuarioOperador.rol === 'GERENTE' || usuarioOperador.rol === 'ADMINISTRADOR');
+            const limiteAtribucion = usuarioOperador && parseFloat(usuarioOperador.limite_atribucion) > 0
+                ? parseFloat(usuarioOperador.limite_atribucion)
+                : (esGerenteOAdmin ? 9999999.00 : UMBRALES_FINANCIEROS_EVALUACION.limiteAtribucionJefeCreditosBs);
             const montoSolicitado = parseFloat(solicitud.monto_solicitado || solicitud.montoSolicitado);
 
-            if (limiteAtribucion > 0 && montoSolicitado > limiteAtribucion) {
+            if (!esGerenteOAdmin && limiteAtribucion > 0 && montoSolicitado > limiteAtribucion) {
                 await auditoriaService.registrarEvento({
                     username: usernameOperador,
                     operacion: 'INTENTO_APROBACION_EXCEDE_ATRIBUCION',
                     entidad: 'SOLICITUD_CREDITO',
                     idEntidad: id,
                     resultado: 'BLOQUEADO',
-                    detalles: `Intento de aprobación bloqueado: Monto solicitado (Bs ${montoSolicitado}) excede el límite de atribución del Jefe (Bs ${limiteAtribucion}). Requiere derivar a Comité de Créditos (CA13).`,
+                    detalles: `Intento de aprobación bloqueado: Monto solicitado (Bs ${montoSolicitado}) excede el límite de atribución del Jefe (Bs ${limiteAtribucion}). Requiere derivar a Gerente / Comité de Créditos (CA13).`,
                     ipOrigen: ipOrigen,
                 });
                 throw new ReglaNegocioError(
-                    `Monto fuera de atribución: El monto solicitado de Bs ${montoSolicitado.toLocaleString()} supera su límite de aprobación de Bs ${limiteAtribucion.toLocaleString()}. Debe derivar el trámite al Comité de Créditos (CA13).`
+                    `Monto fuera de atribución: El monto solicitado de Bs ${montoSolicitado.toLocaleString()} supera su límite de aprobación de Bs ${limiteAtribucion.toLocaleString()}. Debe derivar el trámite a una instancia superior (Gerente) (CA13).`
                 );
             }
 
@@ -148,8 +151,8 @@ export const creditoService = {
         if (solicitudes.length === 0) throw new ReglaNegocioError(`Solicitud no encontrada con ID: ${id}`);
         const solicitud = solicitudes[0];
 
-        if (solicitud.estado !== ESTADOS_SOLICITUD.EN_EVALUACION) {
-            throw new ReglaNegocioError(`Solo se pueden aprobar solicitudes en estado EN_EVALUACION. Estado actual: ${solicitud.estado}`);
+        if (solicitud.estado !== ESTADOS_SOLICITUD.EN_EVALUACION && solicitud.estado !== ESTADOS_SOLICITUD.DERIVADA_A_GERENCIA) {
+            throw new ReglaNegocioError(`Solo se pueden aprobar solicitudes en estado EN_EVALUACION o DERIVADA_A_GERENCIA. Estado actual: ${solicitud.estado}`);
         }
 
         const [evaluaciones] = await pool.query('SELECT * FROM evaluacion_credito WHERE id_solicitud = ?', [id]);
@@ -163,21 +166,25 @@ export const creditoService = {
         }
 
         const [usuarios] = await pool.query('SELECT * FROM usuario WHERE login = ?', [usernameOperador]);
-        const limiteAtribucion = usuarios.length > 0 ? parseFloat(usuarios[0].limite_atribucion) : UMBRALES_FINANCIEROS_EVALUACION.limiteAtribucionJefeCreditosBs;
+        const operador = usuarios.length > 0 ? usuarios[0] : null;
+        const esGerenteOAdmin = operador && (operador.rol === 'GERENTE' || operador.rol === 'ADMINISTRADOR');
+        const limiteAtribucion = operador && parseFloat(operador.limite_atribucion) > 0
+            ? parseFloat(operador.limite_atribucion)
+            : (esGerenteOAdmin ? 9999999.00 : UMBRALES_FINANCIEROS_EVALUACION.limiteAtribucionJefeCreditosBs);
         const montoSolicitado = parseFloat(solicitud.monto_solicitado);
 
-        if (limiteAtribucion > 0 && montoSolicitado > limiteAtribucion) {
+        if (!esGerenteOAdmin && limiteAtribucion > 0 && montoSolicitado > limiteAtribucion) {
             await auditoriaService.registrarEvento({
                 username: usernameOperador,
                 operacion: 'INTENTO_APROBACION_EXCEDE_ATRIBUCION',
                 entidad: 'SOLICITUD_CREDITO',
                 idEntidad: id,
                 resultado: 'BLOQUEADO',
-                detalles: `Intento de aprobación bloqueado: Monto solicitado (Bs ${montoSolicitado}) excede el límite de atribución del Jefe (Bs ${limiteAtribucion}). Requiere derivar a Comité de Créditos (CA13).`,
+                detalles: `Intento de aprobación bloqueado: Monto solicitado (Bs ${montoSolicitado}) excede el límite de atribución del Jefe (Bs ${limiteAtribucion}). Requiere derivar a Gerente / Comité de Créditos (CA13).`,
                 ipOrigen: ipOrigen,
             });
             throw new ReglaNegocioError(
-                `Monto fuera de atribución: El monto solicitado de Bs ${montoSolicitado.toLocaleString()} supera su límite de aprobación de Bs ${limiteAtribucion.toLocaleString()}. Debe derivar el trámite al Comité de Créditos (CA13).`
+                `Monto fuera de atribución: El monto solicitado de Bs ${montoSolicitado.toLocaleString()} supera su límite de aprobación de Bs ${limiteAtribucion.toLocaleString()}. Debe derivar el trámite a una instancia superior (Gerente) (CA13).`
             );
         }
 

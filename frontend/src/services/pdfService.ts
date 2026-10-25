@@ -1,0 +1,263 @@
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import type { AuditoriaItem, SolicitudItem } from '../types';
+
+/**
+ * Servicio de Generación de Documentos y Reportes en Formato PDF
+ * Cumple con estándares formales bancarios y normativa ASFI / UMSA INF-241.
+ */
+export const pdfService = {
+    /**
+     * Emitir Factura / Comprobante de Cobranza Oficial en PDF (P08 / CU12 / RF13)
+     */
+    emitirFacturaPDF(recibo: any, solicitud?: SolicitudItem | null, credito?: any | null) {
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'letter'
+        });
+
+        const titular = solicitud?.nombreCompletoCliente || 'CLIENTE TITULAR';
+        const ci = solicitud?.ciCliente || 'N/A';
+        const numCredito = credito?.numeroCredito || solicitud?.numeroCredito || 'CR-OFICIAL';
+        const fechaHoy = recibo.fechaPago || new Date().toISOString().split('T')[0];
+
+        // 1. Encabezado Institucional UMSA
+        doc.setFillColor(76, 29, 149); // #4c1d95 Púrpura bancario UMSA
+        doc.rect(0, 0, 216, 28, 'F');
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(14);
+        doc.text('UNIVERSIDAD MAYOR DE SAN ANDRÉS', 108, 11, { align: 'center' });
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text('FACULTAD DE CIENCIAS PURAS Y NATURALES · CARRERA DE INFORMÁTICA', 108, 17, { align: 'center' });
+        doc.setFontSize(8.5);
+        doc.text('SISTEMA DE GESTIÓN DE CRÉDITOS Y COBRANZAS BANCARIAS (INF-241)', 108, 23, { align: 'center' });
+
+        // 2. Título del Comprobante Fiscal
+        doc.setTextColor(30, 41, 59);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(13);
+        doc.text('COMPROBANTE FISCAL DE PAGO Y AMORTIZACIÓN', 14, 38);
+
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100, 116, 139);
+        doc.text(`N° Recibo Oficial: ${recibo.numeroRecibo}`, 14, 44);
+        doc.text(`Fecha y Hora de Emisión: ${fechaHoy}`, 14, 49);
+
+        // Caja lateral derecha: NIT y Autorización ASFI
+        doc.setDrawColor(203, 213, 225);
+        doc.setFillColor(248, 250, 252);
+        doc.roundedRect(135, 33, 67, 21, 2, 2, 'FD');
+        doc.setTextColor(15, 23, 42);
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        doc.text('ENTIDAD BANCARIA UMSA', 138, 38);
+        doc.setFont('helvetica', 'normal');
+        doc.text('NIT Entidad: 1020304050', 138, 43);
+        doc.text('Autorización ASFI N°: 884-2026-CB', 138, 48);
+        doc.text('Modalidad: Facturación Computarizada', 138, 52);
+
+        // 3. Cuadro de Datos del Cliente y Crédito
+        doc.setDrawColor(124, 58, 237);
+        doc.setLineWidth(0.4);
+        doc.setFillColor(245, 243, 255);
+        doc.roundedRect(14, 58, 188, 26, 2, 2, 'FD');
+
+        doc.setTextColor(109, 40, 217);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9.5);
+        doc.text('DATOS DE LA OPERACIÓN CREDITICIA', 18, 64);
+
+        doc.setTextColor(30, 41, 59);
+        doc.setFontSize(8.5);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Titular / Cliente: ${titular}`, 18, 71);
+        doc.text(`Documento de Identidad (CI): ${ci}`, 18, 77);
+        doc.text(`N° de Crédito Asociado: ${numCredito}`, 18, 82);
+
+        doc.text(`Cuota N°: ${recibo.numeroCuota || '1'}`, 120, 71);
+        doc.text(`Forma de Pago: ${recibo.formaPago || 'EFECTIVO'}`, 120, 77);
+        doc.text(`Estado Cuota: ${recibo.estadoCuota || 'PAGADA'}`, 120, 82);
+
+        // 4. Tabla de Imputación Contable en Cascada (CA19 / RF13)
+        const itemsFactura = [
+            ['1', 'Interés Penal Moratorio (18% anual s/ capital)', `Bs ${Number(recibo.montoMora || 0).toFixed(2)}`],
+            ['2', 'Interés Compensatorio Corriente (Sistema Francés)', `Bs ${Number(recibo.montoInteres || 0).toFixed(2)}`],
+            ['3', 'Amortización Efectiva a Capital Vivo', `Bs ${Number(recibo.montoCapital || 0).toFixed(2)}`],
+            ['', 'TOTAL COBRADO Y AMORTIZADO', `Bs ${Number(recibo.montoTotal || 0).toFixed(2)}`],
+        ];
+
+        autoTable(doc, {
+            startY: 89,
+            head: [['Ítem', 'Concepto de Imputación (Prelación Estricta)', 'Importe Amortizado']],
+            body: itemsFactura,
+            theme: 'grid',
+            headStyles: {
+                fillColor: [76, 29, 149],
+                textColor: [255, 255, 255],
+                fontStyle: 'bold',
+                fontSize: 9,
+                halign: 'left',
+            },
+            styles: {
+                fontSize: 8.5,
+                cellPadding: 3.5,
+            },
+            columnStyles: {
+                0: { cellWidth: 16, halign: 'center' },
+                1: { cellWidth: 122 },
+                2: { cellWidth: 50, halign: 'right', fontStyle: 'bold' },
+            },
+            didParseCell: (data) => {
+                if (data.row.index === 3) {
+                    data.cell.styles.fontStyle = 'bold';
+                    data.cell.styles.fillColor = [237, 233, 254];
+                    data.cell.styles.textColor = [109, 40, 217];
+                }
+            }
+        });
+
+        // 5. Estado de Cuenta Posterior al Pago
+        const finalY = (doc as any).lastAutoTable?.finalY || 135;
+        doc.setDrawColor(203, 213, 225);
+        doc.setFillColor(248, 250, 252);
+        doc.roundedRect(14, finalY + 5, 188, 22, 2, 2, 'FD');
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(8.5);
+        doc.setTextColor(30, 41, 59);
+        doc.text('RESUMEN DE SALDO DEUDOR REMANENTE', 18, finalY + 11);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(71, 85, 105);
+        doc.text(`Saldo Capital Vivo Restante: Bs ${Number(recibo.saldoCapitalCredito || 0).toLocaleString('es-BO', { minimumFractionDigits: 2 })}`, 18, finalY + 17);
+        doc.text(`Estado del Crédito: ${recibo.estadoCredito || 'VIGENTE'}`, 18, finalY + 22);
+
+        doc.text(`Saldo Exigible Cuota: Bs ${Number(recibo.saldoPendienteCuota || 0).toFixed(2)}`, 120, finalY + 17);
+        doc.text('Canal: Ventanilla Principal de Caja (P08)', 120, finalY + 22);
+
+        // 6. Pie de Página y Control Fiscal
+        const qrBoxY = finalY + 34;
+        doc.setDrawColor(203, 213, 225);
+        doc.roundedRect(14, qrBoxY, 188, 30, 2, 2);
+
+        doc.setFontSize(7.5);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(30, 41, 59);
+        doc.text('CÓDIGO DE CONTROL FISCAL Y SEGURIDAD BANCARIA:', 18, qrBoxY + 6);
+        doc.setFont('courier', 'bold');
+        doc.setFontSize(8.5);
+        doc.setTextColor(76, 29, 149);
+        doc.text(`CF-2026-${recibo.numeroRecibo}-ASFI-UMSA-9941A`, 18, qrBoxY + 12);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.5);
+        doc.setTextColor(100, 116, 139);
+        doc.text('Este documento constituye comprobante formal y fiscal de pago conforme a la Ley N° 393 de Servicios Financieros.', 18, qrBoxY + 18);
+        doc.text('La imputación contable se ejecutó respetando estrictamente la prelación legal: 1° Intereses Penales, 2° Intereses Corrientes, 3° Capital Vivo.', 18, qrBoxY + 23);
+        doc.text('Original: Cliente · Copia Digital: Archivo de Auditoría Inmutable del Sistema Bancario.', 18, qrBoxY + 27);
+
+        // Guardar archivo PDF en navegador
+        const nombreArchivo = `Factura_${recibo.numeroRecibo || 'PAGO'}_${fechaHoy}.pdf`;
+        doc.save(nombreArchivo);
+    },
+
+    /**
+     * Generar Reporte de Auditoría Inmutable en PDF (CU15 / RNF06 / RN12)
+     */
+    emitirReporteAuditoriaPDF(trazas: AuditoriaItem[], usuarioGenerador: string = 'GERENTE') {
+        const doc = new jsPDF({
+            orientation: 'landscape',
+            unit: 'mm',
+            format: 'letter'
+        });
+
+        const fechaGeneracion = new Date().toLocaleString('es-BO');
+
+        // 1. Encabezado Institucional UMSA Landscape (279 x 216 mm)
+        doc.setFillColor(76, 29, 149);
+        doc.rect(0, 0, 279, 24, 'F');
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(13);
+        doc.text('UNIVERSIDAD MAYOR DE SAN ANDRÉS · CARRERA DE INFORMÁTICA (INF-241)', 139.5, 10, { align: 'center' });
+        doc.setFontSize(9.5);
+        doc.setFont('helvetica', 'normal');
+        doc.text('SISTEMA DE GESTIÓN DE CRÉDITOS · REPORTE OFICIAL DE TRAZABILIDAD Y AUDITORÍA INMUTABLE', 139.5, 17, { align: 'center' });
+
+        // 2. Metadatos del Reporte
+        doc.setTextColor(30, 41, 59);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.text('TRAZA HISTÓRICA DE EVENTOS DE AUDITORÍA BANCARIA (RNF06 / RN12)', 14, 32);
+
+        doc.setFontSize(8.5);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100, 116, 139);
+        doc.text(`Fecha y Hora de Emisión: ${fechaGeneracion}`, 14, 37);
+        doc.text(`Generado por Operador: ${usuarioGenerador}`, 14, 42);
+        doc.text(`Total de Eventos Auditados: ${trazas.length} registros`, 150, 37);
+        doc.text('Integridad: Trazabilidad SHA-256 inmutable (Solo Lectura)', 150, 42);
+
+        // 3. Formateo de datos para la tabla
+        const tablaDatos = trazas.map((t, idx) => [
+            String(idx + 1),
+            new Date(t.fechaHora).toLocaleString('es-BO'),
+            t.operacion,
+            t.entidad,
+            t.idEntidad || '—',
+            t.ipOrigen || '127.0.0.1',
+            t.resultado,
+            t.detalles || 'Sin observaciones'
+        ]);
+
+        autoTable(doc, {
+            startY: 46,
+            head: [['#', 'Fecha / Hora', 'Operación', 'Entidad', 'Clave', 'IP Origen', 'Resultado', 'Detalles del Evento']],
+            body: tablaDatos,
+            theme: 'grid',
+            headStyles: {
+                fillColor: [76, 29, 149],
+                textColor: [255, 255, 255],
+                fontStyle: 'bold',
+                fontSize: 8,
+                halign: 'center',
+            },
+            styles: {
+                fontSize: 7.5,
+                cellPadding: 2.2,
+                overflow: 'linebreak'
+            },
+            columnStyles: {
+                0: { cellWidth: 8, halign: 'center' },
+                1: { cellWidth: 28, halign: 'center' },
+                2: { cellWidth: 38, fontStyle: 'bold' },
+                3: { cellWidth: 24 },
+                4: { cellWidth: 18, halign: 'center' },
+                5: { cellWidth: 22, halign: 'center' },
+                6: { cellWidth: 20, halign: 'center' },
+                7: { cellWidth: 93 },
+            },
+            didParseCell: (data) => {
+                if (data.column.index === 6) {
+                    if (data.cell.raw === 'EXITOSO') {
+                        data.cell.styles.textColor = [16, 185, 129];
+                        data.cell.styles.fontStyle = 'bold';
+                    } else if (data.cell.raw === 'BLOQUEADO' || data.cell.raw === 'FALLIDO') {
+                        data.cell.styles.textColor = [239, 68, 68];
+                        data.cell.styles.fontStyle = 'bold';
+                    }
+                }
+            }
+        });
+
+        const fechaSello = new Date().toISOString().split('T')[0];
+        doc.save(`Reporte_Auditoria_Bancaria_${fechaSello}.pdf`);
+    }
+};

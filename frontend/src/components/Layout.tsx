@@ -110,21 +110,22 @@ export const Layout: React.FC<LayoutProps> = ({ user, currentView, onNavigate, o
             case 'GERENTE':
                 return [
                     { id: 'dashboard', label: 'Inicio', icon: LayoutDashboard },
-                    { id: 'reportes', label: 'Centro de Reportes', icon: BarChart3 },
-                    { id: 'auditoria', label: 'Auditoría Bancaria', icon: ShieldAlert },
+                    { id: 'bandeja', label: 'Aprobación Gerencial', icon: CheckSquare },
+                    { id: 'reportes', label: 'Reportes', icon: BarChart3 },
+                    { id: 'auditoria', label: 'Auditoría', icon: ShieldAlert },
                 ];
             case 'ADMINISTRADOR':
                 return [
                     { id: 'dashboard', label: 'Inicio', icon: LayoutDashboard },
-                    { id: 'clientes', label: 'Clientes (P10)', icon: Users },
-                    { id: 'solicitudes', label: 'Solicitudes (P11)', icon: FileText },
-                    { id: 'evaluaciones', label: 'Evaluaciones (P13)', icon: ClipboardCheck },
-                    { id: 'bandeja', label: 'Bandeja Aprobación (P02)', icon: CheckSquare },
-                    { id: 'desembolsos', label: 'Desembolsos Core', icon: CreditCard },
-                    { id: 'caja', label: 'Caja · Cobranzas', icon: DollarSign },
-                    { id: 'reportes', label: 'Reportes Gerenciales', icon: BarChart3 },
-                    { id: 'usuarios', label: 'Usuarios y Roles (P14)', icon: Users },
-                    { id: 'auditoria', label: 'Auditoría del Sistema', icon: ShieldAlert },
+                    { id: 'clientes', label: 'Clientes', icon: Users },
+                    { id: 'solicitudes', label: 'Solicitudes', icon: FileText },
+                    { id: 'evaluaciones', label: 'Evaluación', icon: ClipboardCheck },
+                    { id: 'bandeja', label: 'Aprobación', icon: CheckSquare },
+                    { id: 'desembolsos', label: 'Desembolsos', icon: CreditCard },
+                    { id: 'caja', label: 'Caja', icon: DollarSign },
+                    { id: 'reportes', label: 'Reportes', icon: BarChart3 },
+                    { id: 'usuarios', label: 'Usuarios', icon: Users },
+                    { id: 'auditoria', label: 'Auditoría', icon: ShieldAlert },
                 ];
             default:
                 return [{ id: 'dashboard', label: 'Inicio', icon: LayoutDashboard }];

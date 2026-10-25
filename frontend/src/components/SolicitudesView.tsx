@@ -60,6 +60,7 @@ export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user }) => {
     const esOficial = user.rol === 'OFICIAL' || user.rol === 'ADMINISTRADOR';
     const esAnalista = user.rol === 'ANALISTA' || user.rol === 'ADMINISTRADOR';
     const esJefe = user.rol === 'JEFE' || user.rol === 'ADMINISTRADOR';
+    const esGerente = user.rol === 'GERENTE' || user.rol === 'ADMINISTRADOR';
 
     return (
         <div className="card">
@@ -83,6 +84,7 @@ export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user }) => {
                         <option value="TODOS">Todos los estados</option>
                         <option value="REGISTRADA">REGISTRADA (Bandeja Analista)</option>
                         <option value="EN_EVALUACION">EN_EVALUACION (Bandeja Jefe)</option>
+                        <option value="DERIVADA_A_GERENCIA">DERIVADA A GERENCIA (Bandeja Gerente)</option>
                         <option value="APROBADA">APROBADA (Formalizadas)</option>
                         <option value="RECHAZADA">RECHAZADA</option>
                     </select>
@@ -149,9 +151,10 @@ export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user }) => {
                                             <span className={`badge ${
                                                 s.estado === 'APROBADA' ? 'badge-success' :
                                                 s.estado === 'EN_EVALUACION' ? 'badge-info' :
+                                                s.estado === 'DERIVADA_A_GERENCIA' ? 'badge-warning' :
                                                 s.estado === 'RECHAZADA' ? 'badge-danger' : 'badge-warning'
                                             }`}>
-                                                {s.estado}
+                                                {s.estado === 'DERIVADA_A_GERENCIA' ? 'DERIVADA A GERENCIA' : s.estado}
                                             </span>
                                         </td>
                                         <td>
@@ -189,28 +192,28 @@ export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user }) => {
                                                     </button>
                                                 )}
 
-                                                {/* ESTADO EN_EVALUACION: Evaluar P13 (Analista/Jefe) */}
-                                                {s.estado === 'EN_EVALUACION' && (
+                                                {/* ESTADO EN_EVALUACION o DERIVADA_A_GERENCIA: Evaluar / Ver Dictamen P13 */}
+                                                {(s.estado === 'EN_EVALUACION' || s.estado === 'DERIVADA_A_GERENCIA') && (
                                                     <button
                                                         className="btn btn-primary"
                                                         style={{ padding: '0.2rem 0.45rem', fontSize: '0.75rem' }}
                                                         onClick={() => setSolicitudEvaluacion(s)}
-                                                        title="Evaluar capacidad y buró (P13)"
+                                                        title="Evaluar capacidad, buró e informe (P13)"
                                                     >
                                                         {s.tieneEvaluacion ? 'Ver Dictamen (P13)' : 'Evaluar Riesgo (P13)'}
                                                     </button>
                                                 )}
 
-                                                {/* ESTADO EN_EVALUACION: Decisión Jefe (CU07 / CU08) */}
-                                                {s.estado === 'EN_EVALUACION' && esJefe && (
+                                                {/* ESTADO EN_EVALUACION: Decisión Jefe (CU07 / CU08) o Derivación si > 70.000 */}
+                                                {s.estado === 'EN_EVALUACION' && esJefe && user.rol !== 'GERENTE' && (
                                                     <>
                                                         <button
                                                             className="btn btn-success"
                                                             style={{ padding: '0.2rem 0.45rem', fontSize: '0.75rem', background: '#10b981', color: '#fff' }}
                                                             onClick={() => setSolicitudAprobar(s)}
-                                                            title="Aprobar Crédito (P04)"
+                                                            title={s.montoSolicitado > 70000 ? "Revisar y derivar a Gerente" : "Aprobar Crédito (P04)"}
                                                         >
-                                                            Aprobar (P04)
+                                                            {s.montoSolicitado > 70000 ? 'Derivar / Aprobar' : 'Aprobar (P04)'}
                                                         </button>
                                                         <button
                                                             className="btn btn-danger"
@@ -219,6 +222,28 @@ export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user }) => {
                                                             title="Rechazar Crédito (P06)"
                                                         >
                                                             Rechazar (P06)
+                                                        </button>
+                                                    </>
+                                                )}
+
+                                                {/* ESTADO DERIVADA_A_GERENCIA o EN_EVALUACION: Decisión Gerente en base al informe */}
+                                                {(s.estado === 'DERIVADA_A_GERENCIA' || (s.estado === 'EN_EVALUACION' && user.rol === 'GERENTE')) && esGerente && (
+                                                    <>
+                                                        <button
+                                                            className="btn btn-success"
+                                                            style={{ padding: '0.2rem 0.45rem', fontSize: '0.75rem', background: '#7c3aed', color: '#fff' }}
+                                                            onClick={() => setSolicitudAprobar(s)}
+                                                            title="Aprobar Crédito Colegiado en base al Informe (Gerente)"
+                                                        >
+                                                            Aprobar Gerencia
+                                                        </button>
+                                                        <button
+                                                            className="btn btn-danger"
+                                                            style={{ padding: '0.2rem 0.45rem', fontSize: '0.75rem' }}
+                                                            onClick={() => setSolicitudRechazar(s)}
+                                                            title="Rechazar Crédito (Gerente)"
+                                                        >
+                                                            Rechazar
                                                         </button>
                                                     </>
                                                 )}

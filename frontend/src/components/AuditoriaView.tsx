@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import type { AuditoriaItem } from '../types';
+import { Download, RefreshCw, ShieldAlert } from 'lucide-react';
+import { pdfService } from '../services/pdfService';
 
 export const AuditoriaView: React.FC = () => {
     const [trazas, setTrazas] = useState<AuditoriaItem[]>([]);
@@ -25,19 +27,36 @@ export const AuditoriaView: React.FC = () => {
 
     return (
         <div className="card">
-            <div className="card-header">
+            <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
                 <div>
-                    <h3>Trazabilidad y Auditoría Inmutable</h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                        Registro histórico inmutable de eventos sensibles (RNF06, RN12). Solo lectura.
+                    <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, color: 'var(--text-heading)' }}>
+                        <ShieldAlert size={20} color="var(--purple-400)" />
+                        Trazabilidad y Auditoría Inmutable
+                    </h3>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                        Registro histórico inmutable de eventos sensibles (RNF06, RN12). Estándar ASFI de integridad bancaria.
                     </p>
                 </div>
-                <button
-                    className="btn-secondary"
-                    onClick={cargarAuditoria}
-                >
-                    Actualizar
-                </button>
+                <div style={{ display: 'flex', gap: '0.65rem' }}>
+                    <button
+                        className="btn btn-secondary"
+                        onClick={cargarAuditoria}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                    >
+                        <RefreshCw size={14} />
+                        Actualizar
+                    </button>
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => pdfService.emitirReporteAuditoriaPDF(trazas)}
+                        disabled={trazas.length === 0}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                        title="Exportar reporte formal de auditoría en formato PDF"
+                    >
+                        <Download size={14} />
+                        Exportar Reporte PDF
+                    </button>
+                </div>
             </div>
 
             {error && (
