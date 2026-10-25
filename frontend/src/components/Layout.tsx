@@ -14,6 +14,8 @@ import {
     Clock,
     LogOut,
     ChevronRight,
+    ChevronDown,
+    LayoutGrid,
     Menu,
     X,
     Sun,
@@ -74,61 +76,73 @@ export const Layout: React.FC<LayoutProps> = ({ user, currentView, onNavigate, o
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Cerrar menú desplegable con la tecla Escape
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                setMobileMenuOpen(false);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
     const formatTime = (seconds: number) => {
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
         return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     };
 
-    // Menú según la Sección 20.3 Menú por rol
+    // Menú según la Sección 20.3 Menú por rol con subetiquetas descriptivas
     const getMenuItems = () => {
         switch (user.rol) {
             case 'OFICIAL':
                 return [
-                    { id: 'dashboard', label: 'Inicio', icon: LayoutDashboard },
-                    { id: 'clientes', label: 'Clientes (P10)', icon: Users },
-                    { id: 'solicitudes', label: 'Solicitudes (P11)', icon: FileText },
-                    { id: 'garantias', label: 'Garantías (P12)', icon: Shield },
-                    { id: 'desembolsos', label: 'Desembolsos', icon: CreditCard },
+                    { id: 'dashboard', label: 'Inicio', sublabel: 'Panel y operaciones rápidas', icon: LayoutDashboard },
+                    { id: 'clientes', label: 'Clientes (P10)', sublabel: 'Padrón y registro de prestatarios', icon: Users },
+                    { id: 'solicitudes', label: 'Solicitudes (P11)', sublabel: 'Registro de solicitudes crediticias', icon: FileText },
+                    { id: 'garantias', label: 'Garantías (P12)', sublabel: 'Custodia hipotecaria y documentos', icon: Shield },
+                    { id: 'desembolsos', label: 'Desembolsos', sublabel: 'Consulta de desembolsos autorizados', icon: CreditCard },
                 ];
             case 'ANALISTA':
                 return [
-                    { id: 'dashboard', label: 'Inicio', icon: LayoutDashboard },
-                    { id: 'evaluaciones', label: 'Evaluaciones (P13)', icon: ClipboardCheck },
+                    { id: 'dashboard', label: 'Inicio', sublabel: 'Panel de riesgo financiero', icon: LayoutDashboard },
+                    { id: 'evaluaciones', label: 'Evaluaciones (P13)', sublabel: 'Buró ASFI, DTI y dictamen', icon: ClipboardCheck },
                 ];
             case 'JEFE':
                 return [
-                    { id: 'dashboard', label: 'Inicio', icon: LayoutDashboard },
-                    { id: 'bandeja', label: 'Bandeja Aprobación (P02)', icon: CheckSquare },
-                    { id: 'desembolsos', label: 'Desembolsos Core', icon: CreditCard },
+                    { id: 'dashboard', label: 'Inicio', sublabel: 'Panel de resoluciones', icon: LayoutDashboard },
+                    { id: 'bandeja', label: 'Bandeja Aprobación (P02)', sublabel: 'Resolución de créditos hasta Bs 70.000', icon: CheckSquare },
+                    { id: 'desembolsos', label: 'Desembolsos Core', sublabel: 'Autorización y desembolso', icon: CreditCard },
                 ];
             case 'CAJERO':
                 return [
-                    { id: 'dashboard', label: 'Inicio', icon: LayoutDashboard },
-                    { id: 'caja', label: 'Caja · Cobranzas (P08)', icon: DollarSign },
+                    { id: 'dashboard', label: 'Inicio', sublabel: 'Panel de ventanilla', icon: LayoutDashboard },
+                    { id: 'caja', label: 'Caja · Cobranzas (P08)', sublabel: 'Cobro de cuotas y factura en PDF', icon: DollarSign },
                 ];
             case 'GERENTE':
                 return [
-                    { id: 'dashboard', label: 'Inicio', icon: LayoutDashboard },
-                    { id: 'bandeja', label: 'Aprobación Gerencial', icon: CheckSquare },
-                    { id: 'reportes', label: 'Reportes', icon: BarChart3 },
-                    { id: 'auditoria', label: 'Auditoría', icon: ShieldAlert },
+                    { id: 'dashboard', label: 'Inicio', sublabel: 'Panel gerencial consolidado', icon: LayoutDashboard },
+                    { id: 'bandeja', label: 'Aprobación Gerencial', sublabel: 'Dictamen de créditos > Bs 70.000', icon: CheckSquare },
+                    { id: 'reportes', label: 'Reportes (P09)', sublabel: 'Métricas de cartera y mora ASFI', icon: BarChart3 },
+                    { id: 'auditoria', label: 'Auditoría', sublabel: 'Pistas de no repudio y reportes PDF', icon: ShieldAlert },
                 ];
             case 'ADMINISTRADOR':
                 return [
-                    { id: 'dashboard', label: 'Inicio', icon: LayoutDashboard },
-                    { id: 'clientes', label: 'Clientes', icon: Users },
-                    { id: 'solicitudes', label: 'Solicitudes', icon: FileText },
-                    { id: 'evaluaciones', label: 'Evaluación', icon: ClipboardCheck },
-                    { id: 'bandeja', label: 'Aprobación', icon: CheckSquare },
-                    { id: 'desembolsos', label: 'Desembolsos', icon: CreditCard },
-                    { id: 'caja', label: 'Caja', icon: DollarSign },
-                    { id: 'reportes', label: 'Reportes', icon: BarChart3 },
-                    { id: 'usuarios', label: 'Usuarios', icon: Users },
-                    { id: 'auditoria', label: 'Auditoría', icon: ShieldAlert },
+                    { id: 'dashboard', label: 'Inicio', sublabel: 'Panel y métricas consolidadas', icon: LayoutDashboard },
+                    { id: 'clientes', label: 'Clientes (P10)', sublabel: 'Padrón y registro de prestatarios', icon: Users },
+                    { id: 'solicitudes', label: 'Solicitudes (P11)', sublabel: 'Registro y seguimiento de trámites', icon: FileText },
+                    { id: 'evaluaciones', label: 'Evaluación (P13)', sublabel: 'Buró ASFI, DTI y capacidad de pago', icon: ClipboardCheck },
+                    { id: 'garantias', label: 'Garantías (P12)', sublabel: 'Custodia hipotecaria y documentos', icon: Shield },
+                    { id: 'bandeja', label: 'Aprobación (P02)', sublabel: 'Dictámenes y contratos formalizados', icon: CheckSquare },
+                    { id: 'desembolsos', label: 'Desembolsos (P04)', sublabel: 'Transferencia por Core Bancario', icon: CreditCard },
+                    { id: 'caja', label: 'Caja y Cobranzas (P08)', sublabel: 'Amortización y factura oficial', icon: DollarSign },
+                    { id: 'reportes', label: 'Reportes (P09)', sublabel: 'Métricas de cartera y mora ASFI', icon: BarChart3 },
+                    { id: 'usuarios', label: 'Usuarios y Roles (P14)', sublabel: 'Administración de cuentas RBAC', icon: Users },
+                    { id: 'auditoria', label: 'Auditoría Inmutable', sublabel: 'Trazas de no repudio (RN12/RNF06)', icon: ShieldAlert },
                 ];
             default:
-                return [{ id: 'dashboard', label: 'Inicio', icon: LayoutDashboard }];
+                return [{ id: 'dashboard', label: 'Inicio', sublabel: 'Panel principal', icon: LayoutDashboard }];
         }
     };
 
@@ -151,26 +165,54 @@ export const Layout: React.FC<LayoutProps> = ({ user, currentView, onNavigate, o
                         </div>
                     </div>
 
-                    {/* Navegación Horizontal Centrada (Escritorio) */}
+                    {/* Navegación Horizontal Centrada: Para Administrador se muestra menú desplegable compacto; para los demás roles, navegación en píldoras */}
                     <nav className="header-nav">
-                        {menuItems.map((item) => {
-                            const Icon = item.icon;
-                            const isActive = currentView === item.id;
-                            return (
+                        {user.rol === 'ADMINISTRADOR' ? (
+                            <div className="admin-nav-cluster">
                                 <button
-                                    key={item.id}
                                     type="button"
-                                    className={`nav-pill ${isActive ? 'active' : ''}`}
+                                    className={`nav-pill ${currentView === 'dashboard' ? 'active' : ''}`}
                                     onClick={() => {
-                                        onNavigate(item.id);
+                                        onNavigate('dashboard');
                                         setMobileMenuOpen(false);
                                     }}
                                 >
-                                    <Icon size={16} />
-                                    <span>{item.label}</span>
+                                    <LayoutDashboard size={15} />
+                                    <span>Inicio</span>
                                 </button>
-                            );
-                        })}
+
+                                <button
+                                    type="button"
+                                    className={`nav-pill nav-dropdown-btn ${currentView !== 'dashboard' || mobileMenuOpen ? 'active' : ''}`}
+                                    onClick={() => setMobileMenuOpen(prev => !prev)}
+                                    aria-expanded={mobileMenuOpen}
+                                    title="Desplegar menú de módulos del sistema"
+                                >
+                                    <LayoutGrid size={15} />
+                                    <span>Módulos del Sistema</span>
+                                    <ChevronDown size={14} className={`dropdown-chevron ${mobileMenuOpen ? 'open' : ''}`} />
+                                </button>
+                            </div>
+                        ) : (
+                            menuItems.map((item) => {
+                                const Icon = item.icon;
+                                const isActive = currentView === item.id;
+                                return (
+                                    <button
+                                        key={item.id}
+                                        type="button"
+                                        className={`nav-pill ${isActive ? 'active' : ''}`}
+                                        onClick={() => {
+                                            onNavigate(item.id);
+                                            setMobileMenuOpen(false);
+                                        }}
+                                    >
+                                        <Icon size={16} />
+                                        <span>{item.label}</span>
+                                    </button>
+                                );
+                            })
+                        )}
                     </nav>
 
                     {/* Acciones del Usuario en el extremo derecho */}
@@ -225,74 +267,121 @@ export const Layout: React.FC<LayoutProps> = ({ user, currentView, onNavigate, o
                             <span className="logout-text">Salir</span>
                         </button>
 
-                        {/* Toggle de Menú Móvil */}
+                        {/* Toggle de Menú Desplegable */}
                         <button
                             type="button"
-                            className="mobile-toggle"
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            aria-label="Abrir menú"
+                            className={`mobile-toggle ${user.rol === 'ADMINISTRADOR' ? 'admin-toggle-visible' : ''}`}
+                            onClick={() => setMobileMenuOpen(prev => !prev)}
+                            aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+                            title="Menú desplegable de módulos"
                         >
                             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
                         </button>
                     </div>
                 </div>
 
-                {/* Desplegable de Menú Móvil */}
+                {/* Menú Desplegable Unificado (Móvil y Escritorio para Administrador) */}
                 {mobileMenuOpen && (
-                    <div className="mobile-drawer">
-                        <nav className="mobile-nav">
-                            {menuItems.map((item) => {
-                                const Icon = item.icon;
-                                const isActive = currentView === item.id;
-                                return (
-                                    <button
-                                        key={item.id}
-                                        type="button"
-                                        className={`mobile-nav-item ${isActive ? 'active' : ''}`}
-                                        onClick={() => {
-                                            onNavigate(item.id);
-                                            setMobileMenuOpen(false);
-                                        }}
-                                    >
-                                        <Icon size={18} />
-                                        <span>{item.label}</span>
-                                    </button>
-                                );
-                            })}
-                            <div className="mobile-drawer-footer">
+                    <>
+                        {/* Backdrop traslúcido para cerrar al hacer clic afuera */}
+                        <div
+                            className="menu-dropdown-backdrop"
+                            onClick={() => setMobileMenuOpen(false)}
+                            aria-hidden="true"
+                        />
+                        <div
+                            className={`menu-dropdown-panel ${user.rol === 'ADMINISTRADOR' ? 'admin-dropdown-panel' : ''}`}
+                            role="dialog"
+                            aria-modal="true"
+                        >
+                            <div className="menu-dropdown-header">
+                                <div className="menu-dropdown-title">
+                                    <div className="menu-title-icon-box">
+                                        <Shield size={18} />
+                                    </div>
+                                    <div>
+                                        <div className="menu-dropdown-heading">
+                                            {user.rol === 'ADMINISTRADOR' ? 'Módulos del Sistema' : 'Menú de Navegación'}
+                                        </div>
+                                        <div className="menu-dropdown-subheading">
+                                            {user.rol === 'ADMINISTRADOR'
+                                                ? 'Acceso integral RBAC · Seleccione un módulo para operar'
+                                                : `Operaciones autorizadas para el funcionario (${user.rol})`}
+                                        </div>
+                                    </div>
+                                </div>
                                 <button
                                     type="button"
-                                    onClick={toggleTheme}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '0.5rem',
-                                        width: '100%',
-                                        padding: '0.65rem 1rem',
-                                        borderRadius: 'var(--radius)',
-                                        background: 'var(--bg-surface)',
-                                        border: '1px solid var(--border-color)',
-                                        color: 'var(--text-heading)',
-                                        fontSize: '0.85rem',
-                                        fontWeight: 600,
-                                        marginBottom: '0.75rem',
-                                        cursor: 'pointer'
+                                    className="menu-dropdown-close"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    aria-label="Cerrar menú desplegable"
+                                    title="Cerrar menú (Esc)"
+                                >
+                                    <X size={18} />
+                                </button>
+                            </div>
+
+                            <nav className={`menu-dropdown-grid ${user.rol === 'ADMINISTRADOR' ? 'admin-grid-2col' : ''}`}>
+                                {menuItems.map((item) => {
+                                    const Icon = item.icon;
+                                    const isActive = currentView === item.id;
+                                    return (
+                                        <button
+                                            key={item.id}
+                                            type="button"
+                                            className={`menu-dropdown-card ${isActive ? 'active' : ''}`}
+                                            onClick={() => {
+                                                onNavigate(item.id);
+                                                setMobileMenuOpen(false);
+                                            }}
+                                        >
+                                            <div className="menu-card-icon">
+                                                <Icon size={18} />
+                                            </div>
+                                            <div className="menu-card-content">
+                                                <div className="menu-card-label">
+                                                    <span>{item.label}</span>
+                                                    {isActive && <span className="menu-card-active-badge">Activo</span>}
+                                                </div>
+                                                {item.sublabel && (
+                                                    <div className="menu-card-sublabel">{item.sublabel}</div>
+                                                )}
+                                            </div>
+                                            <ChevronRight size={16} className="menu-card-arrow" />
+                                        </button>
+                                    );
+                                })}
+                            </nav>
+
+                            <div className="menu-dropdown-footer">
+                                <div className="menu-footer-actions">
+                                    <button
+                                        type="button"
+                                        className="menu-footer-theme-btn"
+                                        onClick={toggleTheme}
+                                    >
+                                        {theme === 'dark' ? <Sun size={15} color="var(--amber-400)" /> : <Moon size={15} color="var(--purple-600)" />}
+                                        <span>{theme === 'dark' ? 'Modo Claro' : 'Modo Oscuro'}</span>
+                                    </button>
+                                    <div className="menu-footer-timer">
+                                        <Clock size={14} />
+                                        <span>Sesión: {formatTime(timeLeft)}</span>
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    className="menu-footer-logout-btn"
+                                    onClick={() => {
+                                        setMobileMenuOpen(false);
+                                        onLogout();
                                     }}
                                 >
-                                    {theme === 'dark' ? <Sun size={16} color="var(--amber-400)" /> : <Moon size={16} color="var(--purple-600)" />}
-                                    <span>{theme === 'dark' ? 'Activar Modo Claro' : 'Activar Modo Oscuro'}</span>
-                                </button>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', fontSize: '0.8rem', color: 'var(--amber-400)' }}>
-                                    <Clock size={14} />
-                                    <span>Sesión: {formatTime(timeLeft)} restantes</span>
-                                </div>
-                                <button type="button" className="btn-logout" onClick={onLogout} style={{ width: '100%', justifyContent: 'center' }}>
-                                    <LogOut size={16} />
+                                    <LogOut size={15} />
                                     <span>Cerrar Sesión</span>
                                 </button>
                             </div>
-                        </nav>
-                    </div>
+                        </div>
+                    </>
                 )}
             </header>
 
