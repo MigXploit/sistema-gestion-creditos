@@ -147,4 +147,5 @@ export interface ContratoItem {
     fechaFirma?: string;
     notariaRegistro?: string;
     estado: string;
+    documentoAdjunto?: string;
 }

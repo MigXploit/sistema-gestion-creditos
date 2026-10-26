@@ -162,6 +162,13 @@ export const evaluacionService = {
         const calculo = await this.calcularCapacidadYRatios(id, ing, gst, deudasVigentes);
         const fechaEvaluacionHoy = new Date().toISOString().split('T')[0];
 
+        // RNF/Seguridad: Validación estricta en servidor contra manipulación de dictamen del cliente
+        const scoreNumerico = parseInt(scoreBuro, 10);
+        let resultadoValidado = resultado;
+        if (calculo.ratioDti > 40.0 || !calculo.cumpleCapacidadPago || scoreNumerico < 650) {
+            resultadoValidado = 'DESFAVORABLE';
+        }
+
         if (estaEnModoMemoria()) {
             const solicitud = baseDatosEnMemoria.solicitudes.find(s => s.id_solicitud === id);
             if (!solicitud) throw new ReglaNegocioError(`Solicitud no encontrada con ID: ${id}`);

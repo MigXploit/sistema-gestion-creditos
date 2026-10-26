@@ -77,7 +77,7 @@ export const SolicitudRegistroModal: React.FC<SolicitudRegistroModalProps> = ({ 
 
     return (
         <div className="modal-backdrop">
-            <div className="modal-content" style={{ maxWidth: '750px' }}>
+            <div className="modal-content" style={{ maxWidth: '750px', maxHeight: '90vh', overflowY: 'auto' }}>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--color-primary-dark)' }}>
                     Registro de Solicitud de Crédito (P11 – CU02 / RF03)
                 </h3>
@@ -89,8 +89,8 @@ export const SolicitudRegistroModal: React.FC<SolicitudRegistroModalProps> = ({ 
 
                 {/* 1. Búsqueda de Cliente por CI */}
                 <div style={{ background: 'var(--bg-nested)', padding: '1.25rem', borderRadius: 'var(--radius)', marginBottom: '1.25rem', border: '1px solid var(--border-color)', boxShadow: '2px 2px 0px #1e0938' }}>
-                    <form onSubmit={handleBuscarCliente} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end' }}>
-                        <div style={{ flex: 1 }}>
+                    <form onSubmit={handleBuscarCliente} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+                        <div style={{ flex: 1, minWidth: '220px' }}>
                             <label className="form-label" style={{ fontSize: '0.8125rem' }}>Buscar Cliente por CI *</label>
                             <input
                                 type="text"
@@ -108,7 +108,7 @@ export const SolicitudRegistroModal: React.FC<SolicitudRegistroModalProps> = ({ 
                     {clienteEncontrado && (
                         <div style={{ marginTop: '0.75rem', background: 'var(--bg-surface)', padding: '0.85rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-color)', fontSize: '0.875rem' }}>
                             <div>
-                                Cliente: <strong style={{ color: '#ffffff' }}>{clienteEncontrado.nombres} {clienteEncontrado.apellidos}</strong> (CI: <span style={{ fontFamily: 'var(--font-mono)' }}>{clienteEncontrado.ci}</span>)
+                                Cliente: <strong style={{ color: 'var(--text-heading)' }}>{clienteEncontrado.nombres} {clienteEncontrado.apellidos}</strong> (CI: <span style={{ fontFamily: 'var(--font-mono)' }}>{clienteEncontrado.ci}</span>)
                             </div>
                             <div style={{ color: 'var(--teal-300)', fontWeight: 600, marginTop: '0.25rem' }}>
                                 Ingresos Mensuales Comprobados: <span style={{ fontFamily: 'var(--font-tech)' }}>Bs {clienteEncontrado.ingresosMensuales.toLocaleString('es-BO', { minimumFractionDigits: 2 })}</span>
@@ -119,7 +119,7 @@ export const SolicitudRegistroModal: React.FC<SolicitudRegistroModalProps> = ({ 
 
                 {/* 2. Datos del Crédito */}
                 <form onSubmit={handleCrearSolicitud}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '1rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', marginBottom: '1rem' }}>
                         <div className="form-group">
                             <label className="form-label">Tipo de Crédito *</label>
                             <select

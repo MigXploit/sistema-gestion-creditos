@@ -468,6 +468,40 @@ export const creditoService = {
             fechaFirma: ct.fecha_firma ? String(ct.fecha_firma).split('T')[0] : undefined,
             notariaRegistro: ct.notaria_registro || undefined,
             estado: ct.estado,
+            documentoAdjunto: ct.documento_adjunto || undefined,
         };
+    },
+
+    /**
+     * CU09 / CA15: Actualizar estado de contrato (FIRMADO / PENDIENTE_FIRMA) y adjuntar documento legal firmado.
+     */
+    async actualizarContratoFirmado(idCredito, datosContrato, usernameOperador, ipOrigen) {
+        const id = parseInt(idCredito, 10);
+        const { estado, documentoAdjunto, notariaRegistro, fechaFirma } = datosContrato;
+
+        const estadoFinal = estado === 'FIRMADO' ? 'FIRMADO' : 'PENDIENTE_FIRMA';
+        const fechaFirmaFinal = fechaFirma || (estadoFinal === 'FIRMADO' ? new Date().toISOString().split('T')[0] : null);
+
+        const pool = obtenerPool();
+        const [filas] = await pool.query('SELECT * FROM contrato WHERE id_credito = ?', [id]);
+        if (filas.length === 0) throw new ReglaNegocioError(`No existe contrato formalizado para el crédito ID: ${id}`);
+        const ct = filas[0];
+
+        await pool.query(
+            `UPDATE contrato SET estado = ?, fecha_firma = ?, notaria_registro = IFNULL(?, notaria_registro), documento_adjunto = IFNULL(?, documento_adjunto) WHERE id_credito = ?`,
+            [estadoFinal, fechaFirmaFinal, notariaRegistro || null, documentoAdjunto || null, id]
+        );
+
+        await auditoriaService.registrarEvento({
+            username: usernameOperador,
+            operacion: 'ACTUALIZAR_CONTRATO_LEGAL',
+            entidad: 'CONTRATO',
+            idEntidad: ct.id_contrato,
+            resultado: 'EXITOSO',
+            detalles: `Contrato legal N° ${ct.numero_contrato} actualizado a estado '${estadoFinal}'. Documento firmado: ${documentoAdjunto ? 'Archivo adjunto registrado' : 'Sin nuevo adjunto'}.`,
+            ipOrigen: ipOrigen,
+        });
+
+        return this.buscarContratoPorCredito(id);
     }
 };

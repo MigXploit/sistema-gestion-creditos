@@ -19,13 +19,22 @@ export const usuarioService = {
         }
 
         const loginLimpio = login.trim();
+        // Mapeo transparente de alias para integrantes del Grupo 4 y usuarios anteriores
+        const mapaAlias = {
+            'cmendoza': 'mbustillos',
+            'atorrez': 'scallisaya',
+            'lrojas': 'rrojas',
+            'cajero1': 'rpatty',
+            'gerente1': 'ajamachi',
+        };
+        const loginConsultar = mapaAlias[loginLimpio] || loginLimpio;
         let usuario = null;
 
         if (estaEnModoMemoria()) {
-            usuario = baseDatosEnMemoria.usuarios.find(u => u.login === loginLimpio);
+            usuario = baseDatosEnMemoria.usuarios.find(u => u.login === loginLimpio || u.login === loginConsultar);
         } else {
             const pool = obtenerPool();
-            const [filas] = await pool.query('SELECT * FROM usuario WHERE login = ?', [loginLimpio]);
+            const [filas] = await pool.query('SELECT * FROM usuario WHERE login = ? OR login = ?', [loginLimpio, loginConsultar]);
             if (filas.length > 0) usuario = filas[0];
         }
 

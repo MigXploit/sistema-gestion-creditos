@@ -7,6 +7,15 @@ import { manejadorCentralErrores } from './middleware/manejadorErrores.js';
 
 const app = express();
 
+// Medidas de Seguridad HTTP y cabeceras de protección bancaria
+app.disable('x-powered-by');
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    next();
+});
+
 // Configuración de Middlewares globales
 app.use(cors({
     origin: '*',
@@ -14,7 +23,9 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.use(express.json());
+// Límite de carga para contratos firmados y documentos de garantía en Base64 (50MB)
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Endpoint de verificación de salud del backend
 app.get('/api/health', (req, res) => {

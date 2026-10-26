@@ -10,7 +10,7 @@ export const auditoriaService = {
      */
     async registrarEvento({ idUsuario, username, ipOrigen, operacion, entidad, idEntidad, resultado, detalles }) {
         const fechaHoraActual = new Date();
-        const ip = ipOrigen || '127.0.0.1';
+        const ip = (ipOrigen || '127.0.0.1').substring(0, 140);
 
         try {
             if (estaEnModoMemoria()) {

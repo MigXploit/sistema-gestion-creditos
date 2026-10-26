@@ -72,7 +72,7 @@ export function App() {
             )}
 
             {(currentView === 'solicitudes' || currentView === 'bandeja' || currentView === 'evaluaciones' || currentView === 'garantias') && (
-                <SolicitudesView user={user} />
+                <SolicitudesView user={user} currentView={currentView} />
             )}
 
             {currentView === 'desembolsos' && (

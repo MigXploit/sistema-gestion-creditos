@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
-import type { CuotaItem, SolicitudItem } from '../types';
-import { X } from 'lucide-react';
+import { pdfService } from '../services/pdfService';
+import type { CuotaItem, SolicitudItem, CreditoItem } from '../types';
+import { X, Download } from 'lucide-react';
 
 interface CronogramaModalProps {
     solicitud: SolicitudItem;
@@ -10,6 +11,7 @@ interface CronogramaModalProps {
 
 export const CronogramaModal: React.FC<CronogramaModalProps> = ({ solicitud, onClose }) => {
     const [cuotas, setCuotas] = useState<CuotaItem[]>([]);
+    const [credito, setCredito] = useState<CreditoItem | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -18,9 +20,10 @@ export const CronogramaModal: React.FC<CronogramaModalProps> = ({ solicitud, onC
             setLoading(true);
             setError(null);
             // Primero obtener el crédito por solicitud
-            const credito = await api.getCreditoBySolicitud(solicitud.idSolicitud);
-            if (credito && credito.idCredito) {
-                const data = await api.getCronograma(credito.idCredito);
+            const cr = await api.getCreditoBySolicitud(solicitud.idSolicitud);
+            setCredito(cr);
+            if (cr && cr.idCredito) {
+                const data = await api.getCronograma(cr.idCredito);
                 setCuotas(data);
             } else {
                 setError('No se encontró crédito generado para esta solicitud.');
@@ -40,16 +43,21 @@ export const CronogramaModal: React.FC<CronogramaModalProps> = ({ solicitud, onC
     const totalInteres = cuotas.reduce((acc, c) => acc + c.interesComp, 0);
     const totalMonto = cuotas.reduce((acc, c) => acc + c.monto, 0);
 
+    const handleDescargarPDF = () => {
+        if (!cuotas.length) return;
+        pdfService.emitirCronogramaPDF(cuotas, solicitud, credito);
+    };
+
     return (
         <div className="modal-backdrop">
             <div className="modal-content" style={{ maxWidth: '900px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
                     <div>
                         <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-primary-dark)' }}>
                             Cronograma de Pagos – Sistema Francés (P05 – CU10 / RF11 / CA16)
                         </h3>
-                        <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-                            Solicitud: <strong>{solicitud.numeroSolicitud}</strong> | Crédito: <strong>{solicitud.numeroCredito || 'Formalizado'}</strong> | Monto: <strong>Bs {solicitud.montoSolicitado.toLocaleString('es-BO', { minimumFractionDigits: 2 })}</strong> | Plazo: <strong>{solicitud.plazoMeses} meses</strong> (12% anual)
+                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                            Solicitud: <strong>{solicitud.numeroSolicitud}</strong> | Crédito: <strong>{solicitud.numeroCredito || credito?.numeroCredito || 'Formalizado'}</strong> | Monto: <strong>Bs {solicitud.montoSolicitado.toLocaleString('es-BO', { minimumFractionDigits: 2 })}</strong> | Plazo: <strong>{solicitud.plazoMeses} meses</strong> (12% anual)
                         </p>
                     </div>
                     <button className="btn btn-secondary" onClick={onClose} style={{ padding: '0.25rem 0.5rem', display: 'flex', alignItems: 'center' }}>
@@ -65,6 +73,17 @@ export const CronogramaModal: React.FC<CronogramaModalProps> = ({ solicitud, onC
                     </div>
                 ) : (
                     <>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleDescargarPDF}
+                                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', padding: '0.4rem 0.85rem' }}
+                            >
+                                <Download size={16} />
+                                <span>Descargar Cronograma en PDF</span>
+                            </button>
+                        </div>
+
                         <div className="table-container" style={{ maxHeight: '400px', overflowY: 'auto' }}>
                             <table className="table">
                                 <thead>
@@ -96,7 +115,7 @@ export const CronogramaModal: React.FC<CronogramaModalProps> = ({ solicitud, onC
                                                 {c.saldoPendiente.toLocaleString('es-BO', { minimumFractionDigits: 2 })}
                                             </td>
                                             <td>
-                                                <span className={`badge ${c.estado === 'PAGADA' ? 'badge-success' : 'badge-warning'}`}>
+                                                <span className={`badge ${c.estado === 'PAGADA' ? 'badge-success' : c.estado === 'VENCIDA' ? 'badge-danger' : 'badge-warning'}`}>
                                                     {c.estado}
                                                 </span>
                                             </td>
@@ -112,7 +131,7 @@ export const CronogramaModal: React.FC<CronogramaModalProps> = ({ solicitud, onC
                                         <td style={{ textAlign: 'right', color: 'var(--purple-300)', fontFamily: 'var(--font-tech)' }}>
                                             Bs {totalInteres.toLocaleString('es-BO', { minimumFractionDigits: 2 })}
                                         </td>
-                                        <td style={{ textAlign: 'right', color: '#ffffff', fontFamily: 'var(--font-tech)', fontSize: '1rem' }}>
+                                        <td style={{ textAlign: 'right', color: 'var(--text-heading)', fontFamily: 'var(--font-tech)', fontSize: '1rem' }}>
                                             Bs {totalMonto.toLocaleString('es-BO', { minimumFractionDigits: 2 })}
                                         </td>
                                         <td colSpan={2}></td>
@@ -127,7 +146,7 @@ export const CronogramaModal: React.FC<CronogramaModalProps> = ({ solicitud, onC
                     </>
                 )}
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)' }}>
                     <button className="btn btn-secondary" onClick={onClose}>
                         Cerrar
                     </button>

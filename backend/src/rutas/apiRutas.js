@@ -277,6 +277,17 @@ enrutadorApi.get('/creditos/:id/contrato', autenticarTokenJwt, requerirRoles('JE
     }
 });
 
+// CU09: Actualizar contrato legal (FIRMADO / PENDIENTE_FIRMA) y adjuntar documento
+enrutadorApi.put('/creditos/:id/contrato', autenticarTokenJwt, requerirRoles('OFICIAL', 'JEFE', 'GERENTE', 'ADMINISTRADOR'), async (req, res, next) => {
+    try {
+        const ipOrigen = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+        const respuesta = await creditoService.actualizarContratoFirmado(req.params.id, req.body, req.usuario.login, ipOrigen);
+        res.json(respuesta);
+    } catch (error) {
+        next(error);
+    }
+});
+
 // CU11: Desembolsar crédito
 enrutadorApi.post('/creditos/:id/desembolsar', autenticarTokenJwt, requerirRoles('OFICIAL', 'JEFE', 'GERENTE', 'ADMINISTRADOR'), async (req, res, next) => {
     try {
@@ -295,6 +306,17 @@ enrutadorApi.post('/pagos', autenticarTokenJwt, requerirRoles('CAJERO', 'ADMINIS
     try {
         const ipOrigen = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
         const respuesta = await pagoService.registrarPagoCuota(req.body, req.usuario.login, ipOrigen);
+        res.json(respuesta);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// CU12 / ASFI: Justificación de Pago Flexible / Prórroga / Acumulación
+enrutadorApi.post('/pagos/flexibilidad', autenticarTokenJwt, requerirRoles('CAJERO', 'OFICIAL', 'JEFE', 'GERENTE', 'ADMINISTRADOR'), async (req, res, next) => {
+    try {
+        const ipOrigen = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+        const respuesta = await pagoService.justificarPagoFlexible(req.body, req.usuario.login, ipOrigen);
         res.json(respuesta);
     } catch (error) {
         next(error);

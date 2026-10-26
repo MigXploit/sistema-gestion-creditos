@@ -105,7 +105,7 @@ export const api = {
         });
     },
 
-    editarCliente(id: number, data: { telefono?: string; direccion?: string }) {
+    editarCliente(id: number, data: { telefono?: string; direccion?: string; email?: string }) {
         return this.request(`/clientes/${id}`, {
             method: 'PUT',
             body: JSON.stringify(data),
@@ -210,6 +210,13 @@ export const api = {
         return this.request(`/creditos/${idCredito}/contrato`);
     },
 
+    actualizarContrato(idCredito: number, data: { estado?: string; documentoAdjunto?: string }) {
+        return this.request(`/creditos/${idCredito}/contrato`, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+    },
+
     // --- BLOQUE 3: DESEMBOLSO, CAJA / PAGOS, MORA Y REPORTES ---
     desembolsarCredito(idCredito: number) {
         return this.request(`/creditos/${idCredito}/desembolsar`, {
@@ -219,6 +226,13 @@ export const api = {
 
     registrarPago(data: { idCuota: number; montoAbonado: number; formaPago?: string }) {
         return this.request('/pagos', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    },
+
+    justificarPagoFlexible(data: { idCuota: number; tipo: 'PRORROGA' | 'ACUMULACION'; motivo: string; dias?: number }) {
+        return this.request('/pagos/flexibilidad', {
             method: 'POST',
             body: JSON.stringify(data),
         });

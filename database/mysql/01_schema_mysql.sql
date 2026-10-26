@@ -129,6 +129,7 @@ CREATE TABLE `contrato` (
     `fecha_firma` DATE NULL,
     `notaria_registro` VARCHAR(150) NULL,
     `estado` VARCHAR(20) NOT NULL DEFAULT 'PENDIENTE_FIRMA',
+    `documento_adjunto` LONGTEXT NULL,
     INDEX `idx_contrato_numero` (`numero_contrato`),
     CONSTRAINT `fk_contrato_credito` FOREIGN KEY (`id_credito`) REFERENCES `credito` (`id_credito`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -147,6 +148,7 @@ CREATE TABLE `cuota` (
     `saldo_pendiente` DECIMAL(12, 2) NOT NULL,
     `dias_mora` INT NOT NULL DEFAULT 0,
     `estado` VARCHAR(15) NOT NULL DEFAULT 'PENDIENTE',
+    `justificacion_flexibilidad` TEXT NULL,
     INDEX `idx_cuota_credito` (`id_credito`),
     CONSTRAINT `fk_cuota_credito` FOREIGN KEY (`id_credito`) REFERENCES `credito` (`id_credito`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -174,7 +176,7 @@ CREATE TABLE `auditoria` (
     `id_auditoria` INT AUTO_INCREMENT PRIMARY KEY,
     `id_usuario` INT NULL,
     `fecha_hora` DATETIME NOT NULL,
-    `ip_origen` VARCHAR(45) NULL,
+    `ip_origen` VARCHAR(150) NULL,
     `operacion` VARCHAR(50) NOT NULL,
     `entidad` VARCHAR(50) NOT NULL,
     `id_entidad` VARCHAR(50) NULL,

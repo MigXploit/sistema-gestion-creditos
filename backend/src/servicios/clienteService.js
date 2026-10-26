@@ -101,7 +101,7 @@ export const clienteService = {
      */
     async editarCliente(idCliente, datosModificados, usernameOperador, ipOrigen) {
         const id = parseInt(idCliente, 10);
-        const { telefono, direccion } = datosModificados;
+        const { telefono, direccion, email } = datosModificados;
 
         if (estaEnModoMemoria()) {
             const cliente = baseDatosEnMemoria.clientes.find(c => c.id_cliente === id);
@@ -111,9 +111,11 @@ export const clienteService = {
 
             const telefonoAnterior = cliente.telefono || 'Sin teléfono';
             const direccionAnterior = cliente.direccion || 'Sin dirección';
+            const emailAnterior = cliente.email || 'Sin correo';
 
             cliente.telefono = telefono ? telefono.trim() : cliente.telefono;
             cliente.direccion = direccion ? direccion.trim() : cliente.direccion;
+            cliente.email = email ? email.trim() : cliente.email;
 
             await auditoriaService.registrarEvento({
                 username: usernameOperador,
@@ -121,7 +123,7 @@ export const clienteService = {
                 entidad: 'CLIENTE',
                 idEntidad: id,
                 resultado: 'EXITOSO',
-                detalles: `Actualización de cliente CI: ${cliente.ci}. Valores previos: [Tel: ${telefonoAnterior}, Dir: ${direccionAnterior}]. Nuevos: [Tel: ${cliente.telefono}, Dir: ${cliente.direccion}]`,
+                detalles: `Actualización de cliente CI: ${cliente.ci}. Valores previos: [Tel: ${telefonoAnterior}, Dir: ${direccionAnterior}, Email: ${emailAnterior}]. Nuevos: [Tel: ${cliente.telefono}, Dir: ${cliente.direccion}, Email: ${cliente.email}]`,
                 ipOrigen: ipOrigen,
             });
 
@@ -135,12 +137,13 @@ export const clienteService = {
         }
 
         const clienteActual = filas[0];
-        const nuevoTelefono = telefono !== undefined ? telefono.trim() : clienteActual.telefono;
-        const nuevaDireccion = direccion !== undefined ? direccion.trim() : clienteActual.direccion;
+        const nuevoTelefono = telefono !== undefined ? (telefono ? telefono.trim() : null) : clienteActual.telefono;
+        const nuevaDireccion = direccion !== undefined ? (direccion ? direccion.trim() : null) : clienteActual.direccion;
+        const nuevoEmail = email !== undefined ? (email ? email.trim() : null) : clienteActual.email;
 
         await pool.query(
-            'UPDATE cliente SET telefono = ?, direccion = ? WHERE id_cliente = ?',
-            [nuevoTelefono, nuevaDireccion, id]
+            'UPDATE cliente SET telefono = ?, direccion = ?, email = ? WHERE id_cliente = ?',
+            [nuevoTelefono, nuevaDireccion, nuevoEmail, id]
         );
 
         await auditoriaService.registrarEvento({
@@ -149,7 +152,7 @@ export const clienteService = {
             entidad: 'CLIENTE',
             idEntidad: id,
             resultado: 'EXITOSO',
-            detalles: `Actualización de cliente CI: ${clienteActual.ci}. Valores previos: [Tel: ${clienteActual.telefono}, Dir: ${clienteActual.direccion}]. Nuevos: [Tel: ${nuevoTelefono}, Dir: ${nuevaDireccion}]`,
+            detalles: `Actualización de cliente CI: ${clienteActual.ci}. Valores previos: [Tel: ${clienteActual.telefono}, Dir: ${clienteActual.direccion}, Email: ${clienteActual.email}]. Nuevos: [Tel: ${nuevoTelefono}, Dir: ${nuevaDireccion}, Email: ${nuevoEmail}]`,
             ipOrigen: ipOrigen,
         });
 

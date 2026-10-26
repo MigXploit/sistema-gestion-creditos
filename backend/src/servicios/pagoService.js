@@ -344,17 +344,50 @@ export const pagoService = {
                 [nuevoSaldoCuota, nuevoEstadoCuota, id]
             );
 
+            // Verificar si quedan cuotas pendientes en el crédito
+            const [cuotasRestantes] = await conexionTransaccional.query(
+                "SELECT COUNT(*) AS pendientes FROM cuota WHERE id_credito = ? AND estado != 'PAGADA'",
+                [cuota.id_credito]
+            );
+            const totalCuotasPendientes = cuotasRestantes[0]?.pendientes || 0;
+
             const nuevoSaldoCapital = Math.round((parseFloat(credito.saldo_capital) - pagoCapital) * 100) / 100;
             let nuevoEstadoCredito = credito.estado;
 
-            if (nuevoSaldoCapital <= 0) {
-                nuevoEstadoCredito = ESTADOS_CREDITO.CANCELADO; // CA21
+            // Si el saldo capital llega a cero o si ya no existen cuotas pendientes (CA21)
+            if (nuevoSaldoCapital <= 0.05 || totalCuotasPendientes === 0) {
+                nuevoEstadoCredito = ESTADOS_CREDITO.CANCELADO; // CA21: Totalmente pagado y cancelado
             }
 
             await conexionTransaccional.query(
                 'UPDATE credito SET saldo_capital = ?, estado = ? WHERE id_credito = ?',
-                [nuevoSaldoCapital, nuevoEstadoCredito, cuota.id_credito]
+                [Math.max(0, nuevoSaldoCapital), nuevoEstadoCredito, cuota.id_credito]
             );
+
+            // Si el crédito se canceló en su totalidad, liquidar contrato y liberar garantías
+            if (nuevoEstadoCredito === ESTADOS_CREDITO.CANCELADO) {
+                await conexionTransaccional.query(
+                    "UPDATE contrato SET estado = 'LIQUIDADO' WHERE id_credito = ?",
+                    [cuota.id_credito]
+                );
+                await conexionTransaccional.query(
+                    "UPDATE garantia SET estado = 'LIBERADA' WHERE id_credito = ?",
+                    [cuota.id_credito]
+                );
+                await conexionTransaccional.query(
+                    "UPDATE solicitud_credito SET estado = 'PAGADA' WHERE id_solicitud = ?",
+                    [credito.id_solicitud]
+                );
+                await auditoriaService.registrarEvento({
+                    username: usernameOperador,
+                    operacion: 'CANCELACION_TOTAL_CREDITO',
+                    entidad: 'CREDITO',
+                    idEntidad: cuota.id_credito,
+                    resultado: 'EXITOSO',
+                    detalles: `Crédito N° ${credito.numero_credito} amortizado en su totalidad. Estado actualizado a CANCELADO, contrato LIQUIDADO y garantías LIBERADAS (CA21).`,
+                    ipOrigen: ipOrigen,
+                });
+            }
 
             const [conteoPagos] = await conexionTransaccional.query('SELECT COUNT(*) AS total FROM pago');
             const numeroRecibo = `REC-${String(conteoPagos[0].total + 1).padStart(5, '0')}`;
@@ -532,6 +565,93 @@ export const pagoService = {
             fechaEjecucion: fechaHoy,
             cuotasAfectadas: cuotasAfectadas,
             mensaje: `Control de mora ejecutado: ${cuotasAfectadas} cuotas vencidas actualizadas.`,
+        };
+    },
+
+    /**
+     * Pago Flexible / Justificación de imposibilidad de pago o prórroga (Normativa ASFI / Casos de Fuerza Mayor).
+     * Permite:
+     * 1. 'PRORROGA': Extiende la fecha de vencimiento 30 días y congela mora bajo justificación acreditada.
+     * 2. 'ACUMULACION': Acumula/difiere la cuota al mes siguiente bajo amortización francesa.
+     */
+    async justificarPagoFlexible(datosFlexibilidad, usernameOperador, ipOrigen) {
+        const { idCuota, tipoFlexibilidad, motivoJustificacion } = datosFlexibilidad;
+        const id = parseInt(idCuota, 10);
+
+        if (!id || isNaN(id)) throw new ReglaNegocioError('ID de cuota inválido.');
+        if (!motivoJustificacion || !motivoJustificacion.trim()) {
+            throw new ReglaNegocioError('Debe ingresar el motivo o justificación documentada para la solicitud de pago flexible.');
+        }
+
+        const pool = obtenerPool();
+        const [cuotas] = await pool.query('SELECT c.*, cr.id_credito, cr.numero_credito, cr.saldo_capital FROM cuota c JOIN credito cr ON c.id_credito = cr.id_credito WHERE c.id_cuota = ?', [id]);
+        if (cuotas.length === 0) throw new ReglaNegocioError(`Cuota no encontrada con ID: ${id}`);
+        const cuota = cuotas[0];
+
+        if (cuota.estado === 'PAGADA') {
+            throw new ReglaNegocioError('No se puede aplicar pago flexible a una cuota que ya está PAGADA.');
+        }
+
+        let detalleAccion = '';
+
+        if (tipoFlexibilidad === 'PRORROGA') {
+            const nuevaFechaVencimiento = new Date(new Date(cuota.fecha_vencimiento).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            await pool.query(
+                `UPDATE cuota SET fecha_vencimiento = ?, dias_mora = 0, interes_mora = 0.00, estado = 'PENDIENTE', justificacion_flexibilidad = ? WHERE id_cuota = ?`,
+                [nuevaFechaVencimiento, `Prórroga de 30 días concedida hasta ${nuevaFechaVencimiento}: ${motivoJustificacion.trim()}`, id]
+            );
+            detalleAccion = `Prórroga de 30 días concedida hasta ${nuevaFechaVencimiento}. Mora congelada por justificación acreditada.`;
+        } else {
+            const [siguienteCuota] = await pool.query(
+                'SELECT * FROM cuota WHERE id_credito = ? AND numero_cuota = ?',
+                [cuota.id_credito, cuota.numero_cuota + 1]
+            );
+
+            if (siguienteCuota.length > 0) {
+                const proxId = siguienteCuota[0].id_cuota;
+                const nuevoSaldoProx = Math.round((parseFloat(siguienteCuota[0].saldo_pendiente) + parseFloat(cuota.saldo_pendiente)) * 100) / 100;
+                await pool.query(
+                    `UPDATE cuota SET saldo_pendiente = ?, justificacion_flexibilidad = CONCAT(IFNULL(justificacion_flexibilidad, ''), ' | Saldo acumulado de cuota anterior Bs ${cuota.saldo_pendiente}') WHERE id_cuota = ?`,
+                    [nuevoSaldoProx, proxId]
+                );
+                await pool.query(
+                    `UPDATE cuota SET estado = 'PAGADA', saldo_pendiente = 0.00, justificacion_flexibilidad = ? WHERE id_cuota = ?`,
+                    [`Cuota diferida y acumulada a Cuota N° ${cuota.numero_cuota + 1}: ${motivoJustificacion.trim()}`, id]
+                );
+                detalleAccion = `Cuota N° ${cuota.numero_cuota} diferida y saldo de Bs ${cuota.saldo_pendiente} acumulado a la Cuota N° ${cuota.numero_cuota + 1}.`;
+            } else {
+                const nuevaFecha = new Date(new Date(cuota.fecha_vencimiento).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                await pool.query(
+                    `UPDATE cuota SET fecha_vencimiento = ?, dias_mora = 0, interes_mora = 0.00, estado = 'PENDIENTE', justificacion_flexibilidad = ? WHERE id_cuota = ?`,
+                    [nuevaFecha, `Extensión especial de última cuota: ${motivoJustificacion.trim()}`, id]
+                );
+                detalleAccion = `Extensión especial de última cuota concedida hasta ${nuevaFecha}.`;
+            }
+        }
+
+        const [cuotasVencidasRestantes] = await pool.query(
+            "SELECT COUNT(*) AS totalVencidas FROM cuota WHERE id_credito = ? AND estado = 'VENCIDA'",
+            [cuota.id_credito]
+        );
+        if (cuotasVencidasRestantes[0].totalVencidas === 0) {
+            await pool.query("UPDATE credito SET estado = 'VIGENTE' WHERE id_credito = ?", [cuota.id_credito]);
+        }
+
+        await auditoriaService.registrarEvento({
+            username: usernameOperador,
+            operacion: 'JUSTIFICAR_PAGO_FLEXIBLE',
+            entidad: 'CUOTA',
+            idEntidad: id,
+            resultado: 'EXITOSO',
+            detalles: `Pago flexible registrado para Cuota N° ${cuota.numero_cuota} del Crédito ${cuota.numero_credito}. Tipo: ${tipoFlexibilidad}. Motivo: ${motivoJustificacion.trim()}. Acción: ${detalleAccion}`,
+            ipOrigen: ipOrigen,
+        });
+
+        return {
+            exitoso: true,
+            mensaje: `Pago flexible aplicado exitosamente: ${detalleAccion}`,
+            idCuota: id,
+            tipoFlexibilidad,
         };
     }
 };

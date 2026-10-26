@@ -11,9 +11,11 @@ import { ContratoModal } from './ContratoModal';
 
 interface SolicitudesViewProps {
     user: UsuarioSession;
+    currentView?: string;
 }
 
-export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user }) => {
+export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user, currentView }) => {
+    const esVistaGarantias = currentView === 'garantias';
     const [solicitudes, setSolicitudes] = useState<SolicitudItem[]>([]);
     const [filtroEstado, setFiltroEstado] = useState<string>('TODOS');
     const [loading, setLoading] = useState(true);
@@ -67,10 +69,14 @@ export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user }) => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                     <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-primary-dark)' }}>
-                        Bandeja de Solicitudes de Crédito (P02 – CU02 a CU10)
+                        {esVistaGarantias 
+                            ? 'Módulo de Custodia y Registro de Garantías (P12 – CU06 / RF07)' 
+                            : 'Bandeja de Solicitudes de Crédito (P02 – CU02 a CU10)'}
                     </h2>
                     <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-                        Flujo integral de originación, control documental, evaluación financiera y decisión crediticia
+                        {esVistaGarantias
+                            ? 'Registro de gravámenes, tasación, cobertura mínima requerida (≥ 120%) y documentos de validación'
+                            : 'Flujo integral de originación, control documental, evaluación financiera y decisión crediticia'}
                     </p>
                 </div>
 
@@ -90,9 +96,24 @@ export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user }) => {
                     </select>
 
                     {esOficial && (
-                        <button className="btn btn-primary" onClick={() => setShowRegistroModal(true)}>
-                            + Nueva Solicitud (P11)
-                        </button>
+                        esVistaGarantias ? (
+                            <button
+                                className="btn btn-primary"
+                                onClick={() => {
+                                    if (solicitudes.length > 0) {
+                                        setSolicitudGarantias(solicitudes[0]);
+                                    } else {
+                                        alert('No hay solicitudes disponibles para registrar garantías.');
+                                    }
+                                }}
+                            >
+                                + Registrar Nueva Garantía (P12)
+                            </button>
+                        ) : (
+                            <button className="btn btn-primary" onClick={() => setShowRegistroModal(true)}>
+                                + Nueva Solicitud (P11)
+                            </button>
+                        )
                     )}
                 </div>
             </div>
@@ -172,10 +193,10 @@ export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user }) => {
                                             <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
                                                 {/* Garantías P12 */}
                                                 <button
-                                                    className="btn btn-secondary"
+                                                    className={`btn ${esVistaGarantias ? 'btn-primary' : 'btn-secondary'}`}
                                                     style={{ padding: '0.2rem 0.45rem', fontSize: '0.75rem' }}
                                                     onClick={() => setSolicitudGarantias(s)}
-                                                    title="Ver / Registrar Garantías"
+                                                    title="Ver / Registrar Garantías (P12)"
                                                 >
                                                     Garantías (P12)
                                                 </button>

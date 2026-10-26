@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import type { SolicitudItem, CuotaItem, UsuarioSession } from '../types';
-import { Clock, Receipt, CheckCircle, Search, RefreshCw, Download, Mail } from 'lucide-react';
+import { Clock, Receipt, CheckCircle, Search, RefreshCw, Download, Mail, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { pdfService } from '../services/pdfService';
 
 interface CajaPagosViewProps {
@@ -19,6 +19,12 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
     const [montoPagar, setMontoPagar] = useState<string>('');
     const [formaPago, setFormaPago] = useState<string>('EFECTIVO');
     const [reciboGenerado, setReciboGenerado] = useState<any | null>(null);
+
+    // Modal de Pago Flexible / Justificación
+    const [cuotaParaFlexibilidad, setCuotaParaFlexibilidad] = useState<CuotaItem | null>(null);
+    const [tipoFlexibilidad, setTipoFlexibilidad] = useState<'PRORROGA' | 'ACUMULACION'>('PRORROGA');
+    const [motivoFlexibilidad, setMotivoFlexibilidad] = useState<string>('');
+    const [procesandoFlexibilidad, setProcesandoFlexibilidad] = useState(false);
 
     const [loading, setLoading] = useState(false);
     const [mensajeExito, setMensajeExito] = useState<string | null>(null);
@@ -45,6 +51,7 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
     const seleccionarSolicitud = async (sol: SolicitudItem) => {
         setSolicitudSeleccionada(sol);
         setCuotaParaPagar(null);
+        setCuotaParaFlexibilidad(null);
         setReciboGenerado(null);
         setError(null);
         setMensajeExito(null);
@@ -68,6 +75,7 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
 
     const iniciarPago = (cuota: CuotaItem) => {
         setCuotaParaPagar(cuota);
+        setCuotaParaFlexibilidad(null);
         setMontoPagar(cuota.saldoPendiente.toFixed(2));
         setError(null);
         setMensajeExito(null);
@@ -128,6 +136,46 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
         }
     };
 
+    const handleAplicarFlexibilidad = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!cuotaParaFlexibilidad) return;
+        if (!motivoFlexibilidad.trim()) {
+            setError('Debe especificar la justificación documentada para la flexibilidad.');
+            return;
+        }
+
+        try {
+            setProcesandoFlexibilidad(true);
+            setError(null);
+            const res = await api.justificarPagoFlexible({
+                idCuota: cuotaParaFlexibilidad.idCuota,
+                tipo: tipoFlexibilidad,
+                motivo: motivoFlexibilidad.trim(),
+                dias: tipoFlexibilidad === 'PRORROGA' ? 30 : 0
+            });
+
+            setMensajeExito(`Flexibilidad aplicada: ${res.mensaje}`);
+            setCuotaParaFlexibilidad(null);
+            setMotivoFlexibilidad('');
+
+            // Refrescar datos
+            if (solicitudSeleccionada?.idCredito) {
+                const [cr, cuotas] = await Promise.all([
+                    api.getCreditoById(solicitudSeleccionada.idCredito),
+                    api.getCronograma(solicitudSeleccionada.idCredito),
+                ]);
+                setCreditoInfo(cr);
+                setCronograma(cuotas);
+            }
+        } catch (err: any) {
+            setError(err.message || 'Error al procesar el plan flexible de pago');
+        } finally {
+            setProcesandoFlexibilidad(false);
+        }
+    };
+
+    const esCancelado = creditoInfo && (creditoInfo.estado === 'CANCELADO' || (cronograma.length > 0 && cronograma.every(c => c.estado === 'PAGADA')));
+
     return (
         <div>
             <div className="card" style={{ marginBottom: '1.5rem' }}>
@@ -141,7 +189,7 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
                         </p>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                         <button className="btn btn-secondary" onClick={cargarCreditos} disabled={loading} title="Actualizar créditos">
                             <RefreshCw size={15} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
                             Actualizar
@@ -157,7 +205,7 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
                 {mensajeExito && <div className="alert alert-success" style={{ marginTop: '1rem' }}>{mensajeExito}</div>}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 1fr) minmax(0, 2.5fr)', gap: '1.5rem' }}>
                 {/* Panel Izquierdo: Selección de Crédito */}
                 <div className="card">
                     <h3 style={{ fontSize: '1.05rem', marginBottom: '0.75rem', color: 'var(--text-heading)' }}>Créditos Formalizados</h3>
@@ -178,7 +226,7 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
                     {loading && solicitudes.length === 0 ? (
                         <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Cargando créditos...</p>
                     ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '500px', overflowY: 'auto' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '520px', overflowY: 'auto' }}>
                             {solicitudes
                                 .filter(sol => {
                                     if (!filtroBusqueda.trim()) return true;
@@ -221,26 +269,131 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
                     )}
                 </div>
 
-                {/* Panel Derecho: Cronograma y Cobro */}
+                {/* Panel Derecho: Cronograma, Cobro y Flexibilidad */}
                 <div className="card">
                     {solicitudSeleccionada && creditoInfo ? (
                         <div>
+                            {/* Banner de Crédito Liquidado al 100% (CA21) */}
+                            {esCancelado && (
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '1rem',
+                                    background: 'rgba(34, 197, 94, 0.12)',
+                                    border: '2px solid var(--teal-500)',
+                                    borderRadius: 'var(--radius)',
+                                    padding: '1rem 1.25rem',
+                                    marginBottom: '1.25rem'
+                                }}>
+                                    <ShieldCheck size={32} color="var(--teal-400)" />
+                                    <div>
+                                        <h4 style={{ margin: 0, color: 'var(--teal-300)', fontSize: '1rem', fontWeight: 700 }}>
+                                            CRÉDITO TOTALMENTE CANCELADO Y LIQUIDADO (CA21)
+                                        </h4>
+                                        <p style={{ margin: '0.25rem 0 0', fontSize: '0.825rem', color: 'var(--text-body)' }}>
+                                            Todas las cuotas han sido amortizadas satisfactoriamente. El saldo capital vivo es <strong>Bs 0.00</strong>. Las garantías han quedado liberadas y el contrato legal finiquitado conforme a la normativa ASFI.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Cabecera del crédito */}
-                            <div style={{ background: 'var(--bg-surface)', padding: '1rem', borderRadius: 'var(--radius)', marginBottom: '1.5rem', border: '1px solid var(--border-color)' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+                            <div style={{ background: 'var(--bg-surface)', padding: '1rem', borderRadius: 'var(--radius)', marginBottom: '1.25rem', border: '1px solid var(--border-color)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
                                     <div>
                                         <h3 style={{ margin: 0, color: 'var(--purple-300)' }}>Crédito {creditoInfo.numeroCredito}</h3>
                                         <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Titular: {solicitudSeleccionada.nombreCompletoCliente} (CI: {solicitudSeleccionada.ciCliente})</span>
                                     </div>
                                     <div style={{ textAlign: 'right' }}>
                                         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Saldo Capital Vivo</div>
-                                        <strong style={{ fontSize: '1.25rem', color: 'var(--teal-300)', fontFamily: 'var(--font-tech)' }}>Bs {creditoInfo.saldoCapital.toLocaleString('es-BO', { minimumFractionDigits: 2 })}</strong>
+                                        <strong style={{ fontSize: '1.25rem', color: 'var(--teal-300)', fontFamily: 'var(--font-tech)' }}>
+                                            Bs {creditoInfo.saldoCapital.toLocaleString('es-BO', { minimumFractionDigits: 2 })}
+                                        </strong>
                                         <div style={{ marginTop: '0.2rem' }}>
                                             <span className={`badge-dev-pill status-${creditoInfo.estado}`}>{creditoInfo.estado}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Modal / Caja de Pago Flexible */}
+                            {cuotaParaFlexibilidad && (
+                                <div style={{
+                                    background: 'rgba(234, 179, 8, 0.08)',
+                                    border: '1.5px solid var(--amber-400)',
+                                    borderRadius: 'var(--radius)',
+                                    padding: '1.25rem',
+                                    marginBottom: '1.25rem'
+                                }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', color: 'var(--amber-300)' }}>
+                                        <AlertTriangle size={18} />
+                                        <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
+                                            Plan de Pago Flexible / Justificación de Cuota N° {cuotaParaFlexibilidad.numeroCuota}
+                                        </h4>
+                                    </div>
+                                    <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                                        Permite mitigar la mora otorgando prórroga justificada de 30 días o acumulación en el siguiente periodo sin alterar la tasa contractual francesa.
+                                    </p>
+
+                                    <form onSubmit={handleAplicarFlexibilidad}>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                                            <div>
+                                                <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.35rem' }}>
+                                                    Mecanismo de Flexibilidad:
+                                                </label>
+                                                <select
+                                                    className="form-control"
+                                                    value={tipoFlexibilidad}
+                                                    onChange={e => setTipoFlexibilidad(e.target.value as any)}
+                                                    required
+                                                >
+                                                    <option value="PRORROGA">Prórroga de Vencimiento (30 días de gracia sin mora)</option>
+                                                    <option value="ACUMULACION">Acumular a la Siguiente Cuota (Sistema Francés)</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.35rem' }}>
+                                                    Monto de Cuota Involucrado:
+                                                </label>
+                                                <div style={{ padding: '0.55rem', background: 'var(--bg-nested)', borderRadius: 'var(--radius)', fontWeight: 700, fontFamily: 'var(--font-tech)' }}>
+                                                    Bs {cuotaParaFlexibilidad.saldoPendiente.toFixed(2)} (Mora: Bs {cuotaParaFlexibilidad.interesMora.toFixed(2)})
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div style={{ marginBottom: '1rem' }}>
+                                            <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.35rem' }}>
+                                                Justificación Documentada / Motivo de Fuerza Mayor:
+                                            </label>
+                                            <textarea
+                                                className="form-control"
+                                                rows={2}
+                                                placeholder="Ejemplo: Cliente presenta baja médica o retraso justificado en cobro salarial. Se concede prórroga conforme a normativa..."
+                                                value={motivoFlexibilidad}
+                                                onChange={e => setMotivoFlexibilidad(e.target.value)}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary"
+                                                onClick={() => setCuotaParaFlexibilidad(null)}
+                                            >
+                                                Cancelar
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                className="btn btn-primary"
+                                                disabled={procesandoFlexibilidad}
+                                            >
+                                                {procesandoFlexibilidad ? 'Procesando...' : 'Aplicar Flexibilidad'}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            )}
 
                             {/* Formulario de Pago Modal/Inline */}
                             {cuotaParaPagar && (
@@ -329,8 +482,23 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
                                 </div>
                             )}
 
+                            {/* Cabecera y Botón Descargar Cronograma */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                <h4 style={{ fontSize: '0.95rem', margin: 0, color: 'var(--text-heading)' }}>
+                                    Cronograma de Cuotas (Sistema Francés)
+                                </h4>
+                                <button
+                                    className="btn btn-secondary"
+                                    onClick={() => pdfService.emitirCronogramaPDF(cronograma, solicitudSeleccionada, creditoInfo)}
+                                    style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                                    title="Descargar cronograma completo en formato PDF formal"
+                                >
+                                    <Download size={14} />
+                                    Descargar Cronograma PDF
+                                </button>
+                            </div>
+
                             {/* Tabla de Cronograma de Cuotas */}
-                            <h4 style={{ fontSize: '0.95rem', marginBottom: '0.75rem', color: 'var(--text-heading)' }}>Cronograma de Cuotas (Sistema Francés)</h4>
                             <div style={{ overflowX: 'auto' }}>
                                 <table className="table" style={{ fontSize: '0.85rem' }}>
                                     <thead>
@@ -343,7 +511,7 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
                                             <th>Cuota Total</th>
                                             <th>Saldo Exigible</th>
                                             <th>Estado</th>
-                                            <th>Acción</th>
+                                            <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -362,14 +530,26 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    {c.estado !== 'PAGADA' && (user.rol === 'CAJERO' || user.rol === 'ADMINISTRADOR') ? (
-                                                        <button
-                                                            className="btn btn-primary"
-                                                            style={{ padding: '0.25rem 0.65rem', fontSize: '0.75rem' }}
-                                                            onClick={() => iniciarPago(c)}
-                                                        >
-                                                            Cobrar
-                                                        </button>
+                                                    {c.estado !== 'PAGADA' ? (
+                                                        <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+                                                            {(user.rol === 'CAJERO' || user.rol === 'ADMINISTRADOR') && (
+                                                                <button
+                                                                    className="btn btn-primary"
+                                                                    style={{ padding: '0.25rem 0.65rem', fontSize: '0.75rem' }}
+                                                                    onClick={() => iniciarPago(c)}
+                                                                >
+                                                                    Cobrar
+                                                                </button>
+                                                            )}
+                                                            <button
+                                                                className="btn btn-secondary"
+                                                                style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', color: 'var(--amber-400)' }}
+                                                                onClick={() => { setCuotaParaFlexibilidad(c); setCuotaParaPagar(null); }}
+                                                                title="Aplicar prórroga o plan flexible justificado"
+                                                            >
+                                                                Flexibilidad
+                                                            </button>
+                                                        </div>
                                                     ) : (
                                                         <span style={{ color: 'var(--teal-400)', fontSize: '0.75rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
                                                             <CheckCircle size={13} /> Pagada
