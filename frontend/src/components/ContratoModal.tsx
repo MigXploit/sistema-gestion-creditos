@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import type { ContratoItem, CreditoItem, SolicitudItem } from '../types';
-import { X } from 'lucide-react';
+import { X, Download } from 'lucide-react';
+import { pdfService } from '../services/pdfService';
 
 interface ContratoModalProps {
     solicitud: SolicitudItem;
@@ -110,7 +111,16 @@ export const ContratoModal: React.FC<ContratoModalProps> = ({ solicitud, onClose
                     </div>
                 )}
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <button
+                        className="btn btn-primary"
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#7c3aed', color: '#fff', padding: '0.5rem 1rem' }}
+                        onClick={() => contrato && credito && pdfService.emitirContratoPDF(solicitud, contrato, credito)}
+                        disabled={!contrato || !credito}
+                    >
+                        <Download size={16} />
+                        Descargar Contrato PDF (P03)
+                    </button>
                     <button className="btn btn-secondary" onClick={onClose}>
                         Cerrar
                     </button>

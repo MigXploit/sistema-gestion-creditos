@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
-import type { CuotaItem, SolicitudItem } from '../types';
-import { X } from 'lucide-react';
+import type { CuotaItem, SolicitudItem, CreditoItem } from '../types';
+import { X, Download } from 'lucide-react';
+import { pdfService } from '../services/pdfService';
 
 interface CronogramaModalProps {
     solicitud: SolicitudItem;
@@ -10,6 +11,7 @@ interface CronogramaModalProps {
 
 export const CronogramaModal: React.FC<CronogramaModalProps> = ({ solicitud, onClose }) => {
     const [cuotas, setCuotas] = useState<CuotaItem[]>([]);
+    const [credito, setCredito] = useState<CreditoItem | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -18,9 +20,10 @@ export const CronogramaModal: React.FC<CronogramaModalProps> = ({ solicitud, onC
             setLoading(true);
             setError(null);
             // Primero obtener el crédito por solicitud
-            const credito = await api.getCreditoBySolicitud(solicitud.idSolicitud);
-            if (credito && credito.idCredito) {
-                const data = await api.getCronograma(credito.idCredito);
+            const cr = await api.getCreditoBySolicitud(solicitud.idSolicitud);
+            setCredito(cr);
+            if (cr && cr.idCredito) {
+                const data = await api.getCronograma(cr.idCredito);
                 setCuotas(data);
             } else {
                 setError('No se encontró crédito generado para esta solicitud.');
@@ -127,7 +130,16 @@ export const CronogramaModal: React.FC<CronogramaModalProps> = ({ solicitud, onC
                     </>
                 )}
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <button
+                        className="btn btn-primary"
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#7c3aed', color: '#fff', padding: '0.5rem 1rem' }}
+                        onClick={() => pdfService.emitirCronogramaPDF(solicitud, cuotas, credito)}
+                        disabled={cuotas.length === 0}
+                    >
+                        <Download size={16} />
+                        Descargar Cronograma PDF (P05)
+                    </button>
                     <button className="btn btn-secondary" onClick={onClose}>
                         Cerrar
                     </button>

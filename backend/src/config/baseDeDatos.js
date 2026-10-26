@@ -30,6 +30,8 @@ export async function inicializarBaseDeDatos() {
 
         // Crear base de datos si no existe
         await conexionInicial.query(`CREATE DATABASE IF NOT EXISTS \`${config.nombreBaseDatos}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
+        // Asegurar soporte para paquetes grandes (documentos base64 de hasta 64MB)
+        try { await conexionInicial.query('SET GLOBAL max_allowed_packet = 67108864;'); } catch (e) { /* ignorar si falta permiso */ }
         await conexionInicial.end();
 
         // Crear pool de conexiones a la base de datos
