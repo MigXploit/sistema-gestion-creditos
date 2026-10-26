@@ -36,7 +36,9 @@ export const clienteService = {
             const clienteExistente = baseDatosEnMemoria.clientes.find(c => c.ci === ciLimpio);
             if (clienteExistente) {
                 // CA02: Mostrar el cliente existente y no crear otro
-                return this.mapearAClienteDto(clienteExistente);
+                const dto = this.mapearAClienteDto(clienteExistente);
+                dto.yaExistia = true;
+                return dto;
             }
 
             const nuevoIdCliente = baseDatosEnMemoria.contadores.idCliente++;
@@ -71,7 +73,9 @@ export const clienteService = {
         // Verificar si existe por CI
         const [existentes] = await pool.query('SELECT * FROM cliente WHERE ci = ?', [ciLimpio]);
         if (existentes.length > 0) {
-            return this.mapearAClienteDto(existentes[0]);
+            const dto = this.mapearAClienteDto(existentes[0]);
+            dto.yaExistia = true;
+            return dto;
         }
 
         const [resultadoInsert] = await pool.query(

@@ -38,18 +38,21 @@ export const api = {
             headers,
         });
 
-        if (res.status === 401) {
-            this.clearSession();
-            window.location.reload();
-            throw new Error('Sesión expirada o no autorizada');
-        }
-
         const text = await res.text();
-        let json = null;
+        let json: any = null;
         try {
             json = text ? JSON.parse(text) : {};
         } catch {
             json = { text };
+        }
+
+        if (res.status === 401) {
+            if (path.includes('/auth/login')) {
+                throw new Error(json.mensaje || json.message || json.error || 'Credenciales inválidas (Usuario o contraseña incorrectos).');
+            }
+            this.clearSession();
+            window.location.reload();
+            throw new Error('Sesión expirada o no autorizada');
         }
 
         if (!res.ok) {

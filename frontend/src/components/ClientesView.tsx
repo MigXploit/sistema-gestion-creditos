@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import type { ClienteItem, UsuarioSession } from '../types';
+import { AlertTriangle, CheckCircle } from 'lucide-react';
 
 interface ClientesViewProps {
     user: UsuarioSession;
@@ -10,6 +11,7 @@ export const ClientesView: React.FC<ClientesViewProps> = ({ user }) => {
     const [clientes, setClientes] = useState<ClienteItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [warningMsg, setWarningMsg] = useState<string | null>(null);
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
     // Modal Crear Cliente (P10)
@@ -47,7 +49,9 @@ export const ClientesView: React.FC<ClientesViewProps> = ({ user }) => {
         e.preventDefault();
         try {
             setError(null);
-            await api.crearCliente({
+            setWarningMsg(null);
+            setSuccessMsg(null);
+            const res: any = await api.crearCliente({
                 ci: nuevoCi,
                 nombres: nuevoNombres,
                 apellidos: nuevoApellidos,
@@ -55,7 +59,13 @@ export const ClientesView: React.FC<ClientesViewProps> = ({ user }) => {
                 direccion: nuevoDireccion || null,
                 ingresosMensuales: parseFloat(nuevoIngresos)
             });
-            setSuccessMsg('Cliente registrado exitosamente (o recuperado si ya existía)');
+
+            if (res?.yaExistia) {
+                setWarningMsg(`⚠️ Validación de Unicidad (CA02): El cliente con CI ${res.ci} ya se encontraba registrado en el sistema a nombre de "${res.nombres} ${res.apellidos}". Se recuperó su ficha original sin duplicar ni reescribir datos.`);
+            } else {
+                setSuccessMsg(`✅ Cliente ${res.nombres} ${res.apellidos} (CI: ${res.ci}) registrado exitosamente en el sistema (CA01).`);
+            }
+
             setShowCrearModal(false);
             setNuevoCi('');
             setNuevoNombres('');
@@ -113,7 +123,18 @@ export const ClientesView: React.FC<ClientesViewProps> = ({ user }) => {
             </div>
 
             {error && <div className="alert alert-error">{error}</div>}
-            {successMsg && <div className="alert alert-success">{successMsg}</div>}
+            {warningMsg && (
+                <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'rgba(245, 158, 11, 0.15)', border: '1.5px solid #f59e0b', color: '#fef3c7', marginBottom: '1rem', padding: '0.85rem 1rem' }}>
+                    <AlertTriangle size={20} style={{ color: '#f59e0b', flexShrink: 0 }} />
+                    <div style={{ fontWeight: 500, lineHeight: 1.4 }}>{warningMsg}</div>
+                </div>
+            )}
+            {successMsg && (
+                <div className="alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem', padding: '0.85rem 1rem' }}>
+                    <CheckCircle size={20} style={{ color: '#10b981', flexShrink: 0 }} />
+                    <div style={{ fontWeight: 500, lineHeight: 1.4 }}>{successMsg}</div>
+                </div>
+            )}
 
             {loading ? (
                 <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>Cargando clientes...</div>
@@ -186,9 +207,29 @@ export const ClientesView: React.FC<ClientesViewProps> = ({ user }) => {
                                     value={nuevoCi}
                                     onChange={e => setNuevoCi(e.target.value)}
                                 />
-                                <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block', marginTop: '0.25rem' }}>
                                     Si el CI ya existe, se mostrará el cliente existente sin duplicar (CA02).
                                 </span>
+                                {nuevoCi.trim() && clientes.some(c => c.ci.trim() === nuevoCi.trim()) && (
+                                    <div style={{
+                                        marginTop: '0.5rem',
+                                        padding: '0.65rem 0.85rem',
+                                        background: 'rgba(245, 158, 11, 0.15)',
+                                        border: '1.5px solid #f59e0b',
+                                        borderRadius: 'var(--radius)',
+                                        color: '#fef3c7',
+                                        fontSize: '0.8rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        lineHeight: 1.4
+                                    }}>
+                                        <AlertTriangle size={16} style={{ color: '#f59e0b', flexShrink: 0 }} />
+                                        <div>
+                                            <strong>Aviso de Unicidad (CA02):</strong> Este CI ya pertenece a <strong>{clientes.find(c => c.ci.trim() === nuevoCi.trim())?.nombres} {clientes.find(c => c.ci.trim() === nuevoCi.trim())?.apellidos}</strong>. Al guardar se conservará la ficha existente sin crear duplicados.
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Nombres *</label>

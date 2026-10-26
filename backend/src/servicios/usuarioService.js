@@ -118,7 +118,8 @@ export const usuarioService = {
                 ipOrigen: ipOrigen,
             });
 
-            throw new ReglaNegocioError(`Credenciales inválidas. Intento ${intentos} de 5 (RNF01).`, 401);
+            const restantes = Math.max(0, 5 - intentos);
+            throw new ReglaNegocioError(`Credenciales inválidas (contraseña incorrecta). Intento ${intentos} de 5 (RNF01). Le quedan ${restantes} intento(s) antes del bloqueo temporal de 30 minutos.`, 401);
         }
 
         // Login exitoso: restablecer intentos fallidos

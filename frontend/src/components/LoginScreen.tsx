@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { api } from '../services/api';
 import type { UsuarioSession } from '../types';
-import { Award, FileText, Search, DollarSign, BarChart3, Shield } from 'lucide-react';
+import { Award, FileText, Search, DollarSign, BarChart3, Shield, AlertTriangle } from 'lucide-react';
 
 interface LoginScreenProps {
     onLoginSuccess: (user: UsuarioSession) => void;
@@ -45,15 +45,26 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
 
                 {error && (
                     <div style={{
-                        padding: '0.75rem',
-                        background: 'var(--danger-bg)',
-                        color: 'var(--danger)',
+                        padding: '0.85rem 1rem',
+                        background: 'rgba(239, 68, 68, 0.15)',
+                        color: '#fca5a5',
                         borderRadius: 'var(--radius)',
-                        fontSize: '0.85rem',
-                        marginBottom: '1rem',
-                        border: '1px solid rgba(185, 28, 28, 0.2)'
+                        fontSize: '0.875rem',
+                        marginBottom: '1.25rem',
+                        border: '1.5px solid #ef4444',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '0.75rem',
+                        lineHeight: 1.5,
+                        boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)'
                     }}>
-                        {error}
+                        <AlertTriangle size={20} style={{ color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+                        <div>
+                            <div style={{ fontWeight: 700, color: '#fee2e2', marginBottom: '2px' }}>
+                                Error de Acceso al Sistema
+                            </div>
+                            <div style={{ color: '#fecaca' }}>{error}</div>
+                        </div>
                     </div>
                 )}
 
