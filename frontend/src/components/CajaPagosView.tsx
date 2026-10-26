@@ -205,7 +205,7 @@ export const CajaPagosView: React.FC<CajaPagosViewProps> = ({ user }) => {
                 {mensajeExito && <div className="alert alert-success" style={{ marginTop: '1rem' }}>{mensajeExito}</div>}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 1fr) minmax(0, 2.5fr)', gap: '1.5rem' }}>
+            <div className="caja-grid-layout">
                 {/* Panel Izquierdo: Selección de Crédito */}
                 <div className="card">
                     <h3 style={{ fontSize: '1.05rem', marginBottom: '0.75rem', color: 'var(--text-heading)' }}>Créditos Formalizados</h3>

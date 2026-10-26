@@ -157,11 +157,12 @@ export const Layout: React.FC<LayoutProps> = ({ user, currentView, onNavigate, o
             {/* Header Flotante Superior con Glassmorphism */}
             <header className={`floating-header ${isScrolled ? 'scrolled' : ''}`}>
                 <div className="header-container">
-                    {/* Identidad del Sistema — Título Original sin logo ficticio */}
+                    {/* Identidad del Sistema — Título Responsivo */}
                     <div className="header-brand" onClick={() => onNavigate('dashboard')} role="button" tabIndex={0}>
                         <div className="brand-text">
-                            <span className="brand-title">Sistema de Gestión de Créditos</span>
-                            <span className="brand-subtitle">Entidad Bancaria · UMSA</span>
+                            <span className="brand-title brand-title-full">Sistema de Gestión de Créditos</span>
+                            <span className="brand-title brand-title-mobile">Créditos UMSA</span>
+                            <span className="brand-subtitle">Entidad Bancaria · INF-241</span>
                         </div>
                     </div>
 

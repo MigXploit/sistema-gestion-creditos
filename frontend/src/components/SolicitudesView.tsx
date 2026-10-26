@@ -65,33 +65,33 @@ export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user, currentV
     const esGerente = user.rol === 'GERENTE' || user.rol === 'ADMINISTRADOR';
 
     return (
-        <div className="card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <div>
-                    <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-primary-dark)' }}>
+        <div className="card" style={{ maxWidth: '100%', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <div style={{ minWidth: 0, flex: '1 1 260px' }}>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-primary-dark)', margin: '0 0 0.25rem 0' }}>
                         {esVistaGarantias 
                             ? 'Módulo de Custodia y Registro de Garantías (P12 – CU06 / RF07)' 
                             : 'Bandeja de Solicitudes de Crédito (P02 – CU02 a CU10)'}
                     </h2>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+                    <p style={{ fontSize: '0.825rem', color: 'var(--color-text-muted)', margin: 0 }}>
                         {esVistaGarantias
                             ? 'Registro de gravámenes, tasación, cobertura mínima requerida (≥ 120%) y documentos de validación'
                             : 'Flujo integral de originación, control documental, evaluación financiera y decisión crediticia'}
                     </p>
                 </div>
 
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', minWidth: 0, maxWidth: '100%' }}>
                     <select
                         className="form-select"
-                        style={{ width: 'auto', padding: '0.5rem 1rem' }}
+                        style={{ padding: '0.45rem 0.65rem', fontSize: '0.825rem', maxWidth: '100%', minWidth: '150px', flex: '1 1 auto' }}
                         value={filtroEstado}
                         onChange={e => setFiltroEstado(e.target.value)}
                     >
                         <option value="TODOS">Todos los estados</option>
-                        <option value="REGISTRADA">REGISTRADA (Bandeja Analista)</option>
-                        <option value="EN_EVALUACION">EN_EVALUACION (Bandeja Jefe)</option>
-                        <option value="DERIVADA_A_GERENCIA">DERIVADA A GERENCIA (Bandeja Gerente)</option>
-                        <option value="APROBADA">APROBADA (Formalizadas)</option>
+                        <option value="REGISTRADA">REGISTRADA (Analista)</option>
+                        <option value="EN_EVALUACION">EN EVALUACIÓN (Jefe)</option>
+                        <option value="DERIVADA_A_GERENCIA">DERIVADA A GERENCIA</option>
+                        <option value="APROBADA">APROBADA</option>
                         <option value="RECHAZADA">RECHAZADA</option>
                     </select>
 
@@ -99,6 +99,7 @@ export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user, currentV
                         esVistaGarantias ? (
                             <button
                                 className="btn btn-primary"
+                                style={{ padding: '0.45rem 0.75rem', fontSize: '0.825rem', whiteSpace: 'nowrap' }}
                                 onClick={() => {
                                     if (solicitudes.length > 0) {
                                         setSolicitudGarantias(solicitudes[0]);
@@ -110,7 +111,11 @@ export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user, currentV
                                 + Registrar Nueva Garantía (P12)
                             </button>
                         ) : (
-                            <button className="btn btn-primary" onClick={() => setShowRegistroModal(true)}>
+                            <button
+                                className="btn btn-primary"
+                                style={{ padding: '0.45rem 0.75rem', fontSize: '0.825rem', whiteSpace: 'nowrap' }}
+                                onClick={() => setShowRegistroModal(true)}
+                            >
                                 + Nueva Solicitud (P11)
                             </button>
                         )
@@ -124,7 +129,7 @@ export const SolicitudesView: React.FC<SolicitudesViewProps> = ({ user, currentV
             {loading ? (
                 <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>Cargando solicitudes...</div>
             ) : (
-                <div className="table-container">
+                <div className="table-container" style={{ width: '100%', maxWidth: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
                     <table className="table">
                         <thead>
                             <tr>

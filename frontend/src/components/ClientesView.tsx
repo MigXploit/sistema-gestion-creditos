@@ -124,7 +124,7 @@ export const ClientesView: React.FC<ClientesViewProps> = ({ user }) => {
             {loading ? (
                 <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>Cargando clientes...</div>
             ) : (
-                <div className="table-container">
+                <div className="table-container" style={{ width: '100%', maxWidth: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
                     <table className="table">
                         <thead>
                             <tr>
@@ -187,7 +187,7 @@ export const ClientesView: React.FC<ClientesViewProps> = ({ user }) => {
                             Si el CI ya existe, se mostrará el cliente existente sin duplicar (CA02).
                         </p>
                         <form onSubmit={handleCrear}>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
                                 <div className="form-group" style={{ marginBottom: '0.5rem' }}>
                                     <label className="form-label">Documento de Identidad (CI) *</label>
                                     <input
@@ -289,7 +289,7 @@ export const ClientesView: React.FC<ClientesViewProps> = ({ user }) => {
                             Por normativa bancaria (RF02), solo se permite actualizar datos de contacto (teléfono, correo y dirección). El CI es inmutable y los cambios se registran en auditoría.
                         </p>
                         <form onSubmit={handleEditar}>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
                                 <div className="form-group" style={{ marginBottom: '0.5rem' }}>
                                     <label className="form-label">CI (Bloqueado por seguridad)</label>
                                     <input
