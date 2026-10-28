@@ -575,7 +575,11 @@ export const pagoService = {
      * 2. 'ACUMULACION': Acumula/difiere la cuota al mes siguiente bajo amortización francesa.
      */
     async justificarPagoFlexible(datosFlexibilidad, usernameOperador, ipOrigen) {
-        const { idCuota, tipoFlexibilidad, motivoJustificacion } = datosFlexibilidad;
+        const {
+            idCuota,
+            tipoFlexibilidad = datosFlexibilidad.tipo,          // acepta 'tipo' o 'tipoFlexibilidad'
+            motivoJustificacion = datosFlexibilidad.motivo,     // acepta 'motivo' o 'motivoJustificacion'
+        } = datosFlexibilidad;
         const id = parseInt(idCuota, 10);
 
         if (!id || isNaN(id)) throw new ReglaNegocioError('ID de cuota inválido.');

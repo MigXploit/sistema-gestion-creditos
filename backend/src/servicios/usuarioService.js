@@ -18,23 +18,33 @@ export const usuarioService = {
             throw new ReglaNegocioError('Credenciales incompletas: Ingrese su usuario y contraseña.', 401);
         }
 
-        const loginLimpio = login.trim();
-        // Mapeo transparente de alias para integrantes del Grupo 4 y usuarios anteriores
+        const loginLimpio = login.trim().toLowerCase();
+        // Mapeo transparente bidireccional de alias (Grupo 4 <-> Usuarios Base)
         const mapaAlias = {
             'cmendoza': 'mbustillos',
             'atorrez': 'scallisaya',
             'lrojas': 'rrojas',
             'cajero1': 'rpatty',
             'gerente1': 'ajamachi',
+            'mbustillos': 'cmendoza',
+            'scallisaya': 'atorrez',
+            'rrojas': 'lrojas',
+            'rpatty': 'cajero1',
+            'ajamachi': 'gerente1',
         };
         const loginConsultar = mapaAlias[loginLimpio] || loginLimpio;
         let usuario = null;
 
         if (estaEnModoMemoria()) {
-            usuario = baseDatosEnMemoria.usuarios.find(u => u.login === loginLimpio || u.login === loginConsultar);
+            usuario = baseDatosEnMemoria.usuarios.find(u => 
+                u.login && (u.login.toLowerCase() === loginLimpio || u.login.toLowerCase() === loginConsultar)
+            );
         } else {
             const pool = obtenerPool();
-            const [filas] = await pool.query('SELECT * FROM usuario WHERE login = ? OR login = ?', [loginLimpio, loginConsultar]);
+            const [filas] = await pool.query(
+                'SELECT * FROM usuario WHERE LOWER(login) = ? OR LOWER(login) = ? LIMIT 1',
+                [loginLimpio, loginConsultar]
+            );
             if (filas.length > 0) usuario = filas[0];
         }
 
@@ -138,12 +148,22 @@ export const usuarioService = {
             await pool.query('UPDATE usuario SET intentos_fallidos = 0, bloqueado_hasta = NULL WHERE id_usuario = ?', [usuario.id_usuario]);
         }
 
+        const nombresGrupo4 = {
+            'mbustillos': 'Miguel Angel Bustillos Choque',
+            'scallisaya': 'Saúl Walter Callisaya Sumi',
+            'rrojas': 'Ranulfo Antonio Rojas Guachalla',
+            'rpatty': 'Royer Marcos Patty Mamani',
+            'ajamachi': 'Alex Arturo Jamachi Condori',
+        };
+        const loginRetorno = loginLimpio;
+        const nombreRetorno = nombresGrupo4[loginLimpio] || usuario.nombre_completo;
+
         // Generar token JWT con 15 minutos de vigencia (RNF01)
         const token = jwt.sign(
             {
                 idUsuario: usuario.id_usuario,
-                login: usuario.login,
-                nombreCompleto: usuario.nombre_completo,
+                login: loginRetorno,
+                nombreCompleto: nombreRetorno,
                 rol: usuario.rol,
                 limiteAtribucion: parseFloat(usuario.limite_atribucion || 0),
             },
@@ -153,10 +173,10 @@ export const usuarioService = {
 
         await auditoriaService.registrarEvento({
             idUsuario: usuario.id_usuario,
-            username: usuario.login,
+            username: loginRetorno,
             operacion: 'LOGIN',
             entidad: 'USUARIO',
-            idEntidad: usuario.login,
+            idEntidad: loginRetorno,
             resultado: 'EXITOSO',
             detalles: 'Sesión iniciada exitosamente con token JWT (15 min vigencia).',
             ipOrigen: ipOrigen,
@@ -165,8 +185,8 @@ export const usuarioService = {
         return {
             token: token,
             tipo: 'Bearer',
-            login: usuario.login,
-            nombreCompleto: usuario.nombre_completo,
+            login: loginRetorno,
+            nombreCompleto: nombreRetorno,
             rol: usuario.rol,
             limiteAtribucion: parseFloat(usuario.limite_atribucion || 0),
         };
