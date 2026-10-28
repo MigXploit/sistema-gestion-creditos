@@ -1,9 +1,15 @@
 import express from 'express';
 import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { configuracionEntorno } from './config/variablesEntorno.js';
 import { inicializarBaseDeDatos } from './config/baseDeDatos.js';
 import { enrutadorApi } from './rutas/apiRutas.js';
 import { manejadorCentralErrores } from './middleware/manejadorErrores.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -39,6 +45,18 @@ app.get('/api/health', (req, res) => {
 
 // Enrutador principal de la API REST
 app.use('/api', enrutadorApi);
+
+// Servir interfaz gráfica web compilada (frontend/dist) para ejecución autónoma local
+const rutaFrontendDist = path.resolve(__dirname, '../../frontend/dist');
+if (fs.existsSync(rutaFrontendDist)) {
+    app.use(express.static(rutaFrontendDist));
+    app.get('*', (req, res, next) => {
+        if (req.path.startsWith('/api')) {
+            return next();
+        }
+        res.sendFile(path.join(rutaFrontendDist, 'index.html'));
+    });
+}
 
 // Manejador centralizado de errores
 app.use(manejadorCentralErrores);
